@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerAnimInstance.h"
 
 // Sets default values
@@ -34,7 +35,7 @@ APlayerCharacter::APlayerCharacter()
 
 	SpringArm->bUsePawnControlRotation = true;
 
-
+	
 	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Anim/ABP_Player.ABP_Player_C'"));
 	if (Anim.Succeeded())
 	{
@@ -67,10 +68,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("LookLeftRight"), this, &APlayerCharacter::LookLeftRight);
 	PlayerInputComponent->BindAxis(TEXT("LookUpDown"), this, &APlayerCharacter::LookUpDown);
 
-
 	PlayerInputComponent->BindAxis(TEXT("Run"), this, &APlayerCharacter::SetRun);
-
-
 
 }
 

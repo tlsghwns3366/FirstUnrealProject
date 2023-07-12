@@ -31,6 +31,9 @@ public:
 	bool	IsRun;
 
 	UPROPERTY(VisibleAnywhere)
+	float MaxWalkSpeed;
+
+	UPROPERTY(VisibleAnywhere)
 	class APlayerCharacter* Player;
 
 	UPROPERTY(VisibleAnywhere)

@@ -14,6 +14,7 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 		if (IsValid(Player))
 		{
 			CharacterMovement = Player->GetCharacterMovement();
+			MaxWalkSpeed = Player->GetCharacterMovement()->MaxWalkSpeed;
 		}
 	}
 }
@@ -28,18 +29,19 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	if (IsValid(Player))
 	{
+		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
 		Velocity = CharacterMovement->Velocity;
 		if (IsRun)
 		{
-			Speed = Velocity.Size() * 2;
-			UE_LOG(LogTemp, Log, TEXT("TRUE"));
+			Speed = Velocity.Size() * 1.3; 
+			Player->GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed * 1.3;
 		}
 		else
 		{
 			Speed = Velocity.Size() * 1;
-			UE_LOG(LogTemp, Log, TEXT("FALSE"));
+			Player->GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 		}
-		UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
+
 		IsMoving = Speed > 3.0f;
 		IsFalling = CharacterMovement->IsFalling();
 	}
