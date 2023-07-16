@@ -15,5 +15,8 @@ class FIRSTUNREALPROJECT_API AFirstGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	AFirstGameModeBase();
+public:
+	UPROPERTY(VisibleAnywhere)
+	class AMainGameState* MyGameState;
 	
 };

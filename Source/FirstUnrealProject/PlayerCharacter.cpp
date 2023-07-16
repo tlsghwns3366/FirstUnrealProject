@@ -35,19 +35,21 @@ APlayerCharacter::APlayerCharacter()
 
 	SpringArm->bUsePawnControlRotation = true;
 
+
+	GetCharacterMovement()->MaxWalkSpeed = 500;
 	
-	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Anim/ABP_Player.ABP_Player_C'"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/ABP_Player.ABP_Player_C'"));
 	if (Anim.Succeeded())
 	{
 		GetMesh()->SetAnimClass(Anim.Class);
 	}
-
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	Animinstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	
 }
 
@@ -68,7 +70,23 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("LookLeftRight"), this, &APlayerCharacter::LookLeftRight);
 	PlayerInputComponent->BindAxis(TEXT("LookUpDown"), this, &APlayerCharacter::LookUpDown);
 
-	PlayerInputComponent->BindAxis(TEXT("Run"), this, &APlayerCharacter::SetRun);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Jump);
+
+
+	PlayerInputComponent->BindAction(TEXT("PlayerRun"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetIsRun);
+	PlayerInputComponent->BindAction(TEXT("PlayerRun"), EInputEvent::IE_Released, this, &APlayerCharacter::SetIsRun);
+
+	PlayerInputComponent->BindAction(TEXT("LeftMouseClick"), EInputEvent::IE_Released, this, &APlayerCharacter::Attack);
+
+}
+
+void APlayerCharacter::Attack()
+{
+	if (IsValid(Animinstance))
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Attack"));
+		//AnimInstance->PlayMontage();
+	}
 
 }
 
@@ -92,8 +110,7 @@ void APlayerCharacter::LookUpDown(float value)
 	AddControllerPitchInput(value);
 }
 
-void APlayerCharacter::SetRun(float value)
+void APlayerCharacter::SetIsRun()
 {
-	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	Anim->SetIsRun(value);
+	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRun();
 }

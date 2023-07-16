@@ -4,24 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "PlayerCharacter.generated.h"
+#include "EnemyCharacter.generated.h"
 
 UCLASS()
-class FIRSTUNREALPROJECT_API APlayerCharacter : public ACharacter
+class FIRSTUNREALPROJECT_API AEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	APlayerCharacter();
-	UPROPERTY(VisibleAnywhere)
-		class USpringArmComponent* SpringArm;
-	UPROPERTY(VisibleAnywhere)
-		class UCameraComponent* Camera;
-
-
-	UPROPERTY(VisibleAnywhere)
-		class UPlayerAnimInstance* Animinstance;
+	AEnemyCharacter();
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,14 +26,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-public:
-
-	void Attack();
-
-	void KeyUpDown(float value);
-	void KeyLeftRight(float value);
-	void LookLeftRight(float value);
-	void LookUpDown(float value);
-
-	void SetIsRun();
 };

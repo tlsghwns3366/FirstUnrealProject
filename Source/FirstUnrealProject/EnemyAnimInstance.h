@@ -4,49 +4,47 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "PlayerCharacter.h"
-#include "PlayerAnimInstance.generated.h"
+#include "EnemyAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FIRSTUNREALPROJECT_API UPlayerAnimInstance : public UAnimInstance
+class FIRSTUNREALPROJECT_API UEnemyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	
-
 public:
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	float	Speed;
 
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FVector Velocity;
+		float	Speed;
 
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool	IsMoving;
+		FVector Velocity;
+
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool	IsFalling;
+		bool	IsMoving;
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool	IsRun;
+		bool	IsFalling;
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		bool	IsRun;
 
 	UPROPERTY(VisibleAnywhere)
-	float PlayerMaxWalkSpeed;
+		float EnemyMaxWalkSpeed;
 
 	UPROPERTY(VisibleAnywhere)
-	float PlayerRunSpeed;
+		float EnemyRunSpeed;
+
+
+
 
 	UPROPERTY(VisibleAnywhere)
-	class APlayerCharacter* Player;
-
+		class AEnemyCharacter* Enemy;
 	UPROPERTY(VisibleAnywhere)
-	class	UCharacterMovementComponent* CharacterMovement;
+		class	UCharacterMovementComponent* CharacterMovement;
 
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-
-public:
-	void SetIsRun();
 };
