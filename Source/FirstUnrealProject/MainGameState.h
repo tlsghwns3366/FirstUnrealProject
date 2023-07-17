@@ -18,7 +18,8 @@ public:
 public:
 	UPROPERTY(VisibleAnywhere)
 		float GameTime;
-	UPROPERTY(VisibleAnywhere)
+
+	UPROPERTY(BlueprintReadWrite)
 		float GameSpeed;
 
 	UPROPERTY(VisibleAnywhere)

@@ -3,18 +3,17 @@
 
 #include "MainGameState.h"
 #include "Misc/DateTime.h"
-#include "Components/DirectionalLightComponent.h"
 
 
 AMainGameState::AMainGameState()
 {
 	Year = Month = Day = 1; //DefaultDate
+	GameSpeed = 0.1; //DefaultGameSpeed = 1
 }
 
 void AMainGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	GameSpeed = 1; //DefaultGameSpeed = 1
 	GameTime = Hours + (Minute / 60.f) + (Second / 3600.f);
 }
 
