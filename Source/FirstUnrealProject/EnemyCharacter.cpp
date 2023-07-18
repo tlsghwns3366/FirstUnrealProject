@@ -2,6 +2,7 @@
 
 
 #include "EnemyCharacter.h"
+#include "EnemyAiController.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -24,6 +25,8 @@ AEnemyCharacter::AEnemyCharacter()
 		GetMesh()->SetAnimClass(Anim.Class);
 	}
 
+	AIControllerClass = AEnemyAIController::StaticClass();
+
 }
 
 // Called when the game starts or when spawned
@@ -45,5 +48,10 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemyCharacter::Attack()
+{
+	UE_LOG(LogTemp, Log, TEXT("AttackTrue"));
 }
 
