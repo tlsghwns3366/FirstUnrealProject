@@ -14,14 +14,18 @@ class FIRSTUNREALPROJECT_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class USpringArmComponent* SpringArm;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UCameraComponent* Camera;
 
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerAnimInstance* Animinstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UPlayerActorComponent* PlayerComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UInventoryComponent* InventoryComponent;
 
 protected:
 	// Called when the game starts or when spawned

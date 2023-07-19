@@ -7,6 +7,8 @@
 #include "PlayerActorComponent.generated.h"
 
 
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FIRSTUNREALPROJECT_API UPlayerActorComponent : public UActorComponent
 {
