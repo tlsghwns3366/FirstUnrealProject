@@ -47,5 +47,6 @@ public:
 	void LookLeftRight(float value);
 	void LookUpDown(float value);
 
-	void SetIsRun();
+	void SetIsRunTrue();
+	void SetIsRunFalse();
 };

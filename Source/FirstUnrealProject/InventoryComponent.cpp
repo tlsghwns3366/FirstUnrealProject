@@ -10,7 +10,7 @@ UInventoryComponent::UInventoryComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	InventorySize = 10; //Default 10
+	InventorySize = 20; //Default 20
 	// ...
 }
 
@@ -19,6 +19,7 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp,Log,TEXT("%d"),InventorySize)
 	for (auto& item : DefaultInventory)
 	{
 		AddItem(item);
@@ -38,7 +39,6 @@ bool UInventoryComponent::AddItem(UItemObject* item)
 {
 	if (ItemInventory.Num() < InventorySize)
 	{
-		UE_LOG(LogTemp, Log, TEXT("TRUE"));
 		item->World = GetWorld();
 		item->Inventory = this;
 		ItemInventory.Add(item);

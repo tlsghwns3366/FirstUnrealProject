@@ -28,6 +28,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
 		TArray<class UItemObject*> DefaultInventory;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D LastInventoryPosition;
+
 	UPROPERTY(BlueprintAssignable)
 		FOnInventoryUpdated OnInventoryUpdated;
 	

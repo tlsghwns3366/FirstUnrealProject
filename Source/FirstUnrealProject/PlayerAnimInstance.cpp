@@ -46,8 +46,3 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsFalling = CharacterMovement->IsFalling();
 	}
 }
-
-void UPlayerAnimInstance::SetIsRun()
-{
-	IsRun = !IsRun;
-}

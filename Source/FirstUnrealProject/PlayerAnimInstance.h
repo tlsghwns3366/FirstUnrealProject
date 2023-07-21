@@ -48,5 +48,6 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 public:
-	void SetIsRun();
+	void SetIsRunTrue() { IsRun = true; }
+	void SetIsRunFalse() { IsRun = false; }
 };
