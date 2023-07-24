@@ -8,6 +8,9 @@
 
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpUpdated);
+
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FIRSTUNREALPROJECT_API UPlayerActorComponent : public UActorComponent
@@ -15,27 +18,32 @@ class FIRSTUNREALPROJECT_API UPlayerActorComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = Info, Meta = (AllowPrivateAccess = true))
 		int32 Level;
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		float Hp;
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		float MaxHp;
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		float Speed;
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
-		float exp;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
+		float Exp;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
+		float MaxExp;
 
 
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		float AttackDamage;
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		float Shild;
 
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		int32 CriticalChance;
-	UPROPERTY(EditAnywhere, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Info, Meta = (AllowPrivateAccess = true))
 		int32 CriticalDamage;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnHpUpdated OnhpUpdated;
 
 public:	
 	// Sets default values for this component's properties

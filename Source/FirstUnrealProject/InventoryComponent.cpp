@@ -19,7 +19,6 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp,Log,TEXT("%d"),InventorySize)
 	for (auto& item : DefaultInventory)
 	{
 		AddItem(item);

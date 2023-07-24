@@ -43,5 +43,6 @@ void UPlayerActorComponent::SetLevel(int32 _Level)
 
 void UPlayerActorComponent::OnDamaged(float DamageAmount)
 {
+	OnhpUpdated.Broadcast();
 }
 
