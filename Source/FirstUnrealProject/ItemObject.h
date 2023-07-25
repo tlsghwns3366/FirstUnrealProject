@@ -14,6 +14,8 @@ class FIRSTUNREALPROJECT_API UItemObject : public UObject
 {
 	GENERATED_BODY()
 public:
+	UItemObject();
+public:
 
 	UPROPERTY(Transient)
 	class UWorld* World;

@@ -6,9 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "PlayerActorComponent.h"
-#include "InventoryComponent.h"
 #include "PlayerAnimInstance.h"
+#include "PlayerActorComponent.h"
+#include "PlayerInventoryComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -20,7 +20,7 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/ABP_Player.ABP_Player_C'"));
 
 	PlayerComponent = CreateDefaultSubobject<UPlayerActorComponent>(TEXT("PlayerComponent"));
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 	if (SkeletalMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);

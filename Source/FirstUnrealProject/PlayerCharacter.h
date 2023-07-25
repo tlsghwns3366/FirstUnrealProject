@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerActorComponent* PlayerComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UInventoryComponent* InventoryComponent;
+		class UPlayerInventoryComponent* PlayerInventoryComponent;
 
 protected:
 	// Called when the game starts or when spawned

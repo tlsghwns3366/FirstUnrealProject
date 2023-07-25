@@ -19,10 +19,6 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	for (auto& item : DefaultInventory)
-	{
-		AddItem(item);
-	}
 	
 }
 
@@ -31,34 +27,4 @@ void UInventoryComponent::BeginPlay()
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
-
-bool UInventoryComponent::AddItem(UItemObject* item)
-{
-	if (ItemInventory.Num() < InventorySize)
-	{
-		item->World = GetWorld();
-		item->Inventory = this;
-		ItemInventory.Add(item);
-		OnInventoryUpdated.Broadcast();
-		return true;
-	}
-	else
-		return false;
-}
-
-bool UInventoryComponent::RemoveItem(UItemObject* item)
-{
-	if (ItemInventory.Num() < InventorySize)
-	{
-		item->World = nullptr;
-		item->Inventory = nullptr;
-		ItemInventory.RemoveSingle(item);
-		OnInventoryUpdated.Broadcast();
-		return true;
-	}
-	else
-		return false;
-}
-
