@@ -9,6 +9,8 @@
 #include "PlayerAnimInstance.h"
 #include "PlayerActorComponent.h"
 #include "PlayerInventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "EnemyCharacter.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -82,6 +84,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction(TEXT("LeftMouseClick"), EInputEvent::IE_Released, this, &APlayerCharacter::Attack);
 
+	PlayerInputComponent->BindAction(TEXT("Interaction"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Interaction);
+
 }
 
 void APlayerCharacter::Attack()
@@ -92,6 +96,35 @@ void APlayerCharacter::Attack()
 		//AnimInstance->PlayMontage();
 	}
 
+}
+
+void APlayerCharacter::Interaction()
+{
+	//UE_LOG(LogTemp, Log, TEXT("%f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
+	float Range = 50.f;
+	FHitResult HitResult;
+	FVector Center = GetActorLocation() + GetActorForwardVector() * Range + FVector(0.f, 0.f, -30.f);
+	FVector Forward = Center + FVector(0.f,0.f,200.f);
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	bool Result = GetWorld()->SweepSingleByChannel
+	(OUT HitResult,
+		Center,
+		Forward,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(Range),
+		Params
+	);
+	if (Result)
+	{
+		DrawDebugLine(GetWorld(), Center, Forward, FColor::Green, true);
+		AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(HitResult.GetActor());
+		if (Enemy)
+		{
+			Enemy->SetEnemyInventory();
+		}
+	}
 }
 
 void APlayerCharacter::KeyUpDown(float value)

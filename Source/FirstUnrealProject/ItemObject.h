@@ -31,8 +31,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (MultiLine = true))
 		FText ItemDescription;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
+		int32 Count;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 		float Weight;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
+		float DropChance;
 
 	UPROPERTY()
 		class UInventoryComponent* Inventory;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Onuse(class APlayerCharacter* Player) ;
 };

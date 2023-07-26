@@ -14,6 +14,10 @@ class FIRSTUNREALPROJECT_API AEnemyCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UEnemyInventoryComponent* EnemyInventoryComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,5 +32,8 @@ public:
 public:
 
 	void Attack();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetEnemyInventory();
 
 };

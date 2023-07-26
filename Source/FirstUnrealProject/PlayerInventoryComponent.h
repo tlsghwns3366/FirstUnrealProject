@@ -6,12 +6,6 @@
 #include "InventoryComponent.h"
 #include "PlayerInventoryComponent.generated.h"
 
-/**
- * 
- */
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
-
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIRSTUNREALPROJECT_API UPlayerInventoryComponent : public UInventoryComponent
 {
@@ -19,12 +13,6 @@ class FIRSTUNREALPROJECT_API UPlayerInventoryComponent : public UInventoryCompon
 public:
 	UPlayerInventoryComponent();
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector2D LastInventoryPosition;
-
-	UPROPERTY(BlueprintAssignable)
-		FOnInventoryUpdated OnInventoryUpdated;
 
 protected:
 	// Called when the game starts
@@ -34,8 +22,4 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-public:
-	bool AddItem(class UItemObject* item);
-	bool RemoveItem(class UItemObject* item);
 };

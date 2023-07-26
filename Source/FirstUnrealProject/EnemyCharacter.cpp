@@ -3,6 +3,7 @@
 
 #include "EnemyCharacter.h"
 #include "EnemyAiController.h"
+#include "EnemyInventoryComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -11,6 +12,8 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	static ConstructorHelpers::FObjectFinder< USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
+
+	EnemyInventoryComponent = CreateDefaultSubobject<UEnemyInventoryComponent>(TEXT("EnemyInventoryComponent"));
 
 	if (SkeletalMesh.Succeeded())
 	{

@@ -27,6 +27,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UEnemyInventoryComponent* EnemyInventoryComponent;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,6 +45,8 @@ public:
 public:
 
 	void Attack();
+	void Interaction();
+
 
 	void KeyUpDown(float value);
 	void KeyLeftRight(float value);
