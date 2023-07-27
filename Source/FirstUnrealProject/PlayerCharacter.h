@@ -27,8 +27,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UEnemyInventoryComponent* EnemyInventoryComponent;
 
 
 protected:
@@ -55,4 +53,6 @@ public:
 
 	void SetIsRunTrue();
 	void SetIsRunFalse();
+
+public:
 };

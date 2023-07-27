@@ -40,6 +40,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:
+	UFUNCTION(BlueprintCallable)
 	virtual bool AddItem(class UItemObject* item);
+	UFUNCTION(BlueprintCallable)
 	virtual bool RemoveItem(class UItemObject* item);
 };
