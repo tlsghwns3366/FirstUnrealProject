@@ -35,14 +35,3 @@ void UPlayerActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 }
-
-void UPlayerActorComponent::SetLevel(int32 _Level)
-{
-	Level = _Level;
-}
-
-void UPlayerActorComponent::OnDamaged(float DamageAmount)
-{
-	OnhpUpdated.Broadcast();
-}
-

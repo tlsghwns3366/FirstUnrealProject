@@ -13,7 +13,6 @@ UEnemyInventoryComponent::UEnemyInventoryComponent()
 bool UEnemyInventoryComponent::AddItem(UItemObject* item)
 {
 	float RandomDrop = FMath::RandRange(0.f,100000.f);
-	UE_LOG(LogTemp, Log, TEXT(" %f"), RandomDrop);
 	if (item->DropChance  > RandomDrop/100000.f)
 	{
 		item->World = GetWorld();

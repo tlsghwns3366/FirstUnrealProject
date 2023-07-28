@@ -17,7 +17,10 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UEnemyStateActorComponent* EnemyStateComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
+public:
 
 protected:
 	// Called when the game starts or when spawned
