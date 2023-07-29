@@ -16,25 +16,32 @@ class FIRSTUNREALPROJECT_API UEnemyAnimInstance : public UAnimInstance
 	
 public:
 
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		float	Speed;
 
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		FVector Velocity;
 
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		bool	IsMoving;
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		bool	IsFalling;
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		bool	IsRun;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 		float EnemyMaxWalkSpeed;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float EnemyRunSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float LeftRight;
+
+
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+		bool	IsRest;
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+		bool	IsSleep;
 
 
 
@@ -47,4 +54,6 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+public:
+	void SetIsRun(bool Run);
 };

@@ -19,14 +19,9 @@ public:
 	// Sets default values for this component's properties
 	UPlayerActorComponent();
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, Meta = (AllowPrivateAccess = true))
-		float Stamina;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, Meta = (AllowPrivateAccess = true))
-		float StaminaMax;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		float Exp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		float MaxExp;
 
 	UPROPERTY(BlueprintAssignable)

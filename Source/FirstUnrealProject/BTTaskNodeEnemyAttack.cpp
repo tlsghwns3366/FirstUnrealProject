@@ -15,15 +15,13 @@ EBTNodeResult::Type UBTTaskNodeEnemyAttack::ExecuteTask(UBehaviorTreeComponent& 
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 	auto MyEnemy = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetPawn());
-
-
+	
 	if (MyEnemy == nullptr)
 	{
 		return EBTNodeResult::Failed;
 	}
 
 	MyEnemy->Attack();
-
 
 	return Result;
 }

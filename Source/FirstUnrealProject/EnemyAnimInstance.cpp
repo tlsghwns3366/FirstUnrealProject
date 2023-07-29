@@ -14,9 +14,10 @@ void UEnemyAnimInstance::NativeInitializeAnimation()
 		Enemy = Cast<AEnemyCharacter>(Pawn);
 		if (IsValid(Enemy))
 		{
+			IsRun = false;
 			CharacterMovement = Enemy->GetCharacterMovement();
 			EnemyMaxWalkSpeed = Enemy->GetCharacterMovement()->MaxWalkSpeed;
-			EnemyRunSpeed = 1.3f;
+			EnemyRunSpeed = 200.f;
 		}
 	}
 }
@@ -35,15 +36,22 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Velocity = CharacterMovement->Velocity;
 		if (IsRun)
 		{
-			Speed = Velocity.Size() * EnemyRunSpeed;
-			Enemy->GetCharacterMovement()->MaxWalkSpeed = EnemyMaxWalkSpeed * EnemyRunSpeed;
+			Speed = Velocity.Size() + EnemyRunSpeed;
+			Enemy->GetCharacterMovement()->MaxWalkSpeed = EnemyMaxWalkSpeed + EnemyRunSpeed;
 		}
 		else
 		{
-			Speed = Velocity.Size() * 1;
+			Speed = Velocity.Size();
 			Enemy->GetCharacterMovement()->MaxWalkSpeed = EnemyMaxWalkSpeed;
 		}
 		IsMoving = Speed > 3.0f;
 		IsFalling = CharacterMovement->IsFalling();
+
+		LeftRight = this->CalculateDirection(Enemy->GetVelocity(), Enemy->GetActorRotation());
 	}
+}
+
+void UEnemyAnimInstance::SetIsRun(bool Run)
+{
+	IsRun = Run;
 }

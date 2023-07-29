@@ -5,6 +5,7 @@
 #include "EnemyAiController.h"
 #include "EnemyInventoryComponent.h"
 #include "EnemyStateActorComponent.h"	
+#include "EnemyAnimInstance.h"
 #include "Blueprint/UserWidget.h"
 
 // Sets default values
@@ -57,4 +58,9 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 void AEnemyCharacter::Attack()
 {
 	UE_LOG(LogTemp, Log, TEXT("AttackTrue"));
+}
+
+void AEnemyCharacter::SetIsRun(bool Run)
+{
+	Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRun(Run);
 }

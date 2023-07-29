@@ -13,5 +13,11 @@ UCLASS()
 class FIRSTUNREALPROJECT_API UEnemyStateActorComponent : public UCharacterStateComponent
 {
 	GENERATED_BODY()
-	
+public:
+
+	UPROPERTY(EditAnywhere)
+		float RestTime;
+	UPROPERTY(EditAnywhere)
+		float SleepTime;
+
 };
