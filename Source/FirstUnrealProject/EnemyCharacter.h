@@ -35,11 +35,8 @@ public:
 public:
 
 	void Attack();
-	void SetIsRun(bool Run);
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void SetEnemyInventory();
-	
-
 };

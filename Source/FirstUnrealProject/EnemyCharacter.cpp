@@ -59,8 +59,3 @@ void AEnemyCharacter::Attack()
 {
 	UE_LOG(LogTemp, Log, TEXT("AttackTrue"));
 }
-
-void AEnemyCharacter::SetIsRun(bool Run)
-{
-	Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRun(Run);
-}

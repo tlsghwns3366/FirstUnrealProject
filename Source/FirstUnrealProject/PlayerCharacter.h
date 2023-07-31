@@ -26,6 +26,8 @@ public:
 		class UPlayerActorComponent* PlayerComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
 
 
 

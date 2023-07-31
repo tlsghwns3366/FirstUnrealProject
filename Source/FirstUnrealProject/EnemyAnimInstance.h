@@ -26,17 +26,10 @@ public:
 		bool	IsMoving;
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		bool	IsFalling;
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
-		bool	IsRun;
 
-	UPROPERTY(EditAnywhere)
-		float EnemyMaxWalkSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		float EnemyRunSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float LeftRight;
-
 
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
 		bool	IsRest;

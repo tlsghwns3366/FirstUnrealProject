@@ -4,6 +4,7 @@
 #include "EnemyAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
+#include "Perception/AIPerceptionComponent.h"
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -20,6 +21,7 @@ AEnemyAIController::AEnemyAIController()
 		//UE_LOG(LogTemp, Log, TEXT("BlackboardData Succeeded"));
 		BlackboardData = BD.Object;
 	}
+	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)

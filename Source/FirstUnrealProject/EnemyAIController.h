@@ -18,6 +18,9 @@ private:
 		class UBehaviorTree* BehaviorTree;
 	UPROPERTY()
 		class UBlackboardData* BlackboardData;
+
+	UPROPERTY(VisibleAnywhere)
+		class UAIPerceptionComponent* AIPerceptionComponent;
 public:
 	AEnemyAIController();
 public:

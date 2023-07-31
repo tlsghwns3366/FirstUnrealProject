@@ -11,6 +11,7 @@
 #include "PlayerInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnemyCharacter.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -23,6 +24,7 @@ APlayerCharacter::APlayerCharacter()
 
 	PlayerComponent = CreateDefaultSubobject<UPlayerActorComponent>(TEXT("PlayerComponent"));
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 	if (SkeletalMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);
