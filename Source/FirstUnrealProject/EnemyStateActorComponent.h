@@ -15,9 +15,11 @@ class FIRSTUNREALPROJECT_API UEnemyStateActorComponent : public UCharacterStateC
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		float RestTime;
-	UPROPERTY(EditAnywhere)
-		float SleepTime;
+	UPROPERTY(EditAnywhere, Category = Enemy,meta = (ClampMin = 0.0,ClampMax = 100.0))
+		float SleepTime;;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy)
+		FVector StartPosition;
 };

@@ -90,6 +90,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	UE_LOG(LogTemp, Log, TEXT("TakeDamage"));
+	return Damage;
+}
+
 void APlayerCharacter::Attack()
 {
 	if (IsValid(Animinstance))
@@ -127,6 +133,11 @@ void APlayerCharacter::Interaction()
 			Enemy->SetEnemyInventory();
 		}
 	}
+}
+
+void APlayerCharacter::OnHit()
+{
+	UE_LOG(LogTemp, Log, TEXT("OnHit"));
 }
 
 void APlayerCharacter::KeyUpDown(float value)

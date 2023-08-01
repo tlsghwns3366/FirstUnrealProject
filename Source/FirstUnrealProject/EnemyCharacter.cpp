@@ -24,12 +24,6 @@ AEnemyCharacter::AEnemyCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.0f), FRotator(0.f, -90.f, 0.f));
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/ABP_Enemy.ABP_Enemy_C'"));
-	if (Anim.Succeeded())
-	{
-		GetMesh()->SetAnimClass(Anim.Class);
-	}
-
 	AIControllerClass = AEnemyAIController::StaticClass();
 
 }
@@ -38,7 +32,12 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Anim = Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance());
+	if (Anim)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Anim"));
+		Anim->OnMontageEnded.AddDynamic(this, &AEnemyCharacter::OnAttackMontageEnded);
+	}
 }
 
 // Called every frame
@@ -55,7 +54,8 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
-void AEnemyCharacter::Attack()
+void AEnemyCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	UE_LOG(LogTemp, Log, TEXT("AttackTrue"));
+	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
+	IsAttacking = false;
 }

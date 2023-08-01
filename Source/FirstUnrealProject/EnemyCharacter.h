@@ -15,11 +15,17 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsAttacking = false;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UEnemyStateActorComponent* EnemyStateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UEnemyAnimInstance* Anim;
 public:
 
 protected:
@@ -31,10 +37,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; 
+	UFUNCTION()
+	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 public:
 
-	void Attack();
+	UFUNCTION(BlueprintImplementableEvent)
+		void Attack();
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)

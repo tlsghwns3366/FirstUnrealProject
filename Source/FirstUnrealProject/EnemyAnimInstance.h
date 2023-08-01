@@ -37,11 +37,12 @@ public:
 		bool	IsSleep;
 
 
-
 	UPROPERTY(VisibleAnywhere)
 		class AEnemyCharacter* Enemy;
 	UPROPERTY(VisibleAnywhere)
 		class	UCharacterMovementComponent* CharacterMovement;
+	UPROPERTY(VisibleAnywhere)
+		class	UEnemyStateActorComponent* EnemyState;
 
 public:
 	virtual void NativeInitializeAnimation() override;

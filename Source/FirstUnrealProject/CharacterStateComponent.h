@@ -38,11 +38,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		float Shild;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		int32 CriticalChance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		int32 CriticalDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		int32 DodgeChance;
 
 	UPROPERTY(BlueprintAssignable)
