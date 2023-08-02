@@ -14,6 +14,11 @@ class FIRSTUNREALPROJECT_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsAttacking = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class USpringArmComponent* SpringArm;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -42,6 +47,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+public:
+	UFUNCTION()
+		virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 public:
 

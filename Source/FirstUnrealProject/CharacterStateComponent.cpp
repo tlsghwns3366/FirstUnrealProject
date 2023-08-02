@@ -35,10 +35,22 @@ void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 void UCharacterStateComponent::SetLevel(int32 _Level)
 {
 	Level = _Level;
+	Hp = MaxHp;
 }
 
 void UCharacterStateComponent::OnDamaged(float DamageAmount)
 {
+	float TempHp = Hp - DamageAmount;
+	SetHp(TempHp);
 	OnhpUpdated.Broadcast();
+}
+
+void UCharacterStateComponent::SetHp(float NewHp)
+{
+	Hp = NewHp;
+	if (Hp < 0)
+	{
+		Hp = 0;
+	}
 }
 

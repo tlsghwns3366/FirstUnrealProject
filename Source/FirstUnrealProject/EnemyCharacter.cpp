@@ -7,6 +7,7 @@
 #include "EnemyStateActorComponent.h"	
 #include "EnemyAnimInstance.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -35,7 +36,7 @@ void AEnemyCharacter::BeginPlay()
 	Anim = Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance());
 	if (Anim)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Anim"));
+		Anim->OnAttackHit.AddUObject(this, &AEnemyCharacter::OnHit);
 		Anim->OnMontageEnded.AddDynamic(this, &AEnemyCharacter::OnAttackMontageEnded);
 	}
 }
@@ -54,8 +55,52 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	EnemyStateComponent->OnDamaged(Damage);
+	return Damage;
+}
+
 void AEnemyCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
 	IsAttacking = false;
+}
+
+void AEnemyCharacter::OnHit()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Parems(NAME_None, false, this);
+
+	float AttackRange = 100.f;
+	float AttackRadius = 30.f;
+
+	FVector Center = GetActorLocation();
+	FVector Forward = Center + GetActorForwardVector() * AttackRange;
+
+	bool Result = GetWorld()->SweepSingleByChannel
+	(OUT HitResult,
+		Center,
+		Forward,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Parems);
+
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
+	FColor DrawColor;
+	if (Result && HitResult.GetActor())
+	{
+		AActor* HitActor = HitResult.GetActor();
+		UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->AttackDamage, GetController(), nullptr, NULL);
+		DrawColor = FColor::Green;
+	}
+	else
+	{
+		DrawColor = FColor::Red;
+	}
+	if (EnemyStateComponent->RestTime < 100.f)
+		EnemyStateComponent->RestTime += 1.f;
+	DrawDebugSphere(GetWorld(), Forward,AttackRadius,32,DrawColor,false,5.0f);
 }

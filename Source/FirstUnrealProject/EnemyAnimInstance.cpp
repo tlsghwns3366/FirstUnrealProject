@@ -24,7 +24,7 @@ void UEnemyAnimInstance::NativeBeginPlay()
 	Super::NativeBeginPlay();
 }
 
-void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)	
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	if (IsValid(Enemy))
@@ -35,6 +35,11 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsMoving = Speed > 3.0f;
 		IsFalling = CharacterMovement->IsFalling();
 
-		LeftRight = this->CalculateDirection(Enemy->GetVelocity(), Enemy->GetActorRotation());
+		LeftRight = CalculateDirection(Enemy->GetVelocity(), Enemy->GetActorRotation());
 	}
+}
+
+void UEnemyAnimInstance::AnimNotify_Hit()
+{
+	OnAttackHit.Broadcast();
 }

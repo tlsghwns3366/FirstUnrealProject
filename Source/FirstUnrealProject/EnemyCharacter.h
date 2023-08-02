@@ -37,15 +37,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; 
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 	UFUNCTION()
 	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void Attack();
-
-public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void SetEnemyInventory();
+
+public:
+	void OnHit();
+
 };

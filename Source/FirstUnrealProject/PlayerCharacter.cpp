@@ -92,16 +92,53 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Log, TEXT("TakeDamage"));
+	PlayerComponent->OnDamaged(Damage);
 	return Damage;
+}
+
+void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
+	IsAttacking = false;
 }
 
 void APlayerCharacter::Attack()
 {
 	if (IsValid(Animinstance))
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Attack"));
-		//AnimInstance->PlayMontage();
+		UE_LOG(LogTemp, Log, TEXT("Attack"));
+		FHitResult HitResult;
+		FCollisionQueryParams Parems(NAME_None, false, this);
+
+		float AttackRange = 100.f;
+		float AttackRadius = 30.f;
+
+		FVector Center = GetActorLocation();
+		FVector Forward = Center + GetActorForwardVector() * AttackRange;
+
+		bool Result = GetWorld()->SweepSingleByChannel
+		(OUT HitResult,
+			Center,
+			Forward,
+			FQuat::Identity,
+			ECollisionChannel::ECC_GameTraceChannel1,
+			FCollisionShape::MakeSphere(AttackRadius),
+			Parems);
+
+		float HalfHeight = AttackRange * 0.5f + AttackRadius;
+		FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
+		FColor DrawColor;
+		if (Result && HitResult.GetActor())
+		{
+			AActor* HitActor = HitResult.GetActor();
+			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->AttackDamage, GetController(), nullptr, NULL);
+			DrawColor = FColor::Green;
+		}
+		else
+		{
+			DrawColor = FColor::Red;
+		}
+		DrawDebugSphere(GetWorld(), Forward, AttackRadius, 32, DrawColor, false, 5.0f);
 	}
 
 }

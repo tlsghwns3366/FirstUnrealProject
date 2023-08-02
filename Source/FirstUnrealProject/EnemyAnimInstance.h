@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "EnemyAnimInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttckHit);
 /**
  * 
  */
@@ -45,9 +46,13 @@ public:
 		class	UEnemyStateActorComponent* EnemyState;
 
 public:
+	FOnAttckHit OnAttackHit;
+public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 public:
-	void SetIsRun(bool Run);
+	
+	UFUNCTION()
+		void AnimNotify_Hit();
 };
