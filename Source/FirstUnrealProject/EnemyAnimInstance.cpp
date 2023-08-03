@@ -4,6 +4,7 @@
 #include "EnemyAnimInstance.h"
 #include "EnemyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "EnemyAIController.h"
 
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {

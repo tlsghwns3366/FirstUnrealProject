@@ -45,7 +45,6 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -100,7 +99,7 @@ void AEnemyCharacter::OnHit()
 	{
 		DrawColor = FColor::Red;
 	}
-	if (EnemyStateComponent->RestTime < 100.f)
-		EnemyStateComponent->RestTime += 1.f;
+	if (EnemyStateComponent->RestTime < 200.f)
+		EnemyStateComponent->RestTime += 10.f;
 	DrawDebugSphere(GetWorld(), Forward,AttackRadius,32,DrawColor,false,5.0f);
 }

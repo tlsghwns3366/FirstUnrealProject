@@ -13,10 +13,10 @@ UCLASS()
 class FIRSTUNREALPROJECT_API AEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
-private:
-	UPROPERTY()
+public:
+	UPROPERTY(EditAnywhere)
 		class UBehaviorTree* BehaviorTree;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 		class UBlackboardData* BlackboardData;
 
 	UPROPERTY(VisibleAnywhere)
@@ -26,6 +26,4 @@ public:
 public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
-
-
 };

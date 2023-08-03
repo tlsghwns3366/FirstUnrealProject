@@ -18,20 +18,16 @@ class FIRSTUNREALPROJECT_API UEnemyStateActorComponent : public UCharacterStateC
 public:
 	UEnemyStateActorComponent();
 public:
-	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 100.0))
+	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 200.0))
 		float RestTime;
-	UPROPERTY(EditAnywhere, Category = Enemy,meta = (ClampMin = 0.0,ClampMax = 100.0))
-		float SleepTime;;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy)
 		FVector StartPosition;
 
-	UPROPERTY(VisibleAnyWhere)
+	UPROPERTY(VisibleAnywhere)
 		class AMainGameState* MainState;
-
-
-	float CurrentTime;
-	float LastTime;
+	UPROPERTY(VisibleAnywhere)
+		class AEnemyCharacter* Enemy;
 
 protected:
 	virtual void BeginPlay() override;

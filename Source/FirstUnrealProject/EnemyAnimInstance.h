@@ -17,25 +17,22 @@ class FIRSTUNREALPROJECT_API UEnemyAnimInstance : public UAnimInstance
 	
 public:
 
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 		float	Speed;
 
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 		FVector Velocity;
 
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 		bool	IsMoving;
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 		bool	IsFalling;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float LeftRight;
-
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		bool	IsRest;
-	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
-		bool	IsSleep;
 
 
 	UPROPERTY(VisibleAnywhere)
@@ -52,7 +49,9 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 public:
-	
+	void SetRest(bool Rest) { IsRest = Rest; };
+	bool GetRest() { return IsRest; };
+public:	
 	UFUNCTION()
 		void AnimNotify_Hit();
 };
