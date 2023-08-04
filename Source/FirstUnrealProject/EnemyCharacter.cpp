@@ -8,6 +8,9 @@
 #include "EnemyAnimInstance.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "BrainComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "ItemActor.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -17,7 +20,6 @@ AEnemyCharacter::AEnemyCharacter()
 
 	EnemyStateComponent = CreateDefaultSubobject<UEnemyStateActorComponent>(TEXT("EnemyStateActorCompenent"));
 	EnemyInventoryComponent = CreateDefaultSubobject<UEnemyInventoryComponent>(TEXT("EnemyInventoryComponent"));
-
 	static ConstructorHelpers::FObjectFinder< USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	if (SkeletalMesh.Succeeded())
 	{
@@ -56,7 +58,26 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	EnemyStateComponent->OnDamaged(Damage);
+	if (EnemyStateComponent->IsDie)
+	{
+		GetMesh()->SetSimulatePhysics(true); 
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
+			Destroy();
+			}, DestroyTime, false);
+		AAIController* EnemyController = Cast<AAIController>(GetController());
+		if (EnemyController)
+		{
+			EnemyController->GetBrainComponent()->StopLogic(FString("Die"));
+		}
+		UCapsuleComponent* EnemyCapsule = GetCapsuleComponent();
+		if (EnemyCapsule)
+		{
+			EnemyCapsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+		DropItem();
+	}
 	return Damage;
 }
 
@@ -101,5 +122,16 @@ void AEnemyCharacter::OnHit()
 	}
 	if (EnemyStateComponent->RestTime < 200.f)
 		EnemyStateComponent->RestTime += 10.f;
-	DrawDebugSphere(GetWorld(), Forward,AttackRadius,32,DrawColor,false,5.0f);
+	DrawDebugSphere(GetWorld(), Forward,AttackRadius,16,DrawColor,false,5.0f);
+}
+
+void AEnemyCharacter::DropItem()
+{
+	FVector ActorLocation = GetActorLocation();
+	for (auto Enemyitem : EnemyInventoryComponent->ItemInventory)
+	{
+		ActorLocation += FVector(0.f, 0.f, 100.f);
+		AItemActor* EItem = GetWorld()->SpawnActor<AItemActor>(EItem->StaticClass(),ActorLocation,FRotator::ZeroRotator);
+		EItem->Iteminitialization(Enemyitem);
+	}
 }

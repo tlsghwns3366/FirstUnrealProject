@@ -15,6 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AItemActor();
 
+public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Instanced)
 		class UItemObject* Item;
 	UPROPERTY(EditAnywhere)
@@ -29,4 +30,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void Iteminitialization(UItemObject* _Item);
 };

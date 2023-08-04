@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		int32 DodgeChance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsDie = false;
+
 	UPROPERTY(BlueprintAssignable)
 		FOnHpUpdated OnhpUpdated;
 

@@ -92,6 +92,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	PlayerComponent->OnDamaged(Damage);
 	return Damage;
 }
@@ -163,12 +164,6 @@ void APlayerCharacter::Interaction()
 	);
 	if (Result)
 	{
-		DrawDebugLine(GetWorld(), Center, Forward, FColor::Green, true);
-		AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(HitResult.GetActor());
-		if (Enemy)
-		{
-			Enemy->SetEnemyInventory();
-		}
 	}
 }
 

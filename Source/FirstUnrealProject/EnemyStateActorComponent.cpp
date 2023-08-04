@@ -28,10 +28,6 @@ void UEnemyStateActorComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	{
 		if (RestTime > 0)
 			RestTime -= FMath::Lerp(0, 200.f, 0.01f * GameSpeed);
-		else
-		{
-			Enemy->Anim->SetRest(false);
-		}
 	}
 	//UE_LOG(LogTemp, Log, TEXT("%f"),RestTime);
 }

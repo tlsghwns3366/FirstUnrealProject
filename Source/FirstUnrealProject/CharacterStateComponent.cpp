@@ -48,9 +48,10 @@ void UCharacterStateComponent::OnDamaged(float DamageAmount)
 void UCharacterStateComponent::SetHp(float NewHp)
 {
 	Hp = NewHp;
-	if (Hp < 0)
+	if (Hp <= 0.f)
 	{
-		Hp = 0;
+		IsDie = true;
+		Hp = 0.f;
 	}
 }
 

@@ -17,7 +17,8 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsAttacking = false;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DestroyTime = 60.f;// Default 60
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UEnemyStateActorComponent* EnemyStateComponent;
@@ -27,7 +28,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UEnemyAnimInstance* Anim;
 public:
-
+	FTimerHandle TimerHandle;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,6 +39,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION()
@@ -51,5 +53,6 @@ public:
 
 public:
 	void OnHit();
+	void DropItem();
 
 };

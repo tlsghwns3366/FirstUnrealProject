@@ -14,7 +14,6 @@ UCLASS()
 class FIRSTUNREALPROJECT_API UEnemyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
@@ -29,18 +28,23 @@ public:
 		bool	IsFalling;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = Animation)
 		float LeftRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		bool	IsRest;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Blackboard)
+		bool	IsNight;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Blackboard)
+		bool	FindTarget;
 
 
 	UPROPERTY(VisibleAnywhere)
 		class AEnemyCharacter* Enemy;
 	UPROPERTY(VisibleAnywhere)
 		class	UCharacterMovementComponent* CharacterMovement;
-	UPROPERTY(VisibleAnywhere)
-		class	UEnemyStateActorComponent* EnemyState;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class AEnemyAIController* EnemyController;
 
 public:
 	FOnAttckHit OnAttackHit;

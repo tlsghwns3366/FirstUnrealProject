@@ -41,5 +41,5 @@ public:
 		class UInventoryComponent* Inventory;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void Onuse(class APlayerCharacter* Player) ;
+	void OnUse(class APlayerCharacter* Player) ;
 };

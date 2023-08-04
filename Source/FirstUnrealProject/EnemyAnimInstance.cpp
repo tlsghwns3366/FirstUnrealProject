@@ -5,6 +5,7 @@
 #include "EnemyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {
@@ -16,6 +17,7 @@ void UEnemyAnimInstance::NativeInitializeAnimation()
 		if (IsValid(Enemy))
 		{
 			CharacterMovement = Enemy->GetCharacterMovement();
+			EnemyController = Cast<AEnemyAIController>(Enemy->GetController());
 		}
 	}
 }
@@ -37,6 +39,15 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsFalling = CharacterMovement->IsFalling();
 
 		LeftRight = CalculateDirection(Enemy->GetVelocity(), Enemy->GetActorRotation());
+		if (EnemyController != nullptr)
+		{
+			IsNight = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("IsNight"));
+			FindTarget = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("FindTarget"));
+		}
+		else
+		{
+			EnemyController = Cast<AEnemyAIController>(Enemy->GetController());
+		}
 	}
 }
 
