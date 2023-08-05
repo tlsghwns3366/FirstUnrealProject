@@ -48,7 +48,7 @@ bool UInventoryComponent::AddItem(UItemObject* item)
 
 bool UInventoryComponent::RemoveItem(UItemObject* item)
 {
-	if (ItemInventory.Num() < InventorySize)
+	if (ItemInventory.Num() > 0)
 	{
 		item->World = nullptr;
 		item->Inventory = nullptr;

@@ -66,4 +66,5 @@ public:
 	virtual void SetHp(float NewHp);
 	virtual int32 GetLevel() { return Level; }
 	virtual int32 GetHp() { return Hp; }
+	virtual void DamageTaken(float Damage);
 };

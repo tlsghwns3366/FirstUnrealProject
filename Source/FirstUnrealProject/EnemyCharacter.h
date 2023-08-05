@@ -20,13 +20,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DestroyTime = 60.f;// Default 60
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
 		class UEnemyStateActorComponent* EnemyStateComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UEnemyAnimInstance* Anim;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+		class UWidgetComponent* WidgetComponent;
 public:
 	FTimerHandle TimerHandle;
 protected:

@@ -11,13 +11,13 @@
 #include "BrainComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "ItemActor.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	EnemyStateComponent = CreateDefaultSubobject<UEnemyStateActorComponent>(TEXT("EnemyStateActorCompenent"));
 	EnemyInventoryComponent = CreateDefaultSubobject<UEnemyInventoryComponent>(TEXT("EnemyInventoryComponent"));
 	static ConstructorHelpers::FObjectFinder< USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
@@ -26,7 +26,10 @@ AEnemyCharacter::AEnemyCharacter()
 		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.0f), FRotator(0.f, -90.f, 0.f));
 	}
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 
+	WidgetComponent->SetupAttachment(GetMesh());
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	AIControllerClass = AEnemyAIController::StaticClass();
 
 }

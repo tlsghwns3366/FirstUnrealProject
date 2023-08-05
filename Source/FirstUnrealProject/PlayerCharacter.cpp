@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "EnemyCharacter.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "ItemActor.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -139,7 +140,7 @@ void APlayerCharacter::Attack()
 		{
 			DrawColor = FColor::Red;
 		}
-		DrawDebugSphere(GetWorld(), Forward, AttackRadius, 32, DrawColor, false, 5.0f);
+		DrawDebugSphere(GetWorld(), Forward, AttackRadius, 16, DrawColor, false, 5.0f);
 	}
 
 }
@@ -149,8 +150,8 @@ void APlayerCharacter::Interaction()
 	//UE_LOG(LogTemp, Log, TEXT("%f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 	float Range = 50.f;
 	FHitResult HitResult;
-	FVector Center = GetActorLocation() + GetActorForwardVector() * Range + FVector(0.f, 0.f, -30.f);
-	FVector Forward = Center + FVector(0.f,0.f,200.f);
+	FVector Center = GetActorLocation();
+	FVector Forward = Center + GetActorForwardVector() * Range;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	bool Result = GetWorld()->SweepSingleByChannel
@@ -162,9 +163,21 @@ void APlayerCharacter::Interaction()
 		FCollisionShape::MakeSphere(Range),
 		Params
 	);
+	FColor DrawColor;
 	if (Result)
 	{
+		auto RootItem = Cast<AItemActor>(HitResult.GetActor());
+		if (RootItem)
+		{
+			RootItem->AddInventory(PlayerInventoryComponent);
+		}
+		DrawColor = FColor::Green;
 	}
+	else
+	{
+		DrawColor = FColor::Red;
+	}
+	DrawDebugSphere(GetWorld(), Forward, Range, 32, DrawColor, false, 5.0f);
 }
 
 void APlayerCharacter::OnHit()
