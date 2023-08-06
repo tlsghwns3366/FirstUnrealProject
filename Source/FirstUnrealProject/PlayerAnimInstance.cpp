@@ -5,6 +5,15 @@
 #include "PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+UPlayerAnimInstance::UPlayerAnimInstance()
+{
+	ConstructorHelpers::FObjectFinder<UAnimMontage> AnimMontage(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Player/AM_ComboPunch.AM_ComboPunch'"));
+	if (AnimMontage.Succeeded())
+	{
+		AttackMontage = AnimMontage.Object;
+	}
+}
+
 void UPlayerAnimInstance::NativeInitializeAnimation()
 {
 	auto Pawn = TryGetPawnOwner();
@@ -45,4 +54,25 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsMoving = Speed > 3.0f;
 		IsFalling = CharacterMovement->IsFalling();
 	}
+}
+
+void UPlayerAnimInstance::PlayMontage()
+{
+	if (IsValid(AttackMontage))
+	{
+		if (!Montage_IsPlaying(AttackMontage))
+		{
+			Montage_Play(AttackMontage);
+			IsAttack = true;
+		}
+	}
+}
+
+void UPlayerAnimInstance::PlayHitReactMontage()
+{
+}
+
+void UPlayerAnimInstance::AnimNotify_Hit()
+{
+	OnAttackHit.Broadcast();
 }

@@ -16,11 +16,12 @@ ADamageActor::ADamageActor()
 	}
 	DamageWidget = CreateWidget<UDamageTextWidget>(GetWorld(), Widget);
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+
+
 	WidgetComponent->SetWidget(DamageWidget);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetComponent->SetDrawSize(FVector2D(200.f, 50.f));
 
-	//
 }
 
 // Called when the game starts or when spawned

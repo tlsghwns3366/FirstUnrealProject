@@ -7,6 +7,7 @@
 #include "PlayerCharacter.h"
 #include "PlayerAnimInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttckHit);
 /**
  * 
  */
@@ -14,7 +15,8 @@ UCLASS()
 class FIRSTUNREALPROJECT_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+public:
+	UPlayerAnimInstance();
 
 public:
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -29,6 +31,8 @@ public:
 	bool	IsFalling;
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool	IsRun;
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool	IsAttack;
 
 	UPROPERTY(VisibleAnywhere)
 	float PlayerMaxWalkSpeed;
@@ -39,15 +43,29 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class APlayerCharacter* Player;
 
+
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		UAnimMontage* AttackMontage;
+
+	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly)
+		UAnimMontage* HitReactMontage;
+
 	UPROPERTY(VisibleAnywhere)
 	class	UCharacterMovementComponent* CharacterMovement;
 
 public:
+	FOnAttckHit OnAttackHit;
+public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override; 
 
 public:
 	void SetIsRunTrue() { IsRun = true; }
 	void SetIsRunFalse() { IsRun = false; }
+
+	void PlayMontage();
+	void PlayHitReactMontage();
+	UFUNCTION()
+		void AnimNotify_Hit();
 };

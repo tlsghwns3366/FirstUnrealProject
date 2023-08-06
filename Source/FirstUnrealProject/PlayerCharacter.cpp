@@ -21,7 +21,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/ABP_Player.ABP_Player_C'"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
 	PlayerComponent = CreateDefaultSubobject<UPlayerActorComponent>(TEXT("PlayerComponent"));
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
@@ -59,6 +59,12 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	Animinstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (Animinstance)
+	{
+		Animinstance->OnAttackHit.AddUObject(this, &APlayerCharacter::OnHit);
+		Animinstance->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded); 
+		Animinstance->OnPlayMontageNotifyBegin.AddDynamic(this, &APlayerCharacter::OnNotifyBeginRecieved);
+	}
 	
 }
 
@@ -102,47 +108,37 @@ void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 {
 	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
 	IsAttacking = false;
+	Animinstance->IsAttack = false;
+}
+
+void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+{
+	UE_LOG(LogTemp, Log, TEXT("Notify"));
+	AttackIndex--;
+	if (AttackIndex < 0)
+	{
+		Animinstance->Montage_Stop(0.35f, Animinstance->AttackMontage);
+		AttackIndex = 0;
+	}
+
 }
 
 void APlayerCharacter::Attack()
 {
+	IsAttacking = true;
+
 	if (IsValid(Animinstance))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Attack"));
-		FHitResult HitResult;
-		FCollisionQueryParams Parems(NAME_None, false, this);
-
-		float AttackRange = 100.f;
-		float AttackRadius = 30.f;
-
-		FVector Center = GetActorLocation();
-		FVector Forward = Center + GetActorForwardVector() * AttackRange;
-
-		bool Result = GetWorld()->SweepSingleByChannel
-		(OUT HitResult,
-			Center,
-			Forward,
-			FQuat::Identity,
-			ECollisionChannel::ECC_GameTraceChannel1,
-			FCollisionShape::MakeSphere(AttackRadius),
-			Parems);
-
-		float HalfHeight = AttackRange * 0.5f + AttackRadius;
-		FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
-		FColor DrawColor;
-		if (Result && HitResult.GetActor())
+		if (!Animinstance->Montage_IsPlaying(Animinstance->AttackMontage))
 		{
-			AActor* HitActor = HitResult.GetActor();
-			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->AttackDamage, GetController(), nullptr, NULL);
-			DrawColor = FColor::Green;
+			Animinstance->PlayMontage();
 		}
 		else
 		{
-			DrawColor = FColor::Red;
+			AttackIndex = 1;
 		}
-		DrawDebugSphere(GetWorld(), Forward, AttackRadius, 16, DrawColor, false, 5.0f);
+		//UE_LOG(LogTemp, Log, TEXT("Attack"));
 	}
-
 }
 
 void APlayerCharacter::Interaction()
@@ -182,7 +178,39 @@ void APlayerCharacter::Interaction()
 
 void APlayerCharacter::OnHit()
 {
-	UE_LOG(LogTemp, Log, TEXT("OnHit"));
+	//UE_LOG(LogTemp, Log, TEXT("OnHit"));
+	FHitResult HitResult;
+	FCollisionQueryParams Parems(NAME_None, false, this);
+
+	float AttackRange = 100.f;
+	float AttackRadius = 30.f;
+
+	FVector Center = GetActorLocation();
+	FVector Forward = Center + GetActorForwardVector() * AttackRange;
+
+	bool Result = GetWorld()->SweepSingleByChannel
+	(OUT HitResult,
+		Center,
+		Forward,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Parems);
+
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
+	FColor DrawColor;
+	if (Result && HitResult.GetActor())
+	{
+		AActor* HitActor = HitResult.GetActor();
+		UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->AttackDamage, GetController(), nullptr, NULL);
+		DrawColor = FColor::Green;
+	}
+	else
+	{
+		DrawColor = FColor::Red;
+	}
+	DrawDebugSphere(GetWorld(), Forward, AttackRadius, 16, DrawColor, false, 5.0f);
 }
 
 void APlayerCharacter::KeyUpDown(float value)
@@ -204,7 +232,6 @@ void APlayerCharacter::LookUpDown(float value)
 {
 	AddControllerPitchInput(value);
 }
-
 
 void APlayerCharacter::SetIsRunTrue()
 {

@@ -36,6 +36,9 @@ public:
 
 
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		int32 AttackIndex;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,6 +54,8 @@ public:
 public:
 	UFUNCTION()
 		virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	UFUNCTION()
+		void OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 public:
 
