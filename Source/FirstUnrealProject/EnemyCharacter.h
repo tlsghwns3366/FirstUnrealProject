@@ -24,6 +24,8 @@ public:
 		class UEnemyStateActorComponent* EnemyStateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UDamageComponent* DamageComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UEnemyAnimInstance* Anim;
@@ -43,7 +45,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
 	UFUNCTION()
 	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 public:

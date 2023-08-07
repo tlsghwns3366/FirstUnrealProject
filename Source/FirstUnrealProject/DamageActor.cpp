@@ -47,3 +47,8 @@ void ADamageActor::SetDamage(float Damage)
 		Destroy();
 		}, 3.f, false);
 }
+
+void ADamageActor::SetColor(FColor Color)
+{
+	DamageWidget->SetTextColor(Color);
+}

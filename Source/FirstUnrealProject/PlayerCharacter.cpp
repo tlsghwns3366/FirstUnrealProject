@@ -13,6 +13,12 @@
 #include "EnemyCharacter.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ItemActor.h"
+#include "DamageComponent.h"
+#include "DamageType_FIre.h"
+#include "DamageType_Physical.h"
+#include "DamageType_Critical.h"
+#include "Engine/DamageEvents.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -25,6 +31,9 @@ APlayerCharacter::APlayerCharacter()
 
 	PlayerComponent = CreateDefaultSubobject<UPlayerActorComponent>(TEXT("PlayerComponent"));
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("DamageComponent"));
+
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 	if (SkeletalMesh.Succeeded())
 	{
@@ -32,6 +41,9 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.0f), FRotator(0.f, -90.f, 0.f));
 	}
 
+
+	Scene->SetupAttachment(RootComponent);
+	GetMesh()->SetupAttachment(Scene);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -100,7 +112,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	PlayerComponent->OnDamaged(Damage);
+	if (IDamageInterface* DamageInterface = Cast<IDamageInterface>(DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>()))
+	{
+			DamageInterface->SetAttackType(DamageComponent, Damage);
+	}
 	return Damage;
 }
 
@@ -113,7 +128,6 @@ void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 
 void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
-	UE_LOG(LogTemp, Log, TEXT("Notify"));
 	AttackIndex--;
 	if (AttackIndex < 0)
 	{
@@ -203,7 +217,17 @@ void APlayerCharacter::OnHit()
 	if (Result && HitResult.GetActor())
 	{
 		AActor* HitActor = HitResult.GetActor();
-		UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->AttackDamage, GetController(), nullptr, NULL);
+
+		float RandomChance = FMath::RandRange(0.f, 100000.f);
+		if (PlayerComponent->CriticalChance > RandomChance / 100000.f)
+		{
+			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
+			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage() * PlayerComponent->CriticalDamage, GetController(), this, DamageTypeClass);
+		}
+		else {
+			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
+			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
+		}
 		DrawColor = FColor::Green;
 	}
 	else

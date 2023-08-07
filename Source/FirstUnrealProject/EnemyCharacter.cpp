@@ -12,6 +12,12 @@
 #include "Components/CapsuleComponent.h"
 #include "ItemActor.h"
 #include "Components/WidgetComponent.h"
+#include "DamageComponent.h"
+#include "DamageType_FIre.h"
+#include "DamageType_Physical.h"
+#include "DamageType_Critical.h"
+#include "Engine/DamageEvents.h"
+#include "PlayerCharacter.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -20,6 +26,7 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	EnemyStateComponent = CreateDefaultSubobject<UEnemyStateActorComponent>(TEXT("EnemyStateActorCompenent"));
 	EnemyInventoryComponent = CreateDefaultSubobject<UEnemyInventoryComponent>(TEXT("EnemyInventoryComponent"));
+	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("DamageComponent"));
 	static ConstructorHelpers::FObjectFinder< USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	if (SkeletalMesh.Succeeded())
 	{
@@ -62,7 +69,10 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	EnemyStateComponent->OnDamaged(Damage);
+	if (IDamageInterface* DamageInterface = Cast<IDamageInterface>(DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>()))
+	{
+		DamageInterface->SetAttackType(DamageComponent, Damage);
+	}
 	if (EnemyStateComponent->IsDie)
 	{
 		GetMesh()->SetSimulatePhysics(true); 
@@ -116,7 +126,17 @@ void AEnemyCharacter::OnHit()
 	if (Result && HitResult.GetActor())
 	{
 		AActor* HitActor = HitResult.GetActor();
-		UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->AttackDamage, GetController(), nullptr, NULL);
+
+		float RandomChance = FMath::RandRange(0.f, 100000.f);
+		if (EnemyStateComponent->CriticalChance > RandomChance / 100000.f)
+		{
+			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
+			UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->GetPhysicalDamage() * EnemyStateComponent->CriticalDamage, GetController(), this, DamageTypeClass);
+		}
+		else {
+			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
+			UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
+		}
 		DrawColor = FColor::Green;
 	}
 	else

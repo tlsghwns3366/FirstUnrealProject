@@ -29,7 +29,7 @@ public:
 
 protected:
 	// Called when the game starts
-	virtual void InitializeComponent() override;// BeginPlayÀü¿¡ È£Ãâ
+	virtual void InitializeComponent() override;// BeginPlayï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½
 	virtual void BeginPlay() override;
 
 public:	

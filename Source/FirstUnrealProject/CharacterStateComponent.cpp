@@ -2,7 +2,6 @@
 
 
 #include "CharacterStateComponent.h"
-#include "DamageActor.h"
 
 // Sets default values for this component's properties
 UCharacterStateComponent::UCharacterStateComponent()
@@ -39,13 +38,6 @@ void UCharacterStateComponent::SetLevel(int32 _Level)
 	Hp = MaxHp;
 }
 
-void UCharacterStateComponent::OnDamaged(float DamageAmount)
-{
-	float TempHp = Hp - DamageAmount;
-	SetHp(TempHp);
-	OnhpUpdated.Broadcast();
-	DamageTaken(DamageAmount);
-}
 
 void UCharacterStateComponent::SetHp(float NewHp)
 {
@@ -57,11 +49,7 @@ void UCharacterStateComponent::SetHp(float NewHp)
 	}
 }
 
-void UCharacterStateComponent::DamageTaken(float Damage)
+float UCharacterStateComponent::GetPhysicalDamage()
 {
-	FVector Location = GetOwner()->GetActorLocation();
-	ADamageActor* DamageActor = GetWorld()->SpawnActor<ADamageActor>(DamageActor->StaticClass(), Location, FRotator::ZeroRotator);
-	DamageActor->SetDamage(Damage);
-
+	return FMath::FRandRange(AttackDamage * 0.85, AttackDamage * 1.15);
 }
-

@@ -14,3 +14,9 @@ bool UDamageTextWidget::SetDamageValue(int32 Damage) const
 	//UE_LOG(LogTemp, Log, TEXT("Interface"));
 	return false;
 }
+
+void UDamageTextWidget::SetTextColor(FColor Color)
+{
+	FLinearColor TextColor = FLinearColor(Color);
+	DamageTextBox->SetColorAndOpacity(TextColor);
+}

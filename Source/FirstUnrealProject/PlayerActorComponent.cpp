@@ -11,6 +11,13 @@ UPlayerActorComponent::UPlayerActorComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent = true;
 	Level = 1;
+	MaxHp = 500.f;
+	Hp = 500.f;
+	StaminaMax = 100.f;
+	Stamina = 100.f;
+	Shild = 0.f;
+	CriticalChance = 0.1f;
+	DodgeChance = 0.f;
 }
 
 

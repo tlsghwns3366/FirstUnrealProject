@@ -22,4 +22,5 @@ public:
 		class UTextBlock* DamageTextBox;
 public:
 	virtual bool SetDamageValue(int32 Damage) const override;
+	virtual void SetTextColor(FColor Color);
 };

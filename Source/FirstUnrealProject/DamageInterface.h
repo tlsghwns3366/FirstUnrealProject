@@ -23,4 +23,5 @@ class FIRSTUNREALPROJECT_API IDamageInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 		virtual bool SetDamageValue(int32 Damage) const;
+		virtual bool SetAttackType(class UDamageComponent* DamageComponent ,float Damage) const;
 };

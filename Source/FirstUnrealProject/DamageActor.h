@@ -33,5 +33,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 public:
 	void SetDamage(float Damage);
+	void SetColor(FColor Color);
 
 };

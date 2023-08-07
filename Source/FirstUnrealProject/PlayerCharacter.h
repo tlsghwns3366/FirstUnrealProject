@@ -32,7 +32,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UDamageComponent* DamageComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class USceneComponent* Scene;
 
 
 

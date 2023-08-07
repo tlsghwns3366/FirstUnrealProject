@@ -39,11 +39,11 @@ public:
 		float Shild;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
-		int32 CriticalChance;
+		float CriticalChance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		int32 CriticalDamage;
+		float CriticalDamage = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
-		int32 DodgeChance;
+		float DodgeChance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDie = false;
@@ -61,10 +61,9 @@ public:
 
 public:
 	virtual void SetLevel(int32 _Level);
-	virtual void OnDamaged(float DamageAmount);
 public:
 	virtual void SetHp(float NewHp);
 	virtual int32 GetLevel() { return Level; }
 	virtual int32 GetHp() { return Hp; }
-	virtual void DamageTaken(float Damage);
+	virtual float GetPhysicalDamage();
 };
