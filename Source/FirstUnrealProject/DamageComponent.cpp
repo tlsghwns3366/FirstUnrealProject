@@ -20,13 +20,11 @@ UDamageComponent::UDamageComponent()
 	{
 		Player = Cast<APlayerCharacter>(GetOwner());
 		CharacterComponent = Cast<UCharacterStateComponent>(Player->PlayerComponent);
-		UE_LOG(LogTemp, Log, TEXT("Player"));
 	}
 	else if (Cast<AEnemyCharacter>(GetOwner()))
 	{
 		Enemy = Cast<AEnemyCharacter>(GetOwner());
 		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
-		UE_LOG(LogTemp, Log, TEXT("Enemy"));
 	}
 	// ...
 }
