@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		bool	IsRest;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		bool	IsDie;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Blackboard)
 		bool	IsNight;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Blackboard)

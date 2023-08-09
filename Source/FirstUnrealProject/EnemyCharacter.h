@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "CustomCharacter.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
-class FIRSTUNREALPROJECT_API AEnemyCharacter : public ACharacter
+class FIRSTUNREALPROJECT_API AEnemyCharacter : public ACustomCharacter
 {
 	GENERATED_BODY()
 
@@ -16,16 +16,12 @@ public:
 	AEnemyCharacter();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool IsAttacking = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DestroyTime = 60.f;// Default 60
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
 		class UEnemyStateActorComponent* EnemyStateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UDamageComponent* DamageComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UEnemyAnimInstance* Anim;
@@ -43,10 +39,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	UFUNCTION()
-	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -55,7 +48,7 @@ public:
 		void SetEnemyInventory();
 
 public:
-	void OnHit();
+	virtual void OnHitActor() override;
 	void DropItem();
 
 };

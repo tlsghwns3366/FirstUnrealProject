@@ -16,7 +16,7 @@ class FIRSTUNREALPROJECT_API AMainGameState : public AGameStateBase
 public:
 	AMainGameState();
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 		float GameTime;
 
 	UPROPERTY(BlueprintReadWrite)

@@ -45,6 +45,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		float DodgeChance;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		float HpRegen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		float StaminaRegen;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDie = false;
 

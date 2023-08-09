@@ -6,8 +6,7 @@
 #include "CharacterStateComponent.h"
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
-#include "PlayerActorComponent.h"
-#include "EnemyStateActorComponent.h"
+#include "CharacterStateComponent.h"
 
 
 // Sets default values for this component's properties
@@ -16,16 +15,7 @@ UDamageComponent::UDamageComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	if (Cast<APlayerCharacter>(GetOwner()))
-	{
-		Player = Cast<APlayerCharacter>(GetOwner());
-		CharacterComponent = Cast<UCharacterStateComponent>(Player->PlayerComponent);
-	}
-	else if (Cast<AEnemyCharacter>(GetOwner()))
-	{
-		Enemy = Cast<AEnemyCharacter>(GetOwner());
-		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
-	}
+	CharacterComponent = Cast<UCharacterStateComponent>(GetOwner());
 	// ...
 }
 

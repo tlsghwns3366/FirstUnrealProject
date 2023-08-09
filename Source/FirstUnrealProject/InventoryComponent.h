@@ -27,6 +27,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D LastInventoryPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D LastEquipmentPosition;
 
 	UPROPERTY(BlueprintAssignable)
 		FOnInventoryUpdated OnInventoryUpdated;

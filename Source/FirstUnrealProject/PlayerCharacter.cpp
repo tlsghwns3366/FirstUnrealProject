@@ -13,7 +13,6 @@
 #include "EnemyCharacter.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ItemActor.h"
-#include "DamageComponent.h"
 #include "DamageType_FIre.h"
 #include "DamageType_Physical.h"
 #include "DamageType_Critical.h"
@@ -27,12 +26,11 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstance(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
 	PlayerComponent = CreateDefaultSubobject<UPlayerActorComponent>(TEXT("PlayerComponent"));
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("DamageComponent"));
 
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 	if (SkeletalMesh.Succeeded())
@@ -60,9 +58,9 @@ APlayerCharacter::APlayerCharacter()
 
 	GetCharacterMovement()->MaxWalkSpeed = 500;
 	
-	if (Anim.Succeeded())
+	if (AnimInstance.Succeeded())
 	{
-		GetMesh()->SetAnimClass(Anim.Class);
+		GetMesh()->SetAnimClass(AnimInstance.Class);
 	}
 }
 
@@ -70,12 +68,12 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	Animinstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	if (Animinstance)
+	Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (Anim)
 	{
-		Animinstance->OnAttackHit.AddUObject(this, &APlayerCharacter::OnHit);
-		Animinstance->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded); 
-		Animinstance->OnPlayMontageNotifyBegin.AddDynamic(this, &APlayerCharacter::OnNotifyBeginRecieved);
+		Anim->OnAttackHit.AddUObject(this, &APlayerCharacter::OnHitActor);
+		Anim->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded);
+		Anim->OnPlayMontageNotifyBegin.AddDynamic(this, &APlayerCharacter::OnNotifyBeginRecieved);
 	}
 	
 }
@@ -112,18 +110,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	if (IDamageInterface* DamageInterface = Cast<IDamageInterface>(DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>()))
-	{
-			DamageInterface->SetAttackType(DamageComponent, Damage);
-	}
 	return Damage;
 }
 
 void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
-	IsAttacking = false;
-	Animinstance->IsAttack = false;
+	Anim->IsAttack = false;
 }
 
 void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
@@ -131,7 +124,7 @@ void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingP
 	AttackIndex--;
 	if (AttackIndex < 0)
 	{
-		Animinstance->Montage_Stop(0.35f, Animinstance->AttackMontage);
+		Anim->Montage_Stop(0.35f, Anim->AttackMontage);
 		AttackIndex = 0;
 	}
 
@@ -140,12 +133,11 @@ void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingP
 void APlayerCharacter::Attack()
 {
 	IsAttacking = true;
-
-	if (IsValid(Animinstance))
+	if (IsValid(Anim))
 	{
-		if (!Animinstance->Montage_IsPlaying(Animinstance->AttackMontage))
+		if (!Anim->Montage_IsPlaying(Anim->AttackMontage))
 		{
-			Animinstance->PlayMontage();
+			Anim->PlayMontage();
 		}
 		else
 		{
@@ -154,6 +146,54 @@ void APlayerCharacter::Attack()
 		//UE_LOG(LogTemp, Log, TEXT("Attack"));
 	}
 }
+
+void APlayerCharacter::OnHitActor()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Parems(NAME_None, false, this);
+
+	float AttackRange = 100.f;
+	float AttackRadius = 30.f;
+
+	FVector Center = GetActorLocation();
+	FVector Forward = Center + GetActorForwardVector() * AttackRange;
+
+	bool Result = GetWorld()->SweepSingleByChannel
+	(OUT HitResult,
+		Center,
+		Forward,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Parems);
+
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
+	FColor DrawColor;
+	if (Result && HitResult.GetActor())
+	{
+		AActor* HitActor = HitResult.GetActor();
+
+		float RandomChance = FMath::RandRange(0.f, 100000.f);
+		if (PlayerComponent->CriticalChance > RandomChance / 100000.f)
+		{
+			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
+			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage() * PlayerComponent->CriticalDamage, GetController(), this, DamageTypeClass);
+		}
+		else {
+			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
+			UE_LOG(LogTemp, Log, TEXT("%f"), PlayerComponent->GetPhysicalDamage());
+			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
+		}
+		DrawColor = FColor::Green;
+	}
+	else
+	{
+		DrawColor = FColor::Red;
+	}
+	DrawDebugSphere(GetWorld(), Forward, AttackRadius, 16, DrawColor, false, 5.0f);
+}
+
 
 void APlayerCharacter::Interaction()
 {
@@ -188,53 +228,6 @@ void APlayerCharacter::Interaction()
 		DrawColor = FColor::Red;
 	}
 	DrawDebugSphere(GetWorld(), Forward, Range, 32, DrawColor, false, 5.0f);
-}
-
-void APlayerCharacter::OnHit()
-{
-	//UE_LOG(LogTemp, Log, TEXT("OnHit"));
-	FHitResult HitResult;
-	FCollisionQueryParams Parems(NAME_None, false, this);
-
-	float AttackRange = 100.f;
-	float AttackRadius = 30.f;
-
-	FVector Center = GetActorLocation();
-	FVector Forward = Center + GetActorForwardVector() * AttackRange;
-
-	bool Result = GetWorld()->SweepSingleByChannel
-	(OUT HitResult,
-		Center,
-		Forward,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1,
-		FCollisionShape::MakeSphere(AttackRadius),
-		Parems);
-
-	float HalfHeight = AttackRange * 0.5f + AttackRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
-	FColor DrawColor;
-	if (Result && HitResult.GetActor())
-	{
-		AActor* HitActor = HitResult.GetActor();
-
-		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		if (PlayerComponent->CriticalChance > RandomChance / 100000.f)
-		{
-			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage() * PlayerComponent->CriticalDamage, GetController(), this, DamageTypeClass);
-		}
-		else {
-			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
-		}
-		DrawColor = FColor::Green;
-	}
-	else
-	{
-		DrawColor = FColor::Red;
-	}
-	DrawDebugSphere(GetWorld(), Forward, AttackRadius, 16, DrawColor, false, 5.0f);
 }
 
 void APlayerCharacter::KeyUpDown(float value)

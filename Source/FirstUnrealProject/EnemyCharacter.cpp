@@ -26,7 +26,6 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	EnemyStateComponent = CreateDefaultSubobject<UEnemyStateActorComponent>(TEXT("EnemyStateActorCompenent"));
 	EnemyInventoryComponent = CreateDefaultSubobject<UEnemyInventoryComponent>(TEXT("EnemyInventoryComponent"));
-	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("DamageComponent"));
 	static ConstructorHelpers::FObjectFinder< USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	if (SkeletalMesh.Succeeded())
 	{
@@ -48,7 +47,7 @@ void AEnemyCharacter::BeginPlay()
 	Anim = Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance());
 	if (Anim)
 	{
-		Anim->OnAttackHit.AddUObject(this, &AEnemyCharacter::OnHit);
+		Anim->OnAttackHit.AddUObject(this, &AEnemyCharacter::OnHitActor);
 		Anim->OnMontageEnded.AddDynamic(this, &AEnemyCharacter::OnAttackMontageEnded);
 	}
 }
@@ -69,12 +68,9 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	if (IDamageInterface* DamageInterface = Cast<IDamageInterface>(DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>()))
-	{
-		DamageInterface->SetAttackType(DamageComponent, Damage);
-	}
 	if (EnemyStateComponent->IsDie)
 	{
+		Anim->IsDie = true;
 		GetMesh()->SetSimulatePhysics(true); 
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
 			Destroy();
@@ -93,14 +89,7 @@ float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	}
 	return Damage;
 }
-
-void AEnemyCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
-	IsAttacking = false;
-}
-
-void AEnemyCharacter::OnHit()
+void AEnemyCharacter::OnHitActor()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams Parems(NAME_None, false, this);

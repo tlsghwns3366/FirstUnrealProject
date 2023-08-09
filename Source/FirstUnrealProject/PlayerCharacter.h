@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "CustomCharacter.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class FIRSTUNREALPROJECT_API APlayerCharacter : public ACharacter
+class FIRSTUNREALPROJECT_API APlayerCharacter : public ACustomCharacter
 {
 	GENERATED_BODY()
 
@@ -16,8 +16,6 @@ public:
 	APlayerCharacter();
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool IsAttacking = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class USpringArmComponent* SpringArm;
@@ -25,14 +23,12 @@ public:
 		class UCameraComponent* Camera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UPlayerAnimInstance* Animinstance;
+		class UPlayerAnimInstance* Anim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerActorComponent* PlayerComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UDamageComponent* DamageComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
 
@@ -57,16 +53,15 @@ public:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
-	UFUNCTION()
 		virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION()
 		void OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 public:
 
-	void Attack();
+	virtual void Attack() override;
+	virtual void OnHitActor() override;
 	void Interaction();
-	void OnHit(); 
 
 	void KeyUpDown(float value);
 	void KeyLeftRight(float value);
@@ -76,5 +71,4 @@ public:
 	void SetIsRunTrue();
 	void SetIsRunFalse();
 
-public:
 };
