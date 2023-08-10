@@ -13,6 +13,8 @@ class FIRSTUNREALPROJECT_API UPlayerInventoryComponent : public UInventoryCompon
 public:
 	UPlayerInventoryComponent();
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+		TArray<class UEquipItemObject*> EquipInventory;
 
 protected:
 	// Called when the game starts
@@ -22,4 +24,7 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	bool EquipItem(class UEquipItemObject* Item);
+	bool UnEquipItem(UEquipItemObject* Item)
 };

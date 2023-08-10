@@ -19,7 +19,6 @@ public:
 
 	UPROPERTY(Transient)
 	class UWorld* World;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 		FText UseActionText;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")

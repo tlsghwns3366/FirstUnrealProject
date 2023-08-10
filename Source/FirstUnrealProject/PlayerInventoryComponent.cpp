@@ -2,7 +2,7 @@
 
 
 #include "PlayerInventoryComponent.h"
-#include "ItemObject.h"
+#include "EquipItemObject.h"
 
 UPlayerInventoryComponent::UPlayerInventoryComponent()
 {
@@ -18,4 +18,33 @@ void UPlayerInventoryComponent::BeginPlay()
 void UPlayerInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+bool UPlayerInventoryComponent::EquipItem(UEquipItemObject* Item)
+{
+	if (!Item->Equip)
+	{
+		Item->World = GetWorld();
+		Item->Inventory = this;
+		Item->Equip = true;
+		EquipInventory.Add(Item);
+		OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	else
+		return false;
+}
+bool UPlayerInventoryComponent::UnEquipItem(UEquipItemObject* Item)
+{
+	if (Item->Equip)
+	{
+		Item->World = nullptr;
+		Item->Inventory = nullptr;
+		Item->Equip = false;
+		ItemInventory.RemoveSingle(Item);
+		OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	else
+		return false;
 }
