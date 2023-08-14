@@ -7,3 +7,8 @@ UItemObject::UItemObject()
 {
 
 }
+
+
+void UItemObject::OnUse_Implementation(ACustomCharacter* Character)
+{
+}

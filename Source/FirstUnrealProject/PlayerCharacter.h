@@ -71,4 +71,7 @@ public:
 	void SetIsRunTrue();
 	void SetIsRunFalse();
 
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	void UseItem(UItemObject* Item);
+
 };

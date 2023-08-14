@@ -36,9 +36,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 		float DropChance;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 		class UInventoryComponent* Inventory;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnUse(class APlayerCharacter* Player) ;
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Item")
+		void OnUse(class ACustomCharacter* Character);
+		virtual void OnUse_Implementation(class ACustomCharacter* Character);
 };

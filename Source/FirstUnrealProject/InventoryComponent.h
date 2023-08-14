@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "EquipItemObject.h"
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
@@ -24,6 +25,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
 		TArray<class UItemObject*> DefaultInventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+		TArray<class UEquipItemObject*> EquipInventory;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UCharacterStateComponent* CharacterComponent;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D LastInventoryPosition;
@@ -46,4 +54,8 @@ public:
 	virtual bool AddItem(class UItemObject* item);
 	UFUNCTION(BlueprintCallable)
 	virtual bool RemoveItem(class UItemObject* item);
+	UFUNCTION(BlueprintCallable)
+	virtual bool EquipItem(class UEquipItemObject* Item);
+	UFUNCTION(BlueprintCallable)
+	virtual bool UnEquipItem(UEquipItemObject* Item);
 };

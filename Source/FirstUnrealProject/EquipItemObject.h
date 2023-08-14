@@ -24,13 +24,16 @@ UCLASS()
 class FIRSTUNREALPROJECT_API UEquipItemObject : public UItemObject
 {
 	GENERATED_BODY()
+public:
+	UEquipItemObject();
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 		EItemEnum ItemEnum {
 		EItemEnum::E_None
 	};
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 		bool Equip = false;
-
+	UFUNCTION(BlueprintCallable, Category = "Item")
+		virtual void OnUse_Implementation(class ACustomCharacter* Character) override;
 };

@@ -17,6 +17,7 @@ UPlayerActorComponent::UPlayerActorComponent()
 	Stamina = 100.f;
 	Shild = 0.f;
 	CriticalChance = 0.1f;
+	CriticalDamage = 2.f;
 	DodgeChance = 0.f;
 }
 
@@ -32,7 +33,6 @@ void UPlayerActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
 }
 
 

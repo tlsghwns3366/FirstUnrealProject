@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "EquipItemObject.h"
 #include "CharacterStateComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpUpdated);
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FIRSTUNREALPROJECT_API UCharacterStateComponent : public UActorComponent
@@ -41,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		float CriticalChance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float CriticalDamage = 1;
+		float CriticalDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
 		float DodgeChance;
 
@@ -56,6 +56,22 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 		FOnHpUpdated OnhpUpdated;
+
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Helmat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Weapons;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* TopArmor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* BottomArmor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Boots;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Gloves;
 
 protected:
 	// Called when the game starts
@@ -72,4 +88,6 @@ public:
 	virtual int32 GetLevel() { return Level; }
 	virtual int32 GetHp() { return Hp; }
 	virtual float GetPhysicalDamage();
+	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
+	virtual bool SetEquip(UEquipItemObject* Item);
 };

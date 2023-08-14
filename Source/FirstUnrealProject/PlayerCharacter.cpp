@@ -17,6 +17,7 @@
 #include "DamageType_Physical.h"
 #include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
+#include "ItemObject.h"
 
 
 // Sets default values
@@ -258,4 +259,12 @@ void APlayerCharacter::SetIsRunTrue()
 void APlayerCharacter::SetIsRunFalse()
 {
 	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunFalse();
+}
+
+void APlayerCharacter::UseItem(UItemObject* Item)
+{
+	if (Item)
+	{
+		Item->OnUse(this);
+	}
 }

@@ -27,6 +27,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FOnExpUpdated OnExpUpdated;
 
+
 protected:
 	// Called when the game starts
 	virtual void InitializeComponent() override;// BeginPlay���� ȣ��
