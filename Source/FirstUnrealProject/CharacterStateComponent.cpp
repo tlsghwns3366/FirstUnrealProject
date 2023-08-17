@@ -62,7 +62,7 @@ UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
 		EquippedItem = Helmat;
 		break;
 	case EItemEnum::E_Equip_Weapons:
-		EquippedItem = Weapons;
+		EquippedItem = Weapons_1;
 		break;
 	case EItemEnum::E_Equip_TopArmor:
 		EquippedItem = TopArmor;
@@ -76,6 +76,12 @@ UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
 	case EItemEnum::E_Equip_Gloves:
 		EquippedItem = Gloves;
 		break;
+	case EItemEnum::E_Equip_Ring_1:
+		EquippedItem = Ring_1;
+		break;
+	case EItemEnum::E_Equip_Ring_2:
+		EquippedItem = Ring_2;
+		break;
 	}
 	return EquippedItem;
 }
@@ -86,27 +92,35 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item)
 	{
 	case EItemEnum::E_Equip_Helmet:
 		Helmat = Item;
-			return true;
+		return true;
 		break;
 	case EItemEnum::E_Equip_Weapons:
-		Weapons = Item;
-			return true;
+		Weapons_1 = Item;
+		return true;
 		break;
 	case EItemEnum::E_Equip_TopArmor:
 		TopArmor = Item;
-			return true;
+		return true;
 		break;
 	case EItemEnum::E_Equip_BottomArmor:
 		BottomArmor = Item;
-			return true;
+		return true;
 		break;
 	case EItemEnum::E_Equip_Boots:
 		Boots = Item;
-			return true;
+		return true;
 		break;
 	case EItemEnum::E_Equip_Gloves:
 		Gloves = Item;
-			return true;
+		return true;
+		break;
+	case EItemEnum::E_Equip_Ring_1:
+		Ring_1 = Item;
+		return true;
+		break;
+	case EItemEnum::E_Equip_Ring_2:
+		Ring_2 = Item;
+		return true;
 		break;
 	default:
 		break;

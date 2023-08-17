@@ -40,6 +40,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		int32 AttackIndex;
 
+	bool MouseInput = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -70,6 +72,9 @@ public:
 
 	void SetIsRunTrue();
 	void SetIsRunFalse();
+
+
+	void SetShowMouse();
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void UseItem(UItemObject* Item);

@@ -20,6 +20,8 @@ public:
 public:
 	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 200.0))
 		float RestTime;
+	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 200.0))
+		float DropExp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy)
 		FVector StartPosition;

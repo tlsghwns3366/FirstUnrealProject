@@ -49,13 +49,13 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-bool UInventoryComponent::AddItem(UItemObject* item)
+bool UInventoryComponent::AddItem(UItemObject* Item)
 {
 	if (ItemInventory.Num() < InventorySize)
 	{
-		item->World = GetWorld();
-		item->Inventory = this;
-		ItemInventory.Add(item);
+		Item->World = GetWorld();
+		Item->Inventory = this;
+		ItemInventory.Add(Item);
 		OnInventoryUpdated.Broadcast();
 		return true;
 	}
@@ -63,13 +63,13 @@ bool UInventoryComponent::AddItem(UItemObject* item)
 		return false;
 }
 
-bool UInventoryComponent::RemoveItem(UItemObject* item)
+bool UInventoryComponent::RemoveItem(UItemObject* Item)
 {
 	if (ItemInventory.Num() > 0)
 	{
-		item->World = nullptr;
-		item->Inventory = nullptr;
-		ItemInventory.RemoveSingle(item);
+		Item->World = nullptr;
+		Item->Inventory = nullptr;
+		ItemInventory.RemoveSingle(Item);
 		OnInventoryUpdated.Broadcast();
 		return true;
 	}
@@ -81,7 +81,6 @@ bool UInventoryComponent::EquipItem(UEquipItemObject* Item)
 {
 	if (!Item->Equip)
 	{
-		Item->Equip = true;
 		if (CharacterComponent->GetEquip(Item) != nullptr)
 		{
 			if (Item->ItemEnum == CharacterComponent->GetEquip(Item)->ItemEnum)
@@ -89,9 +88,11 @@ bool UInventoryComponent::EquipItem(UEquipItemObject* Item)
 				UnEquipItem(CharacterComponent->GetEquip(Item));
 			}
 		}
+		Item->Equip = true;
 		CharacterComponent->SetEquip(Item);
-		RemoveItem(Item);
+		ItemInventory.RemoveSingle(Item);
 		EquipInventory.Add(Item);
+		OnInventoryUpdated.Broadcast();
 		return true;
 	}
 	else
@@ -102,8 +103,9 @@ bool UInventoryComponent::UnEquipItem(UEquipItemObject* Item)
 	if (Item->Equip)
 	{
 		Item->Equip = false;
-		AddItem(Item);
 		EquipInventory.RemoveSingle(Item);
+		ItemInventory.Add(Item);
+		OnInventoryUpdated.Broadcast();
 		return true;
 	}
 	else

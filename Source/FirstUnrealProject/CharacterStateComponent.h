@@ -63,8 +63,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		class UEquipItemObject* Helmat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		class UEquipItemObject* Weapons;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		class UEquipItemObject* TopArmor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		class UEquipItemObject* BottomArmor;
@@ -72,6 +70,14 @@ public:
 		class UEquipItemObject* Boots;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
 		class UEquipItemObject* Gloves;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Weapons_1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Weapons_2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Ring_1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+		class UEquipItemObject* Ring_2;
 
 protected:
 	// Called when the game starts

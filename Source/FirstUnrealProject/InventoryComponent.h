@@ -51,9 +51,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual bool AddItem(class UItemObject* item);
+	virtual bool AddItem(class UItemObject* Item);
 	UFUNCTION(BlueprintCallable)
-	virtual bool RemoveItem(class UItemObject* item);
+	virtual bool RemoveItem(class UItemObject* Item);
+
 	UFUNCTION(BlueprintCallable)
 	virtual bool EquipItem(class UEquipItemObject* Item);
 	UFUNCTION(BlueprintCallable)

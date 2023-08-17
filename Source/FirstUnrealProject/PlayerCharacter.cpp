@@ -106,6 +106,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction(TEXT("Interaction"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Interaction);
 
+	PlayerInputComponent->BindAction(TEXT("ShowMouse"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetShowMouse);
+
 }
 
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -260,6 +262,24 @@ void APlayerCharacter::SetIsRunFalse()
 {
 	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunFalse();
 }
+
+void APlayerCharacter::SetShowMouse()
+{
+	if (!MouseInput)
+	{
+		MouseInput = true;
+		GetController<APlayerController>()->SetShowMouseCursor(true);
+		GetController<APlayerController>()->SetInputMode(FInputModeGameAndUI());
+	}
+	else
+	{
+		MouseInput = false;
+		GetController<APlayerController>()->SetShowMouseCursor(false);
+		GetController<APlayerController>()->SetInputMode(FInputModeGameOnly());
+
+	}
+}
+
 
 void APlayerCharacter::UseItem(UItemObject* Item)
 {

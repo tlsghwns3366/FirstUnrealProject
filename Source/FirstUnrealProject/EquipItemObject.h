@@ -16,6 +16,8 @@ enum class EItemEnum : uint8
 	E_Equip_BottomArmor UMETA(DisplayName = "BottomArmor"),
 	E_Equip_Boots UMETA(DisplayName = "Boots"),
 	E_Equip_Gloves UMETA(DisplayName = "Gloves"),
+	E_Equip_Ring_1 UMETA(DisplayName = "Ring_1"),
+	E_Equip_Ring_2 UMETA(DisplayName = "Ring_2"),
 };
 /**
  * 
