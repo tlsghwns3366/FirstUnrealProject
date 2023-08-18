@@ -18,8 +18,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsAttacking = false;
 
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UDamageComponent* DamageComponent;
 protected:

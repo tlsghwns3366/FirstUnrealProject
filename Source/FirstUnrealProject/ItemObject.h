@@ -20,23 +20,23 @@ public:
 	UPROPERTY(Transient)
 	class UWorld* World;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-		FText UseActionText;
+		FString UseActionText = "";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 		class UStaticMesh* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 		class UTexture2D* Texture;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-		FText ItemName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (MultiLine = true))
-		FText ItemDescription;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
-		int32 Count;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+		FString ItemName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (MultiLine = true))
+		FString ItemDescription;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (ClampMin = 0.0))
+		int32 Count = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (ClampMin = 0.0))
 		float Weight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 		float DropChance;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 		class UInventoryComponent* Inventory;
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")

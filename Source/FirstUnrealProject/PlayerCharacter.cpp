@@ -7,17 +7,17 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerAnimInstance.h"
-#include "PlayerActorComponent.h"
+#include "CharacterStateComponent.h"
 #include "PlayerInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnemyCharacter.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ItemActor.h"
+#include "ItemObject.h"
 #include "DamageType_FIre.h"
 #include "DamageType_Physical.h"
 #include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
-#include "ItemObject.h"
 
 
 // Sets default values
@@ -29,7 +29,7 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstance(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
-	PlayerComponent = CreateDefaultSubobject<UPlayerActorComponent>(TEXT("PlayerComponent"));
+	PlayerStateComponent = CreateDefaultSubobject<UCharacterStateComponent>(TEXT("PlayerStateComponent"));
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 
@@ -118,7 +118,6 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 
 void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	//UE_LOG(LogTemp, Log, TEXT("AttackFalse"));
 	Anim->IsAttack = false;
 }
 
@@ -178,15 +177,14 @@ void APlayerCharacter::OnHitActor()
 		AActor* HitActor = HitResult.GetActor();
 
 		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		if (PlayerComponent->CriticalChance > RandomChance / 100000.f)
+		if (PlayerStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
 		{
 			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage() * PlayerComponent->CriticalDamage, GetController(), this, DamageTypeClass);
+			UGameplayStatics::ApplyDamage(HitActor, PlayerStateComponent->GetPhysicalDamage() * PlayerStateComponent->FinalState.CriticalDamage, GetController(), this, DamageTypeClass);
 		}
 		else {
 			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-			UE_LOG(LogTemp, Log, TEXT("%f"), PlayerComponent->GetPhysicalDamage());
-			UGameplayStatics::ApplyDamage(HitActor, PlayerComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
+			UGameplayStatics::ApplyDamage(HitActor, PlayerStateComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
 		}
 		DrawColor = FColor::Green;
 	}
@@ -200,7 +198,6 @@ void APlayerCharacter::OnHitActor()
 
 void APlayerCharacter::Interaction()
 {
-	//UE_LOG(LogTemp, Log, TEXT("%f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 	float Range = 50.f;
 	FHitResult HitResult;
 	FVector Center = GetActorLocation();

@@ -26,7 +26,7 @@ public:
 		class UPlayerAnimInstance* Anim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UPlayerActorComponent* PlayerComponent;
+		class UCharacterStateComponent* PlayerStateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

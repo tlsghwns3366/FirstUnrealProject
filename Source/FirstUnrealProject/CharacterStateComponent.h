@@ -9,6 +9,57 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpUpdated);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpUpdated);
+
+USTRUCT(BlueprintType)
+struct FCharacterState
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 Level = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float MaxHp = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float HpRegen = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float MaxStamina = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float StaminaRegen = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float Speed = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AttackDamage = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float Shild = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float CriticalChance = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float CriticalDamage = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float DodgeChance = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxExp;
+
+
+	FCharacterState operator+(const FEquipItemInfo& Other) const
+	{
+		FCharacterState Result;
+		Result.AttackDamage = AttackDamage + Other.AddDamage;
+		Result.Shild = Shild + Other.AddShild;
+		Result.MaxHp = MaxHp + Other.AddHP;
+		Result.MaxStamina = MaxStamina + Other.AddStamina;
+		Result.CriticalChance = CriticalChance + Other.AddCriticalChance;
+		Result.CriticalDamage = CriticalDamage + Other.AddCriticalDamage;
+		Result.DodgeChance = DodgeChance + Other.AddDodgeChance;
+		Result.Level = Level;
+		Result.HpRegen = HpRegen;
+		Result.StaminaRegen = StaminaRegen;
+		Result.Speed = Speed;
+		Result.MaxExp = MaxExp;
+		return Result;
+	}
+};
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FIRSTUNREALPROJECT_API UCharacterStateComponent : public UActorComponent
 {
@@ -19,64 +70,48 @@ public:
 	UCharacterStateComponent();
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		int32 Level;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float Hp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float MaxHp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float Speed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float Stamina;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float StaminaMax;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float AttackDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float Shild;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
-		float CriticalChance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float CriticalDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info, meta = (ClampMin = 0.0, ClampMax = 100.0))
-		float DodgeChance;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float HpRegen;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float StaminaRegen;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Final")
+		FCharacterState FinalState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default")
+		FCharacterState CharacterState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDie = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
+		float CurrentHp = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
+		float CurrentStamina = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
+		float CurrentExp;
 
 	UPROPERTY(BlueprintAssignable)
 		FOnHpUpdated OnhpUpdated;
 
 
+	UPROPERTY(BlueprintAssignable)
+		FOnExpUpdated OnExpUpdated;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
+		FEquipItemInfo CharacterEquipItemState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Helmat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* TopArmor;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* BottomArmor;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Boots;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Gloves;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Weapons_1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Weapons_2;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Ring_1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Ring_2;
 
 protected:
@@ -88,12 +123,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	virtual void SetLevel(int32 _Level);
-public:
+	virtual void SetState();
 	virtual void SetHp(float NewHp);
-	virtual int32 GetLevel() { return Level; }
-	virtual int32 GetHp() { return Hp; }
 	virtual float GetPhysicalDamage();
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
 	virtual bool SetEquip(UEquipItemObject* Item);
+	virtual void SetEquipState();
 };

@@ -17,7 +17,6 @@
 #include "DamageType_Physical.h"
 #include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
-#include "PlayerCharacter.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -117,10 +116,10 @@ void AEnemyCharacter::OnHitActor()
 		AActor* HitActor = HitResult.GetActor();
 
 		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		if (EnemyStateComponent->CriticalChance > RandomChance / 100000.f)
+		if (EnemyStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
 		{
 			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->GetPhysicalDamage() * EnemyStateComponent->CriticalDamage, GetController(), this, DamageTypeClass);
+			UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->GetPhysicalDamage() * EnemyStateComponent->FinalState.CriticalDamage, GetController(), this, DamageTypeClass);
 		}
 		else {
 			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();

@@ -19,11 +19,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UCharacterStateComponent* CharacterComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	class APlayerCharacter* Player;
+	UPROPERTY(VisibleAnywhere)
+	class AEnemyCharacter* Enemy;
 
-	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* Player;
-	UPROPERTY(VisibleAnywhere)
-		class AEnemyCharacter* Enemy;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

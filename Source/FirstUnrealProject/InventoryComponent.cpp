@@ -17,17 +17,6 @@ UInventoryComponent::UInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	InventorySize = 20; //Default 20
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetOwner());
-	if (Player)
-	{
-		CharacterComponent = Cast<UCharacterStateComponent>(Player->PlayerComponent);
-	}
-
-	if (Enemy)
-	{
-		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
-	}
 	// ...
 }
 
@@ -39,6 +28,17 @@ void UInventoryComponent::BeginPlay()
 	for (auto& item : DefaultInventory)
 	{
 		AddItem(item);
+	}
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetOwner());
+	if (Player)
+	{
+		CharacterComponent = Cast<UCharacterStateComponent>(Player->PlayerStateComponent);
+	}
+
+	if (Enemy)
+	{
+		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
 	}
 }
 
@@ -81,7 +81,7 @@ bool UInventoryComponent::EquipItem(UEquipItemObject* Item)
 {
 	if (!Item->Equip)
 	{
-		if (CharacterComponent->GetEquip(Item) != nullptr)
+		if (CharacterComponent  != nullptr && CharacterComponent->GetEquip(Item) != nullptr)
 		{
 			if (Item->ItemEnum == CharacterComponent->GetEquip(Item)->ItemEnum)
 			{

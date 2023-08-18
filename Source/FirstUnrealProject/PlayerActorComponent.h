@@ -7,9 +7,6 @@
 #include "PlayerActorComponent.generated.h"
 
 
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpUpdated);
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FIRSTUNREALPROJECT_API UPlayerActorComponent : public UCharacterStateComponent
 {
@@ -19,14 +16,6 @@ public:
 	// Sets default values for this component's properties
 	UPlayerActorComponent();
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float Exp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Info)
-		float MaxExp;
-
-	UPROPERTY(BlueprintAssignable)
-		FOnExpUpdated OnExpUpdated;
-
 
 protected:
 	// Called when the game starts

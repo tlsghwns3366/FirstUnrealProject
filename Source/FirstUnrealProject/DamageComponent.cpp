@@ -6,7 +6,7 @@
 #include "CharacterStateComponent.h"
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
-#include "CharacterStateComponent.h"
+#include "EnemyStateActorComponent.h"
 
 
 // Sets default values for this component's properties
@@ -15,7 +15,6 @@ UDamageComponent::UDamageComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	CharacterComponent = Cast<UCharacterStateComponent>(GetOwner());
 	// ...
 }
 
@@ -24,7 +23,16 @@ UDamageComponent::UDamageComponent()
 void UDamageComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Player = Cast<APlayerCharacter>(GetOwner());
+	Enemy = Cast<AEnemyCharacter>(GetOwner());
+	if (Player != nullptr)
+	{
+		CharacterComponent = Player->PlayerStateComponent;
+	}
+	if (Enemy != nullptr)
+	{
+		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
+	}
 	// ...
 	
 }
@@ -40,9 +48,12 @@ void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UDamageComponent::OnDamaged(float Damage)
 {
-	float TempHp = CharacterComponent->Hp - Damage;
-	CharacterComponent->SetHp(TempHp);
-	CharacterComponent->OnhpUpdated.Broadcast();
+	if (CharacterComponent != nullptr)
+	{
+		float TempHp = CharacterComponent->CurrentHp - Damage;
+		CharacterComponent->SetHp(TempHp);
+		CharacterComponent->OnhpUpdated.Broadcast();
+	}
 }
 
 void UDamageComponent::DamageTaken(float Damage, FColor Color)

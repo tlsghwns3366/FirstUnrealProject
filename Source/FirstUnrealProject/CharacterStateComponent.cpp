@@ -9,7 +9,6 @@ UCharacterStateComponent::UCharacterStateComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 	// ...
 }
 
@@ -18,7 +17,12 @@ UCharacterStateComponent::UCharacterStateComponent()
 void UCharacterStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetEquipState();
+	SetState();
+	CurrentHp = FinalState.MaxHp;
+	CurrentStamina = FinalState.MaxStamina;
+	OnhpUpdated.Broadcast();
+	OnExpUpdated.Broadcast();
 	// ...
 	
 }
@@ -32,26 +36,24 @@ void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// ...
 }
 
-void UCharacterStateComponent::SetLevel(int32 _Level)
+void UCharacterStateComponent::SetState()
 {
-	Level = _Level;
-	Hp = MaxHp;
+	FinalState = CharacterState + CharacterEquipItemState;
 }
-
 
 void UCharacterStateComponent::SetHp(float NewHp)
 {
-	Hp = NewHp;
-	if (Hp <= 0.f)
+	CurrentHp = NewHp;
+	if (CurrentHp <= 0.f)
 	{
 		IsDie = true;
-		Hp = 0.f;
+		CurrentHp = 0.f;
 	}
 }
 
 float UCharacterStateComponent::GetPhysicalDamage()
 {
-	return FMath::FRandRange(AttackDamage * 0.85, AttackDamage * 1.15);
+	return FMath::FRandRange(FinalState.AttackDamage * 0.85, FinalState.AttackDamage * 1.15);
 }
 UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
 {
@@ -92,38 +94,78 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item)
 	{
 	case EItemEnum::E_Equip_Helmet:
 		Helmat = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Weapons:
 		Weapons_1 = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_TopArmor:
 		TopArmor = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_BottomArmor:
 		BottomArmor = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Boots:
 		Boots = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Gloves:
 		Gloves = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Ring_1:
 		Ring_1 = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Ring_2:
 		Ring_2 = Item;
+		SetEquipState();
+		SetState();
 		return true;
 		break;
 	default:
 		break;
 	}
 	return false;
+}
+
+void UCharacterStateComponent::SetEquipState()
+{
+	FEquipItemInfo TempInfo;
+	if (Helmat != nullptr)
+		TempInfo = TempInfo + Helmat->EquipItemState;
+	if (TopArmor != nullptr)
+		TempInfo = TempInfo + TopArmor->EquipItemState;
+	if (BottomArmor != nullptr)
+		TempInfo = TempInfo + BottomArmor->EquipItemState;
+	if (Boots != nullptr)
+		TempInfo = TempInfo + Boots->EquipItemState;
+	if (Gloves != nullptr)
+		TempInfo = TempInfo + Gloves->EquipItemState;
+	if (Weapons_1 != nullptr)
+		TempInfo = TempInfo + Weapons_1->EquipItemState;
+	if (Weapons_2 != nullptr)
+		TempInfo = TempInfo + Weapons_2->EquipItemState;
+	if (Ring_1 != nullptr)
+		TempInfo = TempInfo + Ring_1->EquipItemState;
+	if (Ring_2 != nullptr)
+		TempInfo = TempInfo + Ring_2->EquipItemState;
+	CharacterEquipItemState = TempInfo;
 }

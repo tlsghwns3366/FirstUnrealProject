@@ -10,29 +10,18 @@ UPlayerActorComponent::UPlayerActorComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent = true;
-	Level = 1;
-	MaxHp = 500.f;
-	Hp = 500.f;
-	StaminaMax = 100.f;
-	Stamina = 100.f;
-	Shild = 0.f;
-	CriticalChance = 0.1f;
-	CriticalDamage = 2.f;
-	DodgeChance = 0.f;
 }
 
 
 void UPlayerActorComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
-	SetLevel(Level);
 }
 
 // Called when the game starts
 void UPlayerActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 
