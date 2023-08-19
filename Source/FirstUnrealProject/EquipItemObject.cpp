@@ -15,19 +15,19 @@ void UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 
 void UEquipItemObject::SetDescription()
 {
-	EquipDescription = "\n";
+	EquipDescription = "";
 	if (EquipItemState.AddDamage != 0)
-		EquipDescription += FString::Printf(TEXT("Damage + %f\n"), EquipItemState.AddDamage);
+		EquipDescription += FString::Printf(TEXT("Damage + %.1f\n"), EquipItemState.AddDamage);
 	if (EquipItemState.AddShild != 0)
-		EquipDescription += FString::Printf(TEXT("Shild + %f\n"), EquipItemState.AddShild);
+		EquipDescription += FString::Printf(TEXT("Shild + %.1f\n"), EquipItemState.AddShild);
 	if (EquipItemState.AddHP != 0)
-		EquipDescription += FString::Printf(TEXT("HP + %f\n"), EquipItemState.AddHP);
+		EquipDescription += FString::Printf(TEXT("HP + %.1f\n"), EquipItemState.AddHP);
 	if (EquipItemState.AddStamina != 0)
-		EquipDescription += FString::Printf(TEXT("HP + %f\n"), EquipItemState.AddStamina);
+		EquipDescription += FString::Printf(TEXT("Stamina + %.1f\n"), EquipItemState.AddStamina);
 	if (EquipItemState.AddCriticalChance != 0)
-		EquipDescription += FString::Printf(TEXT("CriticalChance + %f\n"), EquipItemState.AddCriticalChance);
+		EquipDescription += FString::Printf(TEXT("CriticalChance + %.1f\n"), EquipItemState.AddCriticalChance);
 	if (EquipItemState.AddCriticalDamage != 0)
-		EquipDescription += FString::Printf(TEXT("CriticalDamage + %f\n"), EquipItemState.AddCriticalDamage);
+		EquipDescription += FString::Printf(TEXT("CriticalDamage + %.1f\n"), EquipItemState.AddCriticalDamage);
 	if (EquipItemState.AddDodgeChance != 0)
-		EquipDescription += FString::Printf(TEXT("DodgeChance + %f\n"), EquipItemState.AddDodgeChance);
+		EquipDescription += FString::Printf(TEXT("DodgeChance + %.1f\n"), EquipItemState.AddDodgeChance);
 }

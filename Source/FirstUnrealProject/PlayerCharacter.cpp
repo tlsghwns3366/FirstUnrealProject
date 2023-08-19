@@ -87,29 +87,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &APlayerCharacter::KeyUpDown);
-	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &APlayerCharacter::KeyLeftRight);
-	PlayerInputComponent->BindAxis(TEXT("LookLeftRight"), this, &APlayerCharacter::LookLeftRight);
-	PlayerInputComponent->BindAxis(TEXT("LookUpDown"), this, &APlayerCharacter::LookUpDown);
-
-	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Jump);
-
-
-	PlayerInputComponent->BindAction(TEXT("PlayerRun"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetIsRunTrue);
-	PlayerInputComponent->BindAction(TEXT("PlayerRun"), EInputEvent::IE_Released, this, &APlayerCharacter::SetIsRunFalse);
-
-	PlayerInputComponent->BindAction(TEXT("LeftMouseClick"), EInputEvent::IE_Released, this, &APlayerCharacter::Attack);
-
-	PlayerInputComponent->BindAction(TEXT("Interaction"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Interaction);
-
-	PlayerInputComponent->BindAction(TEXT("ShowMouse"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetShowMouse);
-
-}
-
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
@@ -230,53 +207,19 @@ void APlayerCharacter::Interaction()
 	DrawDebugSphere(GetWorld(), Forward, Range, 32, DrawColor, false, 5.0f);
 }
 
-void APlayerCharacter::KeyUpDown(float value)
-{
-	AddMovementInput(GetActorForwardVector(), value);
-}
-
-void APlayerCharacter::KeyLeftRight(float value)
-{
-	AddMovementInput(GetActorRightVector(), value);
-}
-
-void APlayerCharacter::LookLeftRight(float value)
-{
-	AddControllerYawInput(value);
-}
-
-void APlayerCharacter::LookUpDown(float value)
-{
-	AddControllerPitchInput(value);
-}
-
 void APlayerCharacter::SetIsRunTrue()
 {
 	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunTrue();
+	GetCharacterMovement()->MaxWalkSpeed = PlayerStateComponent->FinalState.RunSpeed;
+	PlayerStateComponent->CurrentSpeed = PlayerStateComponent->FinalState.RunSpeed;
 }
 
 void APlayerCharacter::SetIsRunFalse()
 {
 	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunFalse();
+	GetCharacterMovement()->MaxWalkSpeed = PlayerStateComponent->FinalState.WalkSpeed;
+	PlayerStateComponent->CurrentSpeed = PlayerStateComponent->FinalState.WalkSpeed;
 }
-
-void APlayerCharacter::SetShowMouse()
-{
-	if (!MouseInput)
-	{
-		MouseInput = true;
-		GetController<APlayerController>()->SetShowMouseCursor(true);
-		GetController<APlayerController>()->SetInputMode(FInputModeGameAndUI());
-	}
-	else
-	{
-		MouseInput = false;
-		GetController<APlayerController>()->SetShowMouseCursor(false);
-		GetController<APlayerController>()->SetInputMode(FInputModeGameOnly());
-
-	}
-}
-
 
 void APlayerCharacter::UseItem(UItemObject* Item)
 {

@@ -34,11 +34,6 @@ public:
 	UPROPERTY(Category = Animation, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool	IsAttack;
 
-	UPROPERTY(VisibleAnywhere)
-	float PlayerMaxWalkSpeed;
-
-	UPROPERTY(VisibleAnywhere)
-	float PlayerRunSpeed;
 
 	UPROPERTY(VisibleAnywhere)
 	class APlayerCharacter* Player;

@@ -40,6 +40,10 @@ public:
 		float DodgeChance = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxExp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float WalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float RunSpeed;
 
 
 	FCharacterState operator+(const FEquipItemInfo& Other) const
@@ -57,6 +61,8 @@ public:
 		Result.StaminaRegen = StaminaRegen;
 		Result.Speed = Speed;
 		Result.MaxExp = MaxExp;
+		Result.WalkSpeed = WalkSpeed;
+		Result.RunSpeed = RunSpeed;
 		return Result;
 	}
 };
@@ -84,6 +90,9 @@ public:
 		float CurrentStamina = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
 		float CurrentExp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
+		float CurrentSpeed;
+
 
 	UPROPERTY(BlueprintAssignable)
 		FOnHpUpdated OnhpUpdated;

@@ -21,6 +21,7 @@ void UCharacterStateComponent::BeginPlay()
 	SetState();
 	CurrentHp = FinalState.MaxHp;
 	CurrentStamina = FinalState.MaxStamina;
+	CurrentSpeed = FinalState.WalkSpeed;
 	OnhpUpdated.Broadcast();
 	OnExpUpdated.Broadcast();
 	// ...

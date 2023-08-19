@@ -51,7 +51,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
@@ -65,16 +64,8 @@ public:
 	virtual void OnHitActor() override;
 	void Interaction();
 
-	void KeyUpDown(float value);
-	void KeyLeftRight(float value);
-	void LookLeftRight(float value);
-	void LookUpDown(float value);
-
 	void SetIsRunTrue();
 	void SetIsRunFalse();
-
-
-	void SetShowMouse();
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void UseItem(UItemObject* Item);
