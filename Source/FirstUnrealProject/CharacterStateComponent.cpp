@@ -18,7 +18,6 @@ void UCharacterStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetEquipState();
-	SetState();
 	CurrentHp = FinalState.MaxHp;
 	CurrentStamina = FinalState.MaxStamina;
 	CurrentSpeed = FinalState.WalkSpeed;
@@ -89,56 +88,48 @@ UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
 	return EquippedItem;
 }
 
-bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item)
+bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum)
 {
-	switch (Item->ItemEnum)
+	switch (ItemEnum)
 	{
 	case EItemEnum::E_Equip_Helmet:
 		Helmat = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Weapons:
 		Weapons_1 = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_TopArmor:
 		TopArmor = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_BottomArmor:
 		BottomArmor = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Boots:
 		Boots = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Gloves:
 		Gloves = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Ring_1:
 		Ring_1 = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	case EItemEnum::E_Equip_Ring_2:
 		Ring_2 = Item;
 		SetEquipState();
-		SetState();
 		return true;
 		break;
 	default:
@@ -169,4 +160,5 @@ void UCharacterStateComponent::SetEquipState()
 	if (Ring_2 != nullptr)
 		TempInfo = TempInfo + Ring_2->EquipItemState;
 	CharacterEquipItemState = TempInfo;
+	SetState();
 }

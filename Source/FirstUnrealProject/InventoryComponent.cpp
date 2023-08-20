@@ -89,7 +89,7 @@ bool UInventoryComponent::EquipItem(UEquipItemObject* Item)
 			}
 		}
 		Item->Equip = true;
-		CharacterComponent->SetEquip(Item);
+		CharacterComponent->SetEquip(Item, Item->ItemEnum);
 		ItemInventory.RemoveSingle(Item);
 		EquipInventory.Add(Item);
 		OnInventoryUpdated.Broadcast();
@@ -102,6 +102,7 @@ bool UInventoryComponent::UnEquipItem(UEquipItemObject* Item)
 {
 	if (Item->Equip)
 	{
+		CharacterComponent->SetEquip(nullptr, Item->ItemEnum);
 		Item->Equip = false;
 		EquipInventory.RemoveSingle(Item);
 		ItemInventory.Add(Item);

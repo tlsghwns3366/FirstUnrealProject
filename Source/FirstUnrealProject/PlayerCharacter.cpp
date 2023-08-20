@@ -18,6 +18,7 @@
 #include "DamageType_Physical.h"
 #include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
+#include "AttackSystemComponent.h"
 
 
 // Sets default values
@@ -116,7 +117,8 @@ void APlayerCharacter::Attack()
 	{
 		if (!Anim->Montage_IsPlaying(Anim->AttackMontage))
 		{
-			Anim->PlayMontage();
+			AttackSystemComponent->Attack();
+			//Anim->PlayMontage();
 		}
 		else
 		{

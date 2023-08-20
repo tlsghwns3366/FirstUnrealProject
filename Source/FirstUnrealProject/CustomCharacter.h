@@ -20,6 +20,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UDamageComponent* DamageComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UAttackSystemComponent* AttackSystemComponent;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

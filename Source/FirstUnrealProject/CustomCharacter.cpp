@@ -10,7 +10,7 @@
 #include "DamageType_Physical.h"
 #include "DamageType_Critical.h"
 #include "Kismet/GameplayStatics.h"
-#include "ItemActor.h"
+#include "AttackSystemComponent.h"
 
 // Sets default values
 ACustomCharacter::ACustomCharacter()
@@ -18,6 +18,7 @@ ACustomCharacter::ACustomCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("DamageComponent"));
+	AttackSystemComponent = CreateDefaultSubobject< UAttackSystemComponent>(TEXT("AttackSystemComponent"));
 }
 
 // Called when the game starts or when spawned

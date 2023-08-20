@@ -136,6 +136,6 @@ public:
 	virtual void SetHp(float NewHp);
 	virtual float GetPhysicalDamage();
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
-	virtual bool SetEquip(UEquipItemObject* Item);
+	virtual bool SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
 	virtual void SetEquipState();
 };
