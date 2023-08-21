@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USceneComponent* SceneComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh");

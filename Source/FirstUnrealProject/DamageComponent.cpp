@@ -27,11 +27,11 @@ void UDamageComponent::BeginPlay()
 	Enemy = Cast<AEnemyCharacter>(GetOwner());
 	if (Player != nullptr)
 	{
-		CharacterComponent = Player->PlayerStateComponent;
+		MainStateComponent = Player->MainStateComponent;
 	}
 	if (Enemy != nullptr)
 	{
-		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
+		MainStateComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
 	}
 	// ...
 	
@@ -48,11 +48,11 @@ void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UDamageComponent::OnDamaged(float Damage)
 {
-	if (CharacterComponent != nullptr)
+	if (MainStateComponent != nullptr)
 	{
-		float TempHp = CharacterComponent->CurrentHp - Damage;
-		CharacterComponent->SetHp(TempHp);
-		CharacterComponent->OnhpUpdated.Broadcast();
+		float TempHp = MainStateComponent->CurrentHp - Damage;
+		MainStateComponent->SetHp(TempHp);
+		MainStateComponent->OnhpUpdated.Broadcast();
 	}
 }
 

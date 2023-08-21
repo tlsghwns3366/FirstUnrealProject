@@ -14,7 +14,7 @@ AWeapon::AWeapon()
 	RootComponent = SceneComponent;
 	SetRootComponent(RootComponent);
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-
+	StaticMesh->SetupAttachment(RootComponent);
 
 	StartPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("StartPoint"));
 	StartPoint->SetupAttachment(StaticMesh);

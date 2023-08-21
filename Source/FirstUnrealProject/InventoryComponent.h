@@ -30,7 +30,7 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UCharacterStateComponent* CharacterComponent;
+		class UCharacterStateComponent* MainStateComponent;
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

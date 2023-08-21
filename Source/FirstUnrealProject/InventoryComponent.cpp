@@ -33,12 +33,12 @@ void UInventoryComponent::BeginPlay()
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetOwner());
 	if (Player)
 	{
-		CharacterComponent = Cast<UCharacterStateComponent>(Player->PlayerStateComponent);
+		MainStateComponent = Cast<UCharacterStateComponent>(Player->MainStateComponent);
 	}
 
 	if (Enemy)
 	{
-		CharacterComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
+		MainStateComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
 	}
 }
 
@@ -81,15 +81,15 @@ bool UInventoryComponent::EquipItem(UEquipItemObject* Item)
 {
 	if (!Item->Equip)
 	{
-		if (CharacterComponent  != nullptr && CharacterComponent->GetEquip(Item) != nullptr)
+		if (MainStateComponent != nullptr && MainStateComponent->GetEquip(Item) != nullptr)
 		{
-			if (Item->ItemEnum == CharacterComponent->GetEquip(Item)->ItemEnum)
+			if (Item->ItemEnum == MainStateComponent->GetEquip(Item)->ItemEnum)
 			{
-				UnEquipItem(CharacterComponent->GetEquip(Item));
+				UnEquipItem(MainStateComponent->GetEquip(Item));
 			}
 		}
 		Item->Equip = true;
-		CharacterComponent->SetEquip(Item, Item->ItemEnum);
+		MainStateComponent->SetEquip(Item, Item->ItemEnum);
 		ItemInventory.RemoveSingle(Item);
 		EquipInventory.Add(Item);
 		OnInventoryUpdated.Broadcast();
@@ -102,7 +102,7 @@ bool UInventoryComponent::UnEquipItem(UEquipItemObject* Item)
 {
 	if (Item->Equip)
 	{
-		CharacterComponent->SetEquip(nullptr, Item->ItemEnum);
+		MainStateComponent->SetEquip(nullptr, Item->ItemEnum);
 		Item->Equip = false;
 		EquipInventory.RemoveSingle(Item);
 		ItemInventory.Add(Item);

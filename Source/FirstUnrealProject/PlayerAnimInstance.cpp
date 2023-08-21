@@ -47,14 +47,6 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::PlayMontage()
 {
-	if (IsValid(AttackMontage))
-	{
-		if (!Montage_IsPlaying(AttackMontage))
-		{
-			Montage_Play(AttackMontage);
-			IsAttack = true;
-		}
-	}
 }
 
 void UPlayerAnimInstance::PlayHitReactMontage()

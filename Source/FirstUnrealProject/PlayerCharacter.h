@@ -26,8 +26,6 @@ public:
 		class UPlayerAnimInstance* Anim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UCharacterStateComponent* PlayerStateComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UPlayerInventoryComponent* PlayerInventoryComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
@@ -35,10 +33,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class USceneComponent* Scene;
 
-
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		int32 AttackIndex;
 
 	bool MouseInput = false;
 
@@ -61,7 +55,6 @@ public:
 public:
 
 	virtual void Attack() override;
-	virtual void OnHitActor() override;
 	void Interaction();
 
 	void SetIsRunTrue();

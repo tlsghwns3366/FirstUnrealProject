@@ -25,6 +25,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 		UAnimMontage* CharacterAttackMontage = nullptr;
 
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+		class UPlayerAnimInstance* AnimInstance;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsAttacking = false;
 
@@ -50,6 +54,7 @@ public:
 	UFUNCTION()
 		void OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
+	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	bool PlayAttackMontage(UAnimMontage* AttackMontage);
 	bool PlayHitReactMontage();
 	void Attack();

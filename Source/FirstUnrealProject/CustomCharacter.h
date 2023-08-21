@@ -23,6 +23,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UAttackSystemComponent* AttackSystemComponent;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UCharacterStateComponent* MainStateComponent;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

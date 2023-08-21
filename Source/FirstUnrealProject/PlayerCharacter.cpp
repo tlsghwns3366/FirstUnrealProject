@@ -30,7 +30,6 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstance(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
-	PlayerStateComponent = CreateDefaultSubobject<UCharacterStateComponent>(TEXT("PlayerStateComponent"));
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 
@@ -73,11 +72,8 @@ void APlayerCharacter::BeginPlay()
 	Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (Anim)
 	{
-		Anim->OnAttackHit.AddUObject(this, &APlayerCharacter::OnHitActor);
 		Anim->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded);
-		Anim->OnPlayMontageNotifyBegin.AddDynamic(this, &APlayerCharacter::OnNotifyBeginRecieved);
 	}
-	
 }
 
 // Called every frame
@@ -101,79 +97,13 @@ void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 
 void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
-	AttackIndex--;
-	if (AttackIndex < 0)
-	{
-		Anim->Montage_Stop(0.35f, Anim->AttackMontage);
-		AttackIndex = 0;
-	}
-
 }
 
 void APlayerCharacter::Attack()
 {
 	IsAttacking = true;
-	if (IsValid(Anim))
-	{
-		if (!Anim->Montage_IsPlaying(Anim->AttackMontage))
-		{
-			AttackSystemComponent->Attack();
-			//Anim->PlayMontage();
-		}
-		else
-		{
-			AttackIndex = 1;
-		}
-		//UE_LOG(LogTemp, Log, TEXT("Attack"));
-	}
+	AttackSystemComponent->Attack();
 }
-
-void APlayerCharacter::OnHitActor()
-{
-	FHitResult HitResult;
-	FCollisionQueryParams Parems(NAME_None, false, this);
-
-	float AttackRange = 100.f;
-	float AttackRadius = 30.f;
-
-	FVector Center = GetActorLocation();
-	FVector Forward = Center + GetActorForwardVector() * AttackRange;
-
-	bool Result = GetWorld()->SweepSingleByChannel
-	(OUT HitResult,
-		Center,
-		Forward,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1,
-		FCollisionShape::MakeSphere(AttackRadius),
-		Parems);
-
-	float HalfHeight = AttackRange * 0.5f + AttackRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
-	FColor DrawColor;
-	if (Result && HitResult.GetActor())
-	{
-		AActor* HitActor = HitResult.GetActor();
-
-		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		if (PlayerStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
-		{
-			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, PlayerStateComponent->GetPhysicalDamage() * PlayerStateComponent->FinalState.CriticalDamage, GetController(), this, DamageTypeClass);
-		}
-		else {
-			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, PlayerStateComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
-		}
-		DrawColor = FColor::Green;
-	}
-	else
-	{
-		DrawColor = FColor::Red;
-	}
-	DrawDebugSphere(GetWorld(), Forward, AttackRadius, 16, DrawColor, false, 5.0f);
-}
-
 
 void APlayerCharacter::Interaction()
 {
@@ -212,15 +142,15 @@ void APlayerCharacter::Interaction()
 void APlayerCharacter::SetIsRunTrue()
 {
 	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunTrue();
-	GetCharacterMovement()->MaxWalkSpeed = PlayerStateComponent->FinalState.RunSpeed;
-	PlayerStateComponent->CurrentSpeed = PlayerStateComponent->FinalState.RunSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.RunSpeed;
+	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.RunSpeed;
 }
 
 void APlayerCharacter::SetIsRunFalse()
 {
 	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunFalse();
-	GetCharacterMovement()->MaxWalkSpeed = PlayerStateComponent->FinalState.WalkSpeed;
-	PlayerStateComponent->CurrentSpeed = PlayerStateComponent->FinalState.WalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.WalkSpeed;
+	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.WalkSpeed;
 }
 
 void APlayerCharacter::UseItem(UItemObject* Item)

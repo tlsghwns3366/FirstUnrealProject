@@ -3,9 +3,17 @@
 
 #include "AttackSystemComponent.h"
 #include "CustomCharacter.h"
+#include "CharacterStateComponent.h"
 #include "Weapon.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "DamageType_FIre.h"
+#include "DamageType_Physical.h"
+#include "DamageType_Critical.h"
+#include "Engine/DamageEvents.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "PlayerAnimInstance.h"
 
 // Sets default values for this component's properties
 UAttackSystemComponent::UAttackSystemComponent()
@@ -21,7 +29,13 @@ void UAttackSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	Character = Cast<ACustomCharacter>(GetOwner());
-
+	AnimInstance = Cast<UPlayerAnimInstance>(Character->GetMesh()->GetAnimInstance());
+	if (AnimInstance)
+	{
+		AnimInstance->OnAttackHit.AddUObject(this, &UAttackSystemComponent::Trace);
+		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UAttackSystemComponent::OnNotifyBeginRecieved);
+		AnimInstance->OnMontageEnded.AddDynamic(this, &UAttackSystemComponent::OnAttackMontageEnded);
+	}
 	// ...
 	
 }
@@ -37,6 +51,12 @@ void UAttackSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UAttackSystemComponent::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
+	AttackIndex--;
+	if (AttackIndex < 0)
+	{
+		Character->StopAnimMontage(CharacterAttackMontage);
+		AttackIndex = 0;
+	}
 }
 
 bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
@@ -45,14 +65,14 @@ bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
 	bool bPlayedSuccessfully = Character->PlayAnimMontage(AttackMontage, PlayRate) > 0.0f;
 	if (bPlayedSuccessfully)
 	{
-		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-		if (AttackMontage == CharacterAttackMontage)
-		{
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UAttackSystemComponent::OnNotifyBeginRecieved);
-		}
 		return bPlayedSuccessfully;
 	}
 	return bPlayedSuccessfully;
+}
+
+void UAttackSystemComponent::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttacking = false;
 }
 
 bool UAttackSystemComponent::PlayHitReactMontage()
@@ -63,44 +83,63 @@ bool UAttackSystemComponent::PlayHitReactMontage()
 void UAttackSystemComponent::Attack()
 {
 	IsAttacking = true;
-	PlayAttackMontage(CharacterAttackMontage);
-	//Trace();
+	if (AnimInstance != nullptr)
+	{
+		if (!AnimInstance->Montage_IsPlaying(CharacterAttackMontage))
+		{
+			PlayAttackMontage(CharacterAttackMontage);
+		}
+		else
+		{
+			AttackIndex = 1;
+		}
+	}
 }
 
 void UAttackSystemComponent::Trace()
 {
 	TArray<AActor*> AttachedActors;
 	Character->GetAttachedActors(AttachedActors);
-	if (AttachedActors.Num() > 0)
+	for (auto GetCharacterActor : AttachedActors)
 	{
-		AActor* AttachedWeapon = AttachedActors[0];
-		AWeapon* Weapon = Cast<AWeapon>(AttachedWeapon);
-		FVector StartPoint = Weapon->StartPoint->GetComponentLocation();
-		FVector EndPoint = Weapon->EndPoint->GetComponentLocation();
-
-		ActorsToIgnore.Add(GetOwner());
-
-		FHitResult HitResult;
-		bool Result = UKismetSystemLibrary::SphereTraceSingle(
-			GetWorld(),
-			StartPoint,
-			EndPoint,
-			15.0f,
-			UEngineTypes::ConvertToTraceType(ECC_Visibility),
-			false,
-			ActorsToIgnore,
-			EDrawDebugTrace::None,
-			HitResult,
-			true,
-			FLinearColor::Red,
-			FLinearColor::Green,
-			1.0f
-		);
-		if (Result)
+		AActor* AttachedWeapon = GetCharacterActor;
+		if (AWeapon* Weapon = Cast<AWeapon>(AttachedWeapon))
 		{
-			AActor* HitActor = HitResult.GetActor();
-		}
+			FVector StartPoint = Weapon->StartPoint->GetComponentLocation();
+			FVector EndPoint = Weapon->EndPoint->GetComponentLocation();
 
+			ActorsToIgnore.Add(GetOwner());
+
+			FHitResult HitResult;
+			bool Result = UKismetSystemLibrary::SphereTraceSingle(
+				GetWorld(),
+				StartPoint,
+				EndPoint,
+				15.0f,
+				UEngineTypes::ConvertToTraceType(ECC_Pawn),
+				false,
+				ActorsToIgnore,
+				EDrawDebugTrace::ForDuration,
+				HitResult,
+				true,
+				FLinearColor::Red,
+				FLinearColor::Green,
+				5.0f
+			);
+			if (Result)
+			{
+				AActor* HitActor = HitResult.GetActor();
+				float RandomChance = FMath::RandRange(0.f, 100000.f);
+				if (Character->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
+				{
+					TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
+					UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage() * Character->MainStateComponent->FinalState.CriticalDamage, Character->GetController(), Character, DamageTypeClass);
+				}
+				else {
+					TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
+					UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage(), Character->GetController(), Character, DamageTypeClass);
+				}
+			}
+		}
 	}
 }
-

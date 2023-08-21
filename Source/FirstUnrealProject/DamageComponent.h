@@ -17,7 +17,7 @@ public:
 	UDamageComponent();
 public:
 	UPROPERTY(VisibleAnywhere)
-	class UCharacterStateComponent* CharacterComponent;
+	class UCharacterStateComponent* MainStateComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	class APlayerCharacter* Player;
