@@ -17,7 +17,7 @@ public:
 	UBTService_UpdateEnemy();
 public:
 	UPROPERTY(VisibleAnywhere)
-	class AEnemyCharacter* CurrentPawn;
+	class AEnemyCharacter* Enemy;
 public:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

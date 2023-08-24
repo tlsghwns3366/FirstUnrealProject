@@ -10,13 +10,9 @@
 #include "CharacterStateComponent.h"
 #include "PlayerInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "EnemyCharacter.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ItemActor.h"
 #include "ItemObject.h"
-#include "DamageType_FIre.h"
-#include "DamageType_Physical.h"
-#include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
 #include "AttackSystemComponent.h"
 
@@ -95,10 +91,6 @@ void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 	Anim->IsAttack = false;
 }
 
-void APlayerCharacter::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
-{
-}
-
 void APlayerCharacter::Attack()
 {
 	IsAttacking = true;
@@ -141,14 +133,12 @@ void APlayerCharacter::Interaction()
 
 void APlayerCharacter::SetIsRunTrue()
 {
-	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunTrue();
 	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.RunSpeed;
 	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.RunSpeed;
 }
 
 void APlayerCharacter::SetIsRunFalse()
 {
-	Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance())->SetIsRunFalse();
 	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.WalkSpeed;
 	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.WalkSpeed;
 }

@@ -15,6 +15,7 @@ AWeapon::AWeapon()
 	SetRootComponent(RootComponent);
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(RootComponent);
+	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	StartPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("StartPoint"));
 	StartPoint->SetupAttachment(StaticMesh);

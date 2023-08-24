@@ -4,7 +4,6 @@
 #include "EnemyCharacter.h"
 #include "EnemyAiController.h"
 #include "EnemyInventoryComponent.h"
-#include "EnemyStateActorComponent.h"	
 #include "EnemyAnimInstance.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,18 +11,16 @@
 #include "Components/CapsuleComponent.h"
 #include "ItemActor.h"
 #include "Components/WidgetComponent.h"
-#include "DamageComponent.h"
-#include "DamageType_FIre.h"
-#include "DamageType_Physical.h"
-#include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
+#include "AttackSystemComponent.h"
+#include "MainGameState.h"
+#include "CharacterStateComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyStateComponent = CreateDefaultSubobject<UEnemyStateActorComponent>(TEXT("EnemyStateActorCompenent"));
 	EnemyInventoryComponent = CreateDefaultSubobject<UEnemyInventoryComponent>(TEXT("EnemyInventoryComponent"));
 	static ConstructorHelpers::FObjectFinder< USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	if (SkeletalMesh.Succeeded())
@@ -46,15 +43,23 @@ void AEnemyCharacter::BeginPlay()
 	Anim = Cast<UEnemyAnimInstance>(GetMesh()->GetAnimInstance());
 	if (Anim)
 	{
-		Anim->OnAttackHit.AddUObject(this, &AEnemyCharacter::OnHitActor);
 		Anim->OnMontageEnded.AddDynamic(this, &AEnemyCharacter::OnAttackMontageEnded);
 	}
+	MainState = Cast<AMainGameState>(GetWorld()->GetGameState());
 }
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	float GameSpeed = MainState->GameSpeed;
+	if (RestTime < 200.f && Anim->GetRest())
+		RestTime += FMath::Lerp(0, 200.f, 0.001f * GameSpeed);
+	if (Anim->GetRest())
+	{
+		if (RestTime > 0)
+			RestTime -= FMath::Lerp(0, 200.f, 0.01f * GameSpeed);
+	}
 }
 
 // Called to bind functionality to input
@@ -67,7 +72,7 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	if (EnemyStateComponent->IsDie)
+	if (MainStateComponent->IsDie)
 	{
 		Anim->IsDie = true;
 		GetMesh()->SetSimulatePhysics(true); 
@@ -88,52 +93,11 @@ float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	}
 	return Damage;
 }
-void AEnemyCharacter::OnHitActor()
+
+void AEnemyCharacter::Attack()
 {
-	FHitResult HitResult;
-	FCollisionQueryParams Parems(NAME_None, false, this);
-
-	float AttackRange = 100.f;
-	float AttackRadius = 30.f;
-
-	FVector Center = GetActorLocation();
-	FVector Forward = Center + GetActorForwardVector() * AttackRange;
-
-	bool Result = GetWorld()->SweepSingleByChannel
-	(OUT HitResult,
-		Center,
-		Forward,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1,
-		FCollisionShape::MakeSphere(AttackRadius),
-		Parems);
-
-	float HalfHeight = AttackRange * 0.5f + AttackRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Forward).ToQuat();
-	FColor DrawColor;
-	if (Result && HitResult.GetActor())
-	{
-		AActor* HitActor = HitResult.GetActor();
-
-		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		if (EnemyStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
-		{
-			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->GetPhysicalDamage() * EnemyStateComponent->FinalState.CriticalDamage, GetController(), this, DamageTypeClass);
-		}
-		else {
-			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, EnemyStateComponent->GetPhysicalDamage(), GetController(), this, DamageTypeClass);
-		}
-		DrawColor = FColor::Green;
-	}
-	else
-	{
-		DrawColor = FColor::Red;
-	}
-	if (EnemyStateComponent->RestTime < 200.f)
-		EnemyStateComponent->RestTime += 10.f;
-	DrawDebugSphere(GetWorld(), Forward,AttackRadius,16,DrawColor,false,5.0f);
+	IsAttacking = true;
+	AttackSystemComponent->Attack();
 }
 
 void AEnemyCharacter::DropItem()

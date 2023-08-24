@@ -23,17 +23,23 @@ public:
 		UAnimMontage* HitReactMontage = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		UAnimMontage* CharacterAttackMontage = nullptr;
+		UAnimMontage* WeaponAttackMontage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class AWeapon* AttackWeapon;
 
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-		class UPlayerAnimInstance* AnimInstance;
+		class UCharacterAnimInstance* AnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsAttacking = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		int32 AttackIndex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		int32 AttackCombo;
 
 	TArray<AActor*> ActorsToIgnore;
 
@@ -50,13 +56,13 @@ public:
 
 
 public:
-
 	UFUNCTION()
-		void OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	bool PlayAttackMontage(UAnimMontage* AttackMontage);
 	bool PlayHitReactMontage();
 	void Attack();
 	void Trace();
+	void SetWeaponAttackMontage();
 };

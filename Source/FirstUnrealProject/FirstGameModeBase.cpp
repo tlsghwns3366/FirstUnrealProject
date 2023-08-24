@@ -18,6 +18,5 @@ AFirstGameModeBase::AFirstGameModeBase()
 		GameStateClass = GS.Class;
 		PlayerControllerClass = Controller.Class;
 		HUDClass = Hud.Class;
-		
 	}
 }

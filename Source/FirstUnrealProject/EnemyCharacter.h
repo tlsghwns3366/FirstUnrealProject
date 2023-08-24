@@ -18,15 +18,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DestroyTime = 60.f;// Default 60
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
-		class UEnemyStateActorComponent* EnemyStateComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UEnemyAnimInstance* Anim;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UWidgetComponent* WidgetComponent;
+
+
+	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 200.0))
+		float RestTime;
+	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 200.0))
+		float DropExp;
+
+	UPROPERTY(VisibleAnywhere)
+		class AMainGameState* MainState;
 public:
 	FTimerHandle TimerHandle;
 protected:
@@ -41,14 +48,11 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 public:
-
-	UFUNCTION(BlueprintImplementableEvent)
-		void Attack();
+		virtual void Attack() override;
 	UFUNCTION(BlueprintImplementableEvent)
 		void SetEnemyInventory();
 
 public:
-	virtual void OnHitActor() override;
 	void DropItem();
 
 };

@@ -20,9 +20,7 @@ public:
 	class UCharacterStateComponent* MainStateComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	class APlayerCharacter* Player;
-	UPROPERTY(VisibleAnywhere)
-	class AEnemyCharacter* Enemy;
+		class ACustomCharacter* Character;
 
 protected:
 	// Called when the game starts

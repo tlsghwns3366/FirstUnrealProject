@@ -12,8 +12,7 @@
 #include "DamageType_Critical.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
-
-#include "PlayerAnimInstance.h"
+#include "CharacterAnimInstance.h"
 
 // Sets default values for this component's properties
 UAttackSystemComponent::UAttackSystemComponent()
@@ -22,22 +21,19 @@ UAttackSystemComponent::UAttackSystemComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 // Called when the game starts
 void UAttackSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	Character = Cast<ACustomCharacter>(GetOwner());
-	AnimInstance = Cast<UPlayerAnimInstance>(Character->GetMesh()->GetAnimInstance());
+	AnimInstance = Cast<UCharacterAnimInstance>(Character->GetMesh()->GetAnimInstance());
 	if (AnimInstance)
 	{
 		AnimInstance->OnAttackHit.AddUObject(this, &UAttackSystemComponent::Trace);
-		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UAttackSystemComponent::OnNotifyBeginRecieved);
+		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UAttackSystemComponent::OnNotifyBeginReceived);
 		AnimInstance->OnMontageEnded.AddDynamic(this, &UAttackSystemComponent::OnAttackMontageEnded);
 	}
-	// ...
-	
 }
 
 
@@ -49,12 +45,18 @@ void UAttackSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-void UAttackSystemComponent::OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
+	if (AttackCombo == 0 || AttackCombo == 2)
+		AttackWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket_L"));
+	else
+		AttackWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket_R"));
+
 	AttackIndex--;
+	AttackCombo++;
 	if (AttackIndex < 0)
 	{
-		Character->StopAnimMontage(CharacterAttackMontage);
+		Character->StopAnimMontage(WeaponAttackMontage);
 		AttackIndex = 0;
 	}
 }
@@ -70,6 +72,7 @@ bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
 	return bPlayedSuccessfully;
 }
 
+
 void UAttackSystemComponent::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttacking = false;
@@ -82,12 +85,16 @@ bool UAttackSystemComponent::PlayHitReactMontage()
 
 void UAttackSystemComponent::Attack()
 {
+	SetWeaponAttackMontage();
 	IsAttacking = true;
 	if (AnimInstance != nullptr)
 	{
-		if (!AnimInstance->Montage_IsPlaying(CharacterAttackMontage))
+		if (!AnimInstance->Montage_IsPlaying(WeaponAttackMontage))
 		{
-			PlayAttackMontage(CharacterAttackMontage);
+			UE_LOG(LogTemp, Log, TEXT("Attack"));
+			PlayAttackMontage(WeaponAttackMontage);
+			AttackIndex = 0;
+			AttackCombo = 0;
 		}
 		else
 		{
@@ -141,5 +148,17 @@ void UAttackSystemComponent::Trace()
 				}
 			}
 		}
+	}
+}
+
+void UAttackSystemComponent::SetWeaponAttackMontage()
+{
+	TArray<AActor*> AttachedActors;
+	Character->GetAttachedActors(AttachedActors);
+	for (auto GetCharacterActor : AttachedActors)
+	{
+		AttackWeapon = Cast<AWeapon>(GetCharacterActor);
+		if (AttackWeapon != nullptr)
+			WeaponAttackMontage = AttackWeapon->CharacterAttackMontage;
 	}
 }

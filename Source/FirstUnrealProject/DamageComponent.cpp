@@ -3,10 +3,8 @@
 
 #include "DamageComponent.h"
 #include "DamageActor.h"
+#include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
-#include "PlayerCharacter.h"
-#include "EnemyCharacter.h"
-#include "EnemyStateActorComponent.h"
 
 
 // Sets default values for this component's properties
@@ -23,17 +21,11 @@ UDamageComponent::UDamageComponent()
 void UDamageComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	Player = Cast<APlayerCharacter>(GetOwner());
-	Enemy = Cast<AEnemyCharacter>(GetOwner());
-	if (Player != nullptr)
+	Character = Cast<ACustomCharacter>(GetOwner());
+	if (IsValid(Character))
 	{
-		MainStateComponent = Player->MainStateComponent;
+		MainStateComponent = Character->MainStateComponent;
 	}
-	if (Enemy != nullptr)
-	{
-		MainStateComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
-	}
-	// ...
 	
 }
 

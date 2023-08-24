@@ -49,8 +49,6 @@ public:
 
 public:
 		virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-	UFUNCTION()
-		void OnNotifyBeginRecieved(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 public:
 

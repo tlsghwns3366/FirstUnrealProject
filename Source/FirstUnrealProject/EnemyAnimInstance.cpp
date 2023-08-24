@@ -10,16 +10,8 @@
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-	auto Pawn = TryGetPawnOwner();
-	if (IsValid(Pawn))
-	{
-		Enemy = Cast<AEnemyCharacter>(Pawn);
-		if (IsValid(Enemy))
-		{
-			CharacterMovement = Enemy->GetCharacterMovement();
-			EnemyController = Cast<AEnemyAIController>(Enemy->GetController());
-		}
-	}
+	if(IsValid(Character))
+		EnemyController = Cast<AEnemyAIController>(Character->GetController());
 }
 
 void UEnemyAnimInstance::NativeBeginPlay()
@@ -30,15 +22,9 @@ void UEnemyAnimInstance::NativeBeginPlay()
 void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)	
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-	if (IsValid(Enemy))
+	if (IsValid(Character))
 	{
-		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
-		Velocity = CharacterMovement->Velocity;
-		Speed = Velocity.Size();
-		IsMoving = Speed > 3.0f;
-		IsFalling = CharacterMovement->IsFalling();
-
-		LeftRight = CalculateDirection(Enemy->GetVelocity(), Enemy->GetActorRotation());
+		LeftRight = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
 		if (EnemyController != nullptr)
 		{
 			IsNight = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("IsNight"));
@@ -46,12 +32,7 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		else
 		{
-			EnemyController = Cast<AEnemyAIController>(Enemy->GetController());
+			EnemyController = Cast<AEnemyAIController>(Character->GetController());
 		}
 	}
-}
-
-void UEnemyAnimInstance::AnimNotify_Hit()
-{
-	OnAttackHit.Broadcast();
 }

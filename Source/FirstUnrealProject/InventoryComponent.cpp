@@ -4,11 +4,8 @@
 #include "InventoryComponent.h"
 #include "ItemObject.h"
 #include "EquipItemObject.h"
-#include "PlayerCharacter.h"
-#include "EnemyCharacter.h"
+#include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
-#include "PlayerActorComponent.h"
-#include "EnemyStateActorComponent.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -29,16 +26,10 @@ void UInventoryComponent::BeginPlay()
 	{
 		AddItem(item);
 	}
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetOwner());
-	if (Player)
+	ACustomCharacter* Character = Cast<ACustomCharacter>(GetOwner());
+	if (IsValid(Character))
 	{
-		MainStateComponent = Cast<UCharacterStateComponent>(Player->MainStateComponent);
-	}
-
-	if (Enemy)
-	{
-		MainStateComponent = Cast<UCharacterStateComponent>(Enemy->EnemyStateComponent);
+		MainStateComponent = Character->MainStateComponent;
 	}
 }
 
