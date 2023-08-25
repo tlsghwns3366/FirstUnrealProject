@@ -26,8 +26,6 @@ public:
 		class UPlayerAnimInstance* Anim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UPlayerInventoryComponent* PlayerInventoryComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -53,7 +51,6 @@ public:
 public:
 
 	virtual void Attack() override;
-	void Interaction();
 
 	void SetIsRunTrue();
 	void SetIsRunFalse();

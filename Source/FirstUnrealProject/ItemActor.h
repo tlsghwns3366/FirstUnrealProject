@@ -31,7 +31,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 public:
-	void AddInventory(class UPlayerInventoryComponent * Inventory);
+	bool AddInventory(class UInventoryComponent * Inventory);
 
 public:
 	UFUNCTION(BlueprintCallable)

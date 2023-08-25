@@ -50,7 +50,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputAction* AltAction;
 
-		bool MouseInput;
 public:
 	AMainPlayerController();
 	virtual void BeginPlay() override;

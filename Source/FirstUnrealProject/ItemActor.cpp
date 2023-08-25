@@ -3,7 +3,7 @@
 
 #include "ItemActor.h"
 #include "ItemObject.h"
-#include "PlayerInventoryComponent.h"
+#include "InventoryComponent.h"
 // Sets default values
 AItemActor::AItemActor()
 {
@@ -29,10 +29,15 @@ void AItemActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AItemActor::AddInventory(UPlayerInventoryComponent* Inventory)
+bool AItemActor::AddInventory(UInventoryComponent* Inventory)
 {
-	if(Inventory->AddItem(Item))
+	if (Inventory->AddItem(Item))
+	{
 		Destroy();
+		return true;
+	}
+	else
+		return false;
 }
 
 void AItemActor::Iteminitialization(UItemObject* _Item)

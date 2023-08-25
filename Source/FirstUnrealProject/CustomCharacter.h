@@ -24,9 +24,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UAttackSystemComponent* AttackSystemComponent;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UCharacterStateComponent* MainStateComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction");
+		float TraceDistance;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,4 +49,5 @@ public:
 
 	virtual void Attack();
 	virtual void OnHitActor();
+	virtual void Interaction();
 };

@@ -55,7 +55,7 @@ void AMainPlayerController::RequestMove(const FInputActionValue& Value)
     // input is a Vector2D
     FVector2D MovementVector = Value.Get<FVector2D>();
 
-    if (MainPlayer != nullptr)
+    if (IsValid(MainPlayer))
     {
         // find out which way is forward
         const FRotator Rotation = MainPlayer->GetControlRotation();
@@ -80,7 +80,7 @@ void AMainPlayerController::RequestLook(const FInputActionValue& Value)
     // input is a Vector2D
     FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-    if (MainPlayer != nullptr)
+    if (IsValid(MainPlayer))
     {
         // add yaw and pitch input to controller
         MainPlayer->AddControllerYawInput(-LookAxisVector.X);
@@ -91,7 +91,7 @@ void AMainPlayerController::RequestLook(const FInputActionValue& Value)
 void AMainPlayerController::RequestAttack()
 {
     APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
-    if (MainPlayer)
+    if (IsValid(MainPlayer))
     {
         MainPlayer->Attack();
     }
@@ -99,12 +99,17 @@ void AMainPlayerController::RequestAttack()
 
 void AMainPlayerController::RequestInteract()
 {
+    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
+    if (IsValid(MainPlayer))
+    {
+        MainPlayer->Interaction();
+    }
 }
 
 
 void AMainPlayerController::RequestJumpStart()
 {
-    if (GetCharacter())
+    if (IsValid(GetCharacter()))
     {
         GetCharacter()->Jump();
     }
@@ -112,7 +117,7 @@ void AMainPlayerController::RequestJumpStart()
 
 void AMainPlayerController::RequestJumpStop()
 {
-    if (GetCharacter())
+    if (IsValid(GetCharacter()))
     {
         GetCharacter()->StopJumping();
     }
@@ -120,7 +125,7 @@ void AMainPlayerController::RequestJumpStop()
 void AMainPlayerController::SetIsRunTrue()
 {
     APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
-    if (MainPlayer)
+    if (IsValid(MainPlayer))
     {
         MainPlayer->SetIsRunTrue();
     }
@@ -129,7 +134,7 @@ void AMainPlayerController::SetIsRunTrue()
 void AMainPlayerController::SetIsRunFalse()
 {
     APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
-    if (MainPlayer)
+    if (IsValid(MainPlayer))
     {
         MainPlayer->SetIsRunFalse();
     }
@@ -137,15 +142,13 @@ void AMainPlayerController::SetIsRunFalse()
 
 void AMainPlayerController::SetShowMouse()
 {
-    if (!MouseInput)
+    if (this->GetMouseCursor() == EMouseCursor::None)
     {
-        MouseInput = true;
         SetShowMouseCursor(true);
         SetInputMode(FInputModeGameAndUI());
     }
     else
     {
-        MouseInput = false;
         SetShowMouseCursor(false);
         SetInputMode(FInputModeGameOnly());
     }

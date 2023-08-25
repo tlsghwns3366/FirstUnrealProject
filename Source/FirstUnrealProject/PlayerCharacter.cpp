@@ -8,7 +8,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerAnimInstance.h"
 #include "CharacterStateComponent.h"
-#include "PlayerInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ItemActor.h"
@@ -26,7 +25,6 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ThirdPerson/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstance(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
-	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
@@ -95,40 +93,6 @@ void APlayerCharacter::Attack()
 {
 	IsAttacking = true;
 	AttackSystemComponent->Attack();
-}
-
-void APlayerCharacter::Interaction()
-{
-	float Range = 50.f;
-	FHitResult HitResult;
-	FVector Center = GetActorLocation();
-	FVector Forward = Center + GetActorForwardVector() * Range;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	bool Result = GetWorld()->SweepSingleByChannel
-	(OUT HitResult,
-		Center,
-		Forward,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel3,
-		FCollisionShape::MakeSphere(Range),
-		Params
-	);
-	FColor DrawColor;
-	if (Result)
-	{
-		auto RootItem = Cast<AItemActor>(HitResult.GetActor());
-		if (RootItem)
-		{
-			RootItem->AddInventory(PlayerInventoryComponent);
-		}
-		DrawColor = FColor::Green;
-	}
-	else
-	{
-		DrawColor = FColor::Red;
-	}
-	DrawDebugSphere(GetWorld(), Forward, Range, 32, DrawColor, false, 5.0f);
 }
 
 void APlayerCharacter::SetIsRunTrue()

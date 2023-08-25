@@ -11,6 +11,8 @@
 #include "DamageType_Critical.h"
 #include "Kismet/GameplayStatics.h"
 #include "AttackSystemComponent.h"
+#include "InventoryComponent.h"
+#include "ItemActor.h"
 
 // Sets default values
 ACustomCharacter::ACustomCharacter()
@@ -20,6 +22,9 @@ ACustomCharacter::ACustomCharacter()
 	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("DamageComponent"));
 	MainStateComponent = CreateDefaultSubobject<UCharacterStateComponent>(TEXT("MainStateComponent"));
 	AttackSystemComponent = CreateDefaultSubobject< UAttackSystemComponent>(TEXT("AttackSystemComponent"));
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+
+	TraceDistance = 2000;
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +69,31 @@ void ACustomCharacter::Attack()
 
 void ACustomCharacter::OnHitActor()
 {
+}
+
+void ACustomCharacter::Interaction()
+{
+	FVector Loc;
+	FRotator Rot;
+	FHitResult HitResult;
+	GetController()->GetPlayerViewPoint(Loc, Rot);
+
+	FVector Start = Loc;
+	FVector End = Start + (Rot.Vector() * TraceDistance);
+
+	FCollisionQueryParams TraceParams;
+	bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, TraceParams);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+
+	if (Result)
+	{
+		AActor* Interactable = HitResult.GetActor();
+
+		if (AItemActor* Item = Cast< AItemActor>(Interactable))
+		{
+			Item->AddInventory(InventoryComponent);
+		}
+	}
 }
 
 
