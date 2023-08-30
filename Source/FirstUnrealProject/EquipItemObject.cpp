@@ -22,6 +22,8 @@ void UEquipItemObject::SetDescription()
 		EquipDescription += FString::Printf(TEXT("Shild + %.1f\n"), EquipItemState.AddShild);
 	if (EquipItemState.AddHP != 0)
 		EquipDescription += FString::Printf(TEXT("HP + %.1f\n"), EquipItemState.AddHP);
+	if (EquipItemState.AddMP != 0)
+		EquipDescription += FString::Printf(TEXT("MP + %.1f\n"), EquipItemState.AddMP);
 	if (EquipItemState.AddStamina != 0)
 		EquipDescription += FString::Printf(TEXT("Stamina + %.1f\n"), EquipItemState.AddStamina);
 	if (EquipItemState.AddCriticalChance != 0)

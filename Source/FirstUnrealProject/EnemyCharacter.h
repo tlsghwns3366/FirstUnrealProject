@@ -32,6 +32,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Enemy, meta = (ClampMin = 0.0, ClampMax = 200.0))
 		float DropExp;
 
+
 	UPROPERTY(VisibleAnywhere)
 		class AMainGameState* MainState;
 public:

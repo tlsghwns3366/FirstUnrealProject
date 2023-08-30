@@ -19,10 +19,13 @@ void UCharacterStateComponent::BeginPlay()
 	Super::BeginPlay();
 	SetEquipState();
 	CurrentHp = FinalState.MaxHp;
+	CurrentMp = FinalState.MaxMp;
 	CurrentStamina = FinalState.MaxStamina;
 	CurrentSpeed = FinalState.WalkSpeed;
-	OnhpUpdated.Broadcast();
+	OnHpMpUpdated.Broadcast();
 	OnExpUpdated.Broadcast();
+	OnStaminaUpdated.Broadcast();
+
 	// ...
 	
 }
@@ -32,7 +35,7 @@ void UCharacterStateComponent::BeginPlay()
 void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	Regen(DeltaTime);
 	// ...
 }
 
@@ -161,4 +164,23 @@ void UCharacterStateComponent::SetEquipState()
 		TempInfo = TempInfo + Ring_2->EquipItemState;
 	CharacterEquipItemState = TempInfo;
 	SetState();
+}
+
+void UCharacterStateComponent::Regen(float DeltaTime)
+{
+	float TargetHP = FinalState.MaxHp;
+	float TargetMP = FinalState.MaxMp;
+	float TargetStamina = FinalState.MaxStamina;
+	if (CurrentHp < TargetHP)
+		CurrentHp = FMath::Lerp(CurrentHp, CurrentHp + FinalState.HpRegen, DeltaTime);
+	if (CurrentHp < TargetMP)
+		CurrentMp = FMath::Lerp(CurrentMp, CurrentMp +FinalState.MpRegen, DeltaTime);
+	if (CurrentHp < TargetStamina)
+	{
+		CurrentStamina = FMath::Lerp(CurrentStamina, CurrentStamina + FinalState.StaminaRegen, DeltaTime);
+	}
+
+
+	OnHpMpUpdated.Broadcast();
+	OnStaminaUpdated.Broadcast();
 }

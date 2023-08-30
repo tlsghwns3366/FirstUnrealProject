@@ -93,12 +93,15 @@ void APlayerCharacter::Attack()
 {
 	IsAttacking = true;
 	AttackSystemComponent->Attack();
+	//
 }
 
 void APlayerCharacter::SetIsRunTrue()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.RunSpeed;
 	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.RunSpeed;
+	//타이머 만들기
+
 }
 
 void APlayerCharacter::SetIsRunFalse()

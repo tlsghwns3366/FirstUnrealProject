@@ -47,13 +47,9 @@ void UAttackSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
-	if (AttackCombo == 0 || AttackCombo == 2)
-		AttackWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket_L"));
-	else
-		AttackWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("WeaponSocket_R"));
+	AttackWeapon->WeaponAction();
 
 	AttackIndex--;
-	AttackCombo++;
 	if (AttackIndex < 0)
 	{
 		Character->StopAnimMontage(WeaponAttackMontage);
@@ -63,6 +59,7 @@ void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBran
 
 bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
 {
+	AttackWeapon->WeaponInitialize();
 	const float PlayRate = 1.0f;
 	bool bPlayedSuccessfully = Character->PlayAnimMontage(AttackMontage, PlayRate) > 0.0f;
 	if (bPlayedSuccessfully)
@@ -76,6 +73,7 @@ bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
 void UAttackSystemComponent::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttacking = false;
+	AnimInstance->IsAttack = false;
 }
 
 bool UAttackSystemComponent::PlayHitReactMontage()
@@ -86,15 +84,17 @@ bool UAttackSystemComponent::PlayHitReactMontage()
 void UAttackSystemComponent::Attack()
 {
 	SetWeaponAttackMontage();
+	if (!IsValid(AttackWeapon))
+		return;
+
 	IsAttacking = true;
 	if (AnimInstance != nullptr)
 	{
 		if (!AnimInstance->Montage_IsPlaying(WeaponAttackMontage))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Attack"));
+			AnimInstance->IsAttack = true;
 			PlayAttackMontage(WeaponAttackMontage);
 			AttackIndex = 0;
-			AttackCombo = 0;
 		}
 		else
 		{
@@ -158,7 +158,8 @@ void UAttackSystemComponent::SetWeaponAttackMontage()
 	for (auto GetCharacterActor : AttachedActors)
 	{
 		AttackWeapon = Cast<AWeapon>(GetCharacterActor);
-		if (AttackWeapon != nullptr)
-			WeaponAttackMontage = AttackWeapon->CharacterAttackMontage;
+		AttackWeapon->AttachMesh = Character->GetMesh();
+		if (AttackWeapon != nullptr && AttackWeapon->CharacterAttackMontage.Num() > 0)
+			WeaponAttackMontage = AttackWeapon->CharacterAttackMontage[0];
 	}
 }

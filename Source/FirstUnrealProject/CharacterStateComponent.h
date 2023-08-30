@@ -7,9 +7,11 @@
 #include "EquipItemObject.h"
 #include "CharacterStateComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpMpUpdated);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpUpdated);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaUpdated);
 
 USTRUCT(BlueprintType)
 struct FCharacterState
@@ -21,7 +23,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float MaxHp = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float MaxMp = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float HpRegen = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float MpRegen = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float MaxStamina = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -52,12 +58,14 @@ public:
 		Result.AttackDamage = AttackDamage + Other.AddDamage;
 		Result.Shild = Shild + Other.AddShild;
 		Result.MaxHp = MaxHp + Other.AddHP;
+		Result.MaxMp = MaxMp + Other.AddMP;
 		Result.MaxStamina = MaxStamina + Other.AddStamina;
 		Result.CriticalChance = CriticalChance + Other.AddCriticalChance;
 		Result.CriticalDamage = CriticalDamage + Other.AddCriticalDamage;
 		Result.DodgeChance = DodgeChance + Other.AddDodgeChance;
 		Result.Level = Level;
 		Result.HpRegen = HpRegen;
+		Result.MpRegen = MpRegen;
 		Result.StaminaRegen = StaminaRegen;
 		Result.Speed = Speed;
 		Result.MaxExp = MaxExp;
@@ -87,6 +95,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
 		float CurrentHp = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
+		float CurrentMp = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
 		float CurrentStamina = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
 		float CurrentExp;
@@ -95,11 +105,13 @@ public:
 
 
 	UPROPERTY(BlueprintAssignable)
-		FOnHpUpdated OnhpUpdated;
-
+		FOnHpMpUpdated OnHpMpUpdated;
 
 	UPROPERTY(BlueprintAssignable)
 		FOnExpUpdated OnExpUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnStaminaUpdated OnStaminaUpdated;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		FEquipItemInfo CharacterEquipItemState;
@@ -138,4 +150,5 @@ public:
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
 	virtual bool SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
 	virtual void SetEquipState();
+	virtual void Regen(float DeltaTime);
 };

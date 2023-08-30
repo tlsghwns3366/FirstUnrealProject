@@ -41,7 +41,10 @@ public:
 		class UArrowComponent* EndPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-		UAnimMontage* CharacterAttackMontage = nullptr;
+		TArray<UAnimMontage*> CharacterAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh");
+	class USkeletalMeshComponent* AttachMesh;
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,4 +54,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void WeaponAction();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void WeaponInitialize();
 };

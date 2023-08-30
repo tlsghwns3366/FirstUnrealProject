@@ -38,9 +38,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		int32 AttackIndex;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		int32 AttackCombo;
-
 	TArray<AActor*> ActorsToIgnore;
 
 

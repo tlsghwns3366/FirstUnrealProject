@@ -19,6 +19,20 @@ enum class EItemEnum : uint8
 	E_Equip_Ring_1 UMETA(DisplayName = "Ring_1"),
 	E_Equip_Ring_2 UMETA(DisplayName = "Ring_2"),
 };
+
+UENUM(BlueprintType)
+enum class EItemRank : uint8
+{
+	E_Rank_None UMETA(DisplayName = "None"),
+	E_Rank_Normal UMETA(DisplayName = "Normal"),
+	E_Rank_Magic UMETA(DisplayName = "Magic"),
+	E_Rank_Rare UMETA(DisplayName = "Rare"),
+	E_Rank_Epic UMETA(DisplayName = "Epic"),
+	E_Rank_Unique UMETA(DisplayName = "Unique"),
+	E_Rank_Legendary UMETA(DisplayName = "Legendary"),
+	E_Rank_Mythic UMETA(DisplayName = "Mythic")
+};
+
 USTRUCT(BlueprintType)
 struct FEquipItemInfo
 {
@@ -31,6 +45,8 @@ public:
 		float AddShild = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float AddHP = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddMP = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float AddStamina = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -48,6 +64,7 @@ public:
 		Result.AddDamage = AddDamage + Other.AddDamage;
 		Result.AddShild = AddShild + Other.AddShild;
 		Result.AddHP = AddHP + Other.AddHP;
+		Result.AddMP = AddMP + Other.AddMP;
 		Result.AddStamina = AddStamina + Other.AddStamina;
 		Result.AddCriticalChance = AddCriticalChance + Other.AddCriticalChance;
 		Result.AddCriticalDamage = AddCriticalDamage + Other.AddCriticalDamage;
@@ -60,6 +77,7 @@ public:
 		Result.AddDamage = AddDamage - Other.AddDamage;
 		Result.AddShild = AddShild - Other.AddShild;
 		Result.AddHP = AddHP - Other.AddHP;
+		Result.AddMP = AddMP - Other.AddMP;
 		Result.AddStamina = AddStamina - Other.AddStamina;
 		Result.AddCriticalChance = AddCriticalChance - Other.AddCriticalChance;
 		Result.AddCriticalDamage = AddCriticalDamage - Other.AddCriticalDamage;

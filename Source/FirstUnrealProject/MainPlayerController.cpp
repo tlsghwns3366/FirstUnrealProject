@@ -5,7 +5,12 @@
 #include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "Camera/CameraComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "EnemyCharacter.h"
+#include "CharacterStateComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -13,12 +18,30 @@ AMainPlayerController::AMainPlayerController()
 
 void AMainPlayerController::BeginPlay()
 {
-
+    MainPlayer = Cast<APlayerCharacter>(GetCharacter());
     // Add Input Mapping Context
     if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
     {
         Subsystem->AddMappingContext(DefaultMappingContext, 0);
     }
+}
+
+void AMainPlayerController::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+    if (IsValid(TargetActor))
+    {
+        const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(MainPlayer->Camera->GetComponentLocation(), TargetActor->GetActorLocation());
+        const FRotator InterpRotation = UKismetMathLibrary::RInterpTo(GetControlRotation(), LookAtRotation, DeltaTime,3.f);
+        SetControlRotation(InterpRotation);
+        if (TargetActor->MainStateComponent->IsDie)
+        {
+
+            TargetActor = nullptr;
+            TargetLook = false;
+        }
+    }
+    
 }
 
 void AMainPlayerController::SetupInputComponent()
@@ -38,6 +61,12 @@ void AMainPlayerController::SetupInputComponent()
         EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AMainPlayerController::SetIsRunTrue);
         EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMainPlayerController::SetIsRunFalse);
 
+        // ** MouseWheelAxis ** //
+        EnhancedInputComponent->BindAction(MouseWheelAxisAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestZoom);
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------//
+         
+         
         // ** INTERACT ** //
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestInteract);
 
@@ -45,16 +74,19 @@ void AMainPlayerController::SetupInputComponent()
         EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestAttack);
 
         // ** ALT ** //
-        EnhancedInputComponent->BindAction(AltAction, ETriggerEvent::Completed, this, &AMainPlayerController::SetShowMouse);
+        EnhancedInputComponent->BindAction(AltAction, ETriggerEvent::Triggered, this, &AMainPlayerController::SetShowMouse);
+
+
+        // ** TARGET ** //
+        EnhancedInputComponent->BindAction(TargetAction, ETriggerEvent::Triggered, this, &AMainPlayerController::Target);
+
     }
 }
 
 void AMainPlayerController::RequestMove(const FInputActionValue& Value)
 {
-    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
     // input is a Vector2D
     FVector2D MovementVector = Value.Get<FVector2D>();
-
     if (IsValid(MainPlayer))
     {
         // find out which way is forward
@@ -75,22 +107,31 @@ void AMainPlayerController::RequestMove(const FInputActionValue& Value)
 
 void AMainPlayerController::RequestLook(const FInputActionValue& Value)
 {
-    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
-
     // input is a Vector2D
     FVector2D LookAxisVector = Value.Get<FVector2D>();
+
+    float Sensitivity = 1.f;
+    float InterpolatedYawInput = FMath::Lerp(0.f, LookAxisVector.X, Sensitivity);
+    float InterpolatedPitchInput = FMath::Lerp(0.f, LookAxisVector.Y, Sensitivity);
 
     if (IsValid(MainPlayer))
     {
         // add yaw and pitch input to controller
-        MainPlayer->AddControllerYawInput(-LookAxisVector.X);
-        MainPlayer->AddControllerPitchInput(LookAxisVector.Y);
+        MainPlayer->AddControllerYawInput(-InterpolatedYawInput);
+        MainPlayer->AddControllerPitchInput(InterpolatedPitchInput);
     }
+}
+
+void AMainPlayerController::RequestZoom(const FInputActionValue& Value)
+{
+    float StartArmLength = MainPlayer->SpringArm->TargetArmLength;   
+    float InterpolatedInput = FMath::Lerp(StartArmLength, StartArmLength+Value.Get<float>()*30,1.f);
+    if(InterpolatedInput <= 2000.f && InterpolatedInput >= 500)
+    MainPlayer->SpringArm->TargetArmLength = InterpolatedInput;
 }
 
 void AMainPlayerController::RequestAttack()
 {
-    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
     if (IsValid(MainPlayer))
     {
         MainPlayer->Attack();
@@ -99,7 +140,6 @@ void AMainPlayerController::RequestAttack()
 
 void AMainPlayerController::RequestInteract()
 {
-    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
     if (IsValid(MainPlayer))
     {
         MainPlayer->Interaction();
@@ -124,7 +164,6 @@ void AMainPlayerController::RequestJumpStop()
 }
 void AMainPlayerController::SetIsRunTrue()
 {
-    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
     if (IsValid(MainPlayer))
     {
         MainPlayer->SetIsRunTrue();
@@ -133,7 +172,6 @@ void AMainPlayerController::SetIsRunTrue()
 
 void AMainPlayerController::SetIsRunFalse()
 {
-    APlayerCharacter* MainPlayer = Cast<APlayerCharacter>(GetCharacter());
     if (IsValid(MainPlayer))
     {
         MainPlayer->SetIsRunFalse();
@@ -151,5 +189,49 @@ void AMainPlayerController::SetShowMouse()
     {
         SetShowMouseCursor(false);
         SetInputMode(FInputModeGameOnly());
+    }
+}
+
+void AMainPlayerController::Target()
+{
+    if (!TargetLook)
+    {
+        FVector Start = MainPlayer->GetActorLocation();
+        FVector End = Start + MainPlayer->Camera->GetForwardVector() * 1000.f;
+        FHitResult HitResult;
+        TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+        ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery3);
+        TArray<AActor*> ActorsToIgnore;
+        ActorsToIgnore.Add(MainPlayer);
+        bool Result = UKismetSystemLibrary::SphereTraceSingleForObjects(
+            GetWorld(),
+            Start,
+            End,
+            125.0f,
+            ObjectTypes,
+            false,
+            ActorsToIgnore,
+            EDrawDebugTrace::ForDuration,
+            HitResult,
+            true,
+            FLinearColor::Red,
+            FLinearColor::Green,
+            5.0f
+        );
+        if (Result)
+        {
+            TargetActor = Cast<AEnemyCharacter>(HitResult.GetActor());
+            TargetLook = true;
+        }
+        else
+        {
+            TargetActor = nullptr;
+            TargetLook = false;
+        }
+    }
+    else
+    {
+        TargetActor = nullptr;
+        TargetLook = false;
     }
 }

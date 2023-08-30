@@ -18,6 +18,13 @@ class FIRSTUNREALPROJECT_API AMainPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+
+	/** Player */
+	UPROPERTY(VisibleAnywhere)
+		class APlayerCharacter* MainPlayer;
+
+
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputMappingContext* DefaultMappingContext;
@@ -50,9 +57,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputAction* AltAction;
 
+	/** MouseWheelAxis Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+		UInputAction* MouseWheelAxisAction;
+
+	/** Target Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+		UInputAction* TargetAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool TargetLook;
+
+	class AEnemyCharacter* TargetActor;
+
 public:
 	AMainPlayerController();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 public:
 		void SetupInputComponent() override;
 
@@ -61,6 +82,10 @@ public:
 
 		/** Called for looking input */
 		void RequestLook(const FInputActionValue& Value);
+
+
+		/** Called for looking input */
+		void RequestZoom(const FInputActionValue& Value);
 
 		/** Called for attack input **/
 		void RequestAttack();
@@ -76,6 +101,10 @@ public:
 		void SetIsRunTrue();
 		void SetIsRunFalse();
 
+		/** Called for Alt input */
 		void SetShowMouse();
+
+		/** Called for Target input */
+		void Target();
 
 };
