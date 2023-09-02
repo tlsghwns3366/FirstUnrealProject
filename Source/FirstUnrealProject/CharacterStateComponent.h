@@ -13,6 +13,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpUpdated);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaUpdated);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpbarUpdated);
+
 USTRUCT(BlueprintType)
 struct FCharacterState
 {
@@ -91,6 +93,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDie = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float StaminaUseDelay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
 		float CurrentHp = 0.f;
@@ -103,18 +107,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
 		float CurrentSpeed;
 
-
-	UPROPERTY(BlueprintAssignable)
-		FOnHpMpUpdated OnHpMpUpdated;
-
-	UPROPERTY(BlueprintAssignable)
-		FOnExpUpdated OnExpUpdated;
-
-	UPROPERTY(BlueprintAssignable)
-		FOnStaminaUpdated OnStaminaUpdated;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
-		FEquipItemInfo CharacterEquipItemState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Helmat;
@@ -135,6 +127,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Ring_2;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
+		FEquipItemInfo CharacterEquipItemState;
+
+
+	UPROPERTY(BlueprintAssignable)
+		FOnHpMpUpdated OnHpMpUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnExpUpdated OnExpUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnStaminaUpdated OnStaminaUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnHpbarUpdated OnHpbarUpdated;
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -146,9 +156,11 @@ public:
 public:
 	virtual void SetState();
 	virtual void SetHp(float NewHp);
+	virtual bool UseStamina(float Amount);
 	virtual float GetPhysicalDamage();
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
 	virtual bool SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
 	virtual void SetEquipState();
-	virtual void Regen(float DeltaTime);
+	virtual void HpMpRegen(float DeltaTime);
+	virtual void StaminaRegen(float DeltaTime);
 };

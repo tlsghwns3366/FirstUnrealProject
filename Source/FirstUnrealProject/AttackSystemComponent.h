@@ -18,7 +18,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		class ACustomCharacter* Character;
 
-
 	UPROPERTY(EditAnywhere, Category = "Animation")
 		UAnimMontage* HitReactMontage = nullptr;
 
@@ -32,17 +31,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 		class UCharacterAnimInstance* AnimInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool IsAttacking = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		int32 AttackIndex;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		float UseStamaina;
 
-	TArray<AActor*> ActorsToIgnore;
-
-
-
-
+		TArray<AActor*> ActorsToIgnore;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -59,7 +54,7 @@ public:
 	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	bool PlayAttackMontage(UAnimMontage* AttackMontage);
 	bool PlayHitReactMontage();
-	void Attack();
+	bool Attack();
 	void Trace();
 	void SetWeaponAttackMontage();
 };

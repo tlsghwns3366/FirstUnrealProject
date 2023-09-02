@@ -31,8 +31,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class USceneComponent* Scene;
 
-
-	bool MouseInput = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsRun = false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -52,9 +52,11 @@ public:
 
 	virtual void Attack() override;
 
-	void SetIsRunTrue();
+	bool SetIsRunTrue();
 	void SetIsRunFalse();
-
+	void Running(float DeltaTime);
+	void JumpStart();
+	void JumpEnd();
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void UseItem(UItemObject* Item);
 

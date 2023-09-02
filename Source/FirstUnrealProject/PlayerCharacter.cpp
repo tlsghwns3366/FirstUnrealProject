@@ -14,7 +14,7 @@
 #include "ItemObject.h"
 #include "Engine/DamageEvents.h"
 #include "AttackSystemComponent.h"
-
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -74,6 +74,8 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (IsRun)
+		Running(DeltaTime);
 
 }
 
@@ -93,21 +95,48 @@ void APlayerCharacter::Attack()
 {
 	IsAttacking = true;
 	AttackSystemComponent->Attack();
-	//
 }
 
-void APlayerCharacter::SetIsRunTrue()
+bool APlayerCharacter::SetIsRunTrue()
 {
+	if (MainStateComponent->CurrentStamina < 10.f)
+		return false;
+
 	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.RunSpeed;
 	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.RunSpeed;
-	//타이머 만들기
-
+	IsRun = true;
+	return true;
 }
 
 void APlayerCharacter::SetIsRunFalse()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.WalkSpeed;
 	MainStateComponent->CurrentSpeed = MainStateComponent->FinalState.WalkSpeed;
+	IsRun = false;
+}
+
+void APlayerCharacter::Running(float DeltaTime)
+{
+	MainStateComponent->StaminaUseDelay = 1.5f;
+	float CurrentStamina = MainStateComponent->CurrentStamina;
+	CurrentStamina = UKismetMathLibrary::FInterpTo(CurrentStamina, CurrentStamina-1.f, DeltaTime,10.f);
+	if (CurrentStamina < 0)
+		SetIsRunFalse();
+	MainStateComponent->CurrentStamina = CurrentStamina;
+}
+
+void APlayerCharacter::JumpStart()
+{
+	if (MainStateComponent->UseStamina(30.f))
+	{
+		this->Jump();
+		MainStateComponent->StaminaUseDelay = 1.5f;
+	}
+}
+
+void APlayerCharacter::JumpEnd()
+{
+	this->StopJumping();
 }
 
 void APlayerCharacter::UseItem(UItemObject* Item)

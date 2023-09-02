@@ -35,7 +35,10 @@ void UCharacterStateComponent::BeginPlay()
 void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	Regen(DeltaTime);
+	if (CurrentHp < FinalState.MaxHp || CurrentMp < FinalState.MaxMp)
+		HpMpRegen(DeltaTime);
+	if(CurrentStamina < FinalState.MaxStamina)
+		StaminaRegen(DeltaTime);
 	// ...
 }
 
@@ -52,6 +55,19 @@ void UCharacterStateComponent::SetHp(float NewHp)
 		IsDie = true;
 		CurrentHp = 0.f;
 	}
+	OnHpbarUpdated.Broadcast();
+}
+
+bool UCharacterStateComponent::UseStamina(float Amount)
+{
+	if (CurrentStamina - Amount >= 0)
+	{
+		CurrentStamina -= Amount;
+		OnStaminaUpdated.Broadcast();
+		return true;
+	}
+	else
+		return false;
 }
 
 float UCharacterStateComponent::GetPhysicalDamage()
@@ -165,22 +181,24 @@ void UCharacterStateComponent::SetEquipState()
 	CharacterEquipItemState = TempInfo;
 	SetState();
 }
-
-void UCharacterStateComponent::Regen(float DeltaTime)
+void UCharacterStateComponent::HpMpRegen(float DeltaTime)
 {
 	float TargetHP = FinalState.MaxHp;
 	float TargetMP = FinalState.MaxMp;
-	float TargetStamina = FinalState.MaxStamina;
 	if (CurrentHp < TargetHP)
 		CurrentHp = FMath::Lerp(CurrentHp, CurrentHp + FinalState.HpRegen, DeltaTime);
-	if (CurrentHp < TargetMP)
-		CurrentMp = FMath::Lerp(CurrentMp, CurrentMp +FinalState.MpRegen, DeltaTime);
-	if (CurrentHp < TargetStamina)
+	if (CurrentMp < TargetMP)
+		CurrentMp = FMath::Lerp(CurrentMp, CurrentMp + FinalState.MpRegen, DeltaTime);
+	OnHpMpUpdated.Broadcast();
+}
+void UCharacterStateComponent::StaminaRegen(float DeltaTime)
+{
+	float TargetStamina = FinalState.MaxStamina;
+	if (StaminaUseDelay >= 0)
+		StaminaUseDelay = StaminaUseDelay - DeltaTime;
+	if (CurrentStamina < TargetStamina && StaminaUseDelay <= 0)
 	{
 		CurrentStamina = FMath::Lerp(CurrentStamina, CurrentStamina + FinalState.StaminaRegen, DeltaTime);
 	}
-
-
-	OnHpMpUpdated.Broadcast();
 	OnStaminaUpdated.Broadcast();
 }

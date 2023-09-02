@@ -34,18 +34,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh");
 		class UStaticMeshComponent* StaticMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh");
+		class USkeletalMeshComponent* AttachMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit Box")
 		class UArrowComponent* StartPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit Box")
 		class UArrowComponent* EndPoint;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Info")
+		class UEquipItemObject* EquipItem;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 		TArray<UAnimMontage*> CharacterAttackMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh");
-	class USkeletalMeshComponent* AttachMesh;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float StaminaCost;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

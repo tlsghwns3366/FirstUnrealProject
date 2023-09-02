@@ -48,11 +48,14 @@ void UAttackSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
 	AttackWeapon->WeaponAction();
-
+	Character->MainStateComponent->UseStamina(AttackWeapon->StaminaCost);
+	Character->MainStateComponent->StaminaUseDelay = 1.5f;
+	UseStamaina = 0.f;
 	AttackIndex--;
 	if (AttackIndex < 0)
 	{
 		Character->StopAnimMontage(WeaponAttackMontage);
+		AnimInstance->IsAttack = false;
 		AttackIndex = 0;
 	}
 }
@@ -69,10 +72,8 @@ bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
 	return bPlayedSuccessfully;
 }
 
-
 void UAttackSystemComponent::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	IsAttacking = false;
 	AnimInstance->IsAttack = false;
 }
 
@@ -81,18 +82,23 @@ bool UAttackSystemComponent::PlayHitReactMontage()
 	return false;
 }
 
-void UAttackSystemComponent::Attack()
+bool UAttackSystemComponent::Attack()
 {
 	SetWeaponAttackMontage();
 	if (!IsValid(AttackWeapon))
-		return;
+		return false;
+	if (Character->MainStateComponent->CurrentStamina < AttackWeapon->StaminaCost + UseStamaina)
+	{
+		AttackIndex = 0;
+		return false;
+	}
+	UseStamaina = AttackWeapon->StaminaCost;
 
-	IsAttacking = true;
 	if (AnimInstance != nullptr)
 	{
+		AnimInstance->IsAttack = true;
 		if (!AnimInstance->Montage_IsPlaying(WeaponAttackMontage))
 		{
-			AnimInstance->IsAttack = true;
 			PlayAttackMontage(WeaponAttackMontage);
 			AttackIndex = 0;
 		}
@@ -101,6 +107,7 @@ void UAttackSystemComponent::Attack()
 			AttackIndex = 1;
 		}
 	}
+	return true;
 }
 
 void UAttackSystemComponent::Trace()

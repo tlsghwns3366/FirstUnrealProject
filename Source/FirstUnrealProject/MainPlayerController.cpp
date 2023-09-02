@@ -151,7 +151,7 @@ void AMainPlayerController::RequestJumpStart()
 {
     if (IsValid(GetCharacter()))
     {
-        GetCharacter()->Jump();
+        MainPlayer->JumpStart();
     }
 }
 
@@ -159,7 +159,7 @@ void AMainPlayerController::RequestJumpStop()
 {
     if (IsValid(GetCharacter()))
     {
-        GetCharacter()->StopJumping();
+        MainPlayer->JumpEnd();
     }
 }
 void AMainPlayerController::SetIsRunTrue()

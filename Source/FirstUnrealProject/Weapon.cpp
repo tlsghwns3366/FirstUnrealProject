@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "EquipItemObject.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -27,7 +28,10 @@ AWeapon::AWeapon()
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (EquipItem != nullptr)
+	{
+		StaticMesh->SetStaticMesh(EquipItem->StaticMesh);
+	}
 }
 
 // Called every frame
