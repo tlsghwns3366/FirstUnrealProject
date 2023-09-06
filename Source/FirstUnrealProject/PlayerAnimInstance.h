@@ -16,7 +16,16 @@ class FIRSTUNREALPROJECT_API UPlayerAnimInstance : public UCharacterAnimInstance
 	GENERATED_BODY()
 public:
 
-public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
+		float ForwardInput;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
+		float SideInput;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
+		bool IsCrouch;
+
+
+
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeBeginPlay() override;

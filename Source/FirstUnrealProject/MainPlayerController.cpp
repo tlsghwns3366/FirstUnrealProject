@@ -11,6 +11,8 @@
 #include "EnemyCharacter.h"
 #include "CharacterStateComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "PlayerAnimInstance.h"
+#include "Math/UnrealMathUtility.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -36,7 +38,6 @@ void AMainPlayerController::Tick(float DeltaTime)
         SetControlRotation(InterpRotation);
         if (TargetActor->MainStateComponent->IsDie)
         {
-
             TargetActor = nullptr;
             TargetLook = false;
         }
@@ -51,6 +52,7 @@ void AMainPlayerController::SetupInputComponent()
     {
         // ** Moving ** //
         EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestMove);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AMainPlayerController::RequestMoveSet);
         // ** Looking ** //
         EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestLook);
         //** Jumping **//
@@ -76,9 +78,14 @@ void AMainPlayerController::SetupInputComponent()
         // ** ALT ** //
         EnhancedInputComponent->BindAction(AltAction, ETriggerEvent::Triggered, this, &AMainPlayerController::SetShowMouse);
 
-
         // ** TARGET ** //
         EnhancedInputComponent->BindAction(TargetAction, ETriggerEvent::Triggered, this, &AMainPlayerController::Target);
+
+        // ** SpaceAction ** //
+        EnhancedInputComponent->BindAction(SpaceAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestSpace);
+        // ** LeftCtrlAction ** //
+        EnhancedInputComponent->BindAction(CtrlAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestCrouch);
+
 
     }
 }
@@ -95,14 +102,22 @@ void AMainPlayerController::RequestMove(const FInputActionValue& Value)
 
         // get forward vector
         const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
         // get right vector
         const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+        MainPlayer->Anim->ForwardInput = MovementVector.Y;
+        MainPlayer->Anim->SideInput = MovementVector.X;
 
         // add movement
         MainPlayer->AddMovementInput(ForwardDirection, MovementVector.Y);
         MainPlayer->AddMovementInput(RightDirection, MovementVector.X);
     }
+}
+
+void AMainPlayerController::RequestMoveSet(const FInputActionValue& Value)
+{
+    MainPlayer->Anim->ForwardInput = 0.f;
+    MainPlayer->Anim->SideInput = 0.f;
 }
 
 void AMainPlayerController::RequestLook(const FInputActionValue& Value)
@@ -126,7 +141,7 @@ void AMainPlayerController::RequestZoom(const FInputActionValue& Value)
 {
     float StartArmLength = MainPlayer->SpringArm->TargetArmLength;   
     float InterpolatedInput = FMath::Lerp(StartArmLength, StartArmLength+Value.Get<float>()*30,1.f);
-    if(InterpolatedInput <= 2000.f && InterpolatedInput >= 500)
+    if(InterpolatedInput <= 2000.f && InterpolatedInput >= 200)
     MainPlayer->SpringArm->TargetArmLength = InterpolatedInput;
 }
 
@@ -233,5 +248,21 @@ void AMainPlayerController::Target()
     {
         TargetActor = nullptr;
         TargetLook = false;
+    }
+}
+
+void AMainPlayerController::RequestSpace()
+{
+    if (IsValid(MainPlayer))
+    {
+        MainPlayer->DodgeAction();
+    }
+}
+
+void AMainPlayerController::RequestCrouch()
+{
+    if (IsValid(MainPlayer))
+    {
+        MainPlayer->CrouchAction();
     }
 }

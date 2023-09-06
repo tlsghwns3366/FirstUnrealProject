@@ -23,8 +23,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* MainPlayer;
 
-
-
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputMappingContext* DefaultMappingContext;
@@ -65,6 +63,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputAction* TargetAction;
 
+	/** LeftShift Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+		UInputAction* SpaceAction;
+
+	/** LeftCtrl Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+		UInputAction* CtrlAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool TargetLook;
 
@@ -79,10 +85,10 @@ public:
 
 		/** Called for movement input */
 		void RequestMove(const FInputActionValue& Value);
+		void RequestMoveSet(const FInputActionValue& Value);
 
 		/** Called for looking input */
 		void RequestLook(const FInputActionValue& Value);
-
 
 		/** Called for looking input */
 		void RequestZoom(const FInputActionValue& Value);
@@ -106,5 +112,11 @@ public:
 
 		/** Called for Target input */
 		void Target();
+
+		/** Called for SpaceAction input */
+		void RequestSpace();
+
+		/** Called for attack input **/
+		void RequestCrouch();
 
 };

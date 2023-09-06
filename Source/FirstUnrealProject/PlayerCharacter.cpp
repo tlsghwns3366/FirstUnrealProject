@@ -15,6 +15,7 @@
 #include "Engine/DamageEvents.h"
 #include "AttackSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/World.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -57,6 +58,7 @@ APlayerCharacter::APlayerCharacter()
 	{
 		GetMesh()->SetAnimClass(AnimInstance.Class);
 	}
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +68,7 @@ void APlayerCharacter::BeginPlay()
 	Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (Anim)
 	{
-		Anim->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnAttackMontageEnded);
+		Anim->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnMontageEnded);
 	}
 }
 
@@ -76,7 +78,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (IsRun)
 		Running(DeltaTime);
-
+	if(Anim->ForwardInput != 0 || Anim->SideInput != 0)
+		SetActorRotation(FRotator(0.f,UKismetMathLibrary::RInterpTo(GetActorRotation(), GetController()->GetControlRotation(), DeltaTime,0.f).Yaw,0.f));
 }
 
 // Called to bind functionality to input
@@ -86,9 +89,9 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 	return Damage;
 }
 
-void APlayerCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	Anim->IsAttack = false;
+	UE_LOG(LogTemp, Log, TEXT("End"));
 }
 
 void APlayerCharacter::Attack()
@@ -127,16 +130,58 @@ void APlayerCharacter::Running(float DeltaTime)
 
 void APlayerCharacter::JumpStart()
 {
-	if (MainStateComponent->UseStamina(30.f))
+	if (!GetCharacterMovement()->IsFalling() && !Anim->IsCrouch)
 	{
-		this->Jump();
-		MainStateComponent->StaminaUseDelay = 1.5f;
+		if (MainStateComponent->UseStamina(30.f))
+		{
+			Jump();
+			MainStateComponent->StaminaUseDelay = 1.5f;
+		}
 	}
 }
 
 void APlayerCharacter::JumpEnd()
 {
-	this->StopJumping();
+	StopJumping();
+}
+
+void APlayerCharacter::DodgeAction()
+{
+	if (IsValid(Anim))
+	{
+		if (IsValid(DodgeMontage) && !Anim->Montage_IsPlaying(DodgeMontage))
+		{
+			Anim->Montage_Play(DodgeMontage, 1.f);
+			MainStateComponent->UseStamina(30.f);
+			MainStateComponent->StaminaUseDelay = 1.5f;
+		}
+	}
+}
+
+void APlayerCharacter::CrouchAction()
+{
+	if (IsValid(Anim))
+	{
+		if (Anim->IsCrouch)
+		{
+			FHitResult HitResult;
+			FVector Start = GetActorLocation();
+			FVector End = (UKismetMathLibrary::GetUpVector(GetActorRotation()) * 200.f) + GetActorLocation();
+			FCollisionQueryParams CollisionParams;
+			CollisionParams.AddIgnoredActor(this); 
+			bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
+			if (!Result)
+			{
+				Anim->IsCrouch = false;
+				GetCharacterMovement()->UnCrouch(true);
+			}
+		}
+		else
+		{
+			Anim->IsCrouch = true;
+			GetCharacterMovement()->Crouch(true);
+		}
+	}
 }
 
 void APlayerCharacter::UseItem(UItemObject* Item)

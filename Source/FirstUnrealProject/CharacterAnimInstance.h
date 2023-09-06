@@ -30,6 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 		bool	IsAttack;
 
+
 	UPROPERTY(VisibleAnywhere)
 		class ACustomCharacter* Character;
 	UPROPERTY(VisibleAnywhere)

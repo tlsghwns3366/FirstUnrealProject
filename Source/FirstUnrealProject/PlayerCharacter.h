@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsRun = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UAnimMontage* DodgeMontage;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,7 +49,7 @@ public:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
-		virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+		virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 public:
 
@@ -57,6 +60,8 @@ public:
 	void Running(float DeltaTime);
 	void JumpStart();
 	void JumpEnd();
+	void DodgeAction();
+	void CrouchAction();
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void UseItem(UItemObject* Item);
 
