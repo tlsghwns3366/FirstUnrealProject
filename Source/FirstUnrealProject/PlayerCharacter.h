@@ -34,9 +34,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsRun = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UAnimMontage* DodgeMontage;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -149,10 +149,20 @@ void APlayerCharacter::DodgeAction()
 {
 	if (IsValid(Anim))
 	{
-		if (IsValid(DodgeMontage) && !Anim->Montage_IsPlaying(DodgeMontage))
+		if (Anim->IsFalling)
+			return;
+		if (Anim->ForwardInput == 0 && Anim->SideInput == 0)
+			return;
+
+		if (MainStateComponent->UseStamina(30.f))
 		{
-			Anim->Montage_Play(DodgeMontage, 1.f);
-			MainStateComponent->UseStamina(30.f);
+			float DeshSize = 1000.f;
+			FRotator YawRotation(0, GetControlRotation().Yaw, 0);
+			FVector Input = FVector(Anim->ForwardInput, Anim->SideInput, 0.f);
+			Input = YawRotation.RotateVector(Input);
+			FVector LaunchVelocity = Input * DeshSize;
+			LaunchVelocity.Z = 150.f;
+			GetCharacterMovement()->Launch(LaunchVelocity);
 			MainStateComponent->StaminaUseDelay = 1.5f;
 		}
 	}
@@ -170,6 +180,7 @@ void APlayerCharacter::CrouchAction()
 			FCollisionQueryParams CollisionParams;
 			CollisionParams.AddIgnoredActor(this); 
 			bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
+			DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
 			if (!Result)
 			{
 				Anim->IsCrouch = false;

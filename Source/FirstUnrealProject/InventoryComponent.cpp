@@ -56,8 +56,14 @@ bool UInventoryComponent::AddItem(UItemObject* Item)
 
 bool UInventoryComponent::RemoveItem(UItemObject* Item)
 {
-	if (ItemInventory.Num() > 0)
+	if (Item != nullptr)
 	{
+		if (UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item))
+		{
+			MainStateComponent->SetEquip(nullptr, EquipItem->ItemEnum);
+			EquipInventory.RemoveSingle(EquipItem);
+			EquipItem->Equip = false;
+		}
 		Item->World = nullptr;
 		Item->Inventory = nullptr;
 		ItemInventory.RemoveSingle(Item);
