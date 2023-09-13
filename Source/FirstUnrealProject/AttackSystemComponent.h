@@ -57,4 +57,5 @@ public:
 	bool Attack();
 	void Trace();
 	void SetWeaponAttackMontage();
+	void StopAttack();
 };

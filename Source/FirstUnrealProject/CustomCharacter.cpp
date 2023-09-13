@@ -96,4 +96,8 @@ void ACustomCharacter::Interaction()
 	}
 }
 
+void ACustomCharacter::DodgeAction()
+{
+}
+
 

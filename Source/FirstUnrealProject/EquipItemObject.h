@@ -6,33 +6,6 @@
 #include "ItemObject.h"
 #include "EquipItemObject.generated.h"
 
-UENUM(BlueprintType)
-enum class EItemEnum : uint8
-{
-	E_None UMETA(DisplayName = "None"),
-	E_Equip_Helmet UMETA(DisplayName = "Helmet"),
-	E_Equip_Weapons UMETA(DisplayName = "Weapons"),
-	E_Equip_TopArmor UMETA(DisplayName = "TopArmor"),
-	E_Equip_BottomArmor UMETA(DisplayName = "BottomArmor"),
-	E_Equip_Boots UMETA(DisplayName = "Boots"),
-	E_Equip_Gloves UMETA(DisplayName = "Gloves"),
-	E_Equip_Ring_1 UMETA(DisplayName = "Ring_1"),
-	E_Equip_Ring_2 UMETA(DisplayName = "Ring_2"),
-};
-
-UENUM(BlueprintType)
-enum class EItemRank : uint8
-{
-	E_Rank_None UMETA(DisplayName = "None"),
-	E_Rank_Normal UMETA(DisplayName = "Normal"),
-	E_Rank_Magic UMETA(DisplayName = "Magic"),
-	E_Rank_Rare UMETA(DisplayName = "Rare"),
-	E_Rank_Epic UMETA(DisplayName = "Epic"),
-	E_Rank_Unique UMETA(DisplayName = "Unique"),
-	E_Rank_Legendary UMETA(DisplayName = "Legendary"),
-	E_Rank_Mythic UMETA(DisplayName = "Mythic")
-};
-
 USTRUCT(BlueprintType)
 struct FEquipItemInfo
 {
@@ -100,13 +73,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		bool Equip = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-		EItemEnum ItemEnum = EItemEnum::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		FString EquipDescription = "";
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		FEquipItemInfo EquipItemState;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void OnUse_Implementation(class ACustomCharacter* Character) override;

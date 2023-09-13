@@ -4,7 +4,8 @@
 #include "Weapon.h"
 #include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "EquipItemObject.h"
+#include "WeaponEquipItemObject.h"
+
 
 // Sets default values
 AWeapon::AWeapon()
@@ -28,10 +29,6 @@ AWeapon::AWeapon()
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	if (EquipItem != nullptr)
-	{
-		StaticMesh->SetStaticMesh(EquipItem->StaticMesh);
-	}
 }
 
 // Called every frame
@@ -39,5 +36,18 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AWeapon::WeaponInitialize_Implementation(UWeaponEquipItemObject* Item)
+{
+	EquipItem = Cast<UWeaponEquipItemObject>(Item);
+	if (EquipItem != nullptr)
+	{
+		StaticMesh->SetStaticMesh(EquipItem->StaticMesh);
+		StaticMesh->SetRelativeTransform(EquipItem->StaticMeshTransform);
+		StartPoint->SetRelativeTransform(EquipItem->StartPoint);
+		EndPoint->SetRelativeTransform(EquipItem->EndPoint);
+		CharacterAttackMontage = EquipItem->CharacterAttackMontage;
+	}
 }
 

@@ -2,6 +2,9 @@
 
 
 #include "CharacterStateComponent.h"
+#include "Weapon.h"
+#include "WeaponEquipItemObject.h"
+#include "CustomCharacter.h"
 
 // Sets default values for this component's properties
 UCharacterStateComponent::UCharacterStateComponent()
@@ -97,10 +100,7 @@ UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
 	case EItemEnum::E_Equip_Gloves:
 		EquippedItem = Gloves;
 		break;
-	case EItemEnum::E_Equip_Ring_1:
-		EquippedItem = Ring_1;
-		break;
-	case EItemEnum::E_Equip_Ring_2:
+	case EItemEnum::E_Equip_Ring:
 		EquippedItem = Ring_2;
 		break;
 	}
@@ -118,6 +118,10 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 		break;
 	case EItemEnum::E_Equip_Weapons:
 		Weapons_1 = Item;
+		if (Weapons_1 != nullptr)
+		{
+			EquipItemSpawn(Weapons_1);
+		}
 		SetEquipState();
 		return true;
 		break;
@@ -141,13 +145,21 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 		SetEquipState();
 		return true;
 		break;
-	case EItemEnum::E_Equip_Ring_1:
-		Ring_1 = Item;
-		SetEquipState();
-		return true;
-		break;
-	case EItemEnum::E_Equip_Ring_2:
-		Ring_2 = Item;
+	case EItemEnum::E_Equip_Ring:
+		if (Item == nullptr)
+		{
+			if (Ring_1 != nullptr && Ring_2 == nullptr)
+				Ring_1 = Item;
+			else
+				Ring_2 = Item;
+		}
+		else
+		{
+			if (Ring_1 == nullptr)
+				Ring_1 = Item;
+			else
+				Ring_2 = Item;
+		}
 		SetEquipState();
 		return true;
 		break;
@@ -200,5 +212,41 @@ void UCharacterStateComponent::StaminaRegen(float DeltaTime)
 	{
 		CurrentStamina = FMath::Lerp(CurrentStamina, CurrentStamina + FinalState.StaminaRegen, DeltaTime);
 	}
+	if (CurrentStamina > TargetStamina)
+		CurrentStamina = TargetStamina;
 	OnStaminaUpdated.Broadcast();
+}
+
+void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
+{
+	ACustomCharacter* Character = Cast<ACustomCharacter>(GetOwner());
+	switch (Item->ItemEnum)
+	{
+	case EItemEnum::E_Equip_Helmet:
+		break;
+	case EItemEnum::E_Equip_Weapons:
+	{
+		UWeaponEquipItemObject* WeaponItem = Cast<UWeaponEquipItemObject>(Item);
+
+		if (IsValid(WeaponItem))
+		{
+			FVector ActorLocation = GetOwner()->GetActorLocation();
+			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(WeaponItem->AttachSocket);
+			AWeapon* AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(AttachedWeapon->StaticClass(), WeaponSocketTransform);
+			AttachedWeapon->WeaponInitialize(WeaponItem);
+			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponItem->AttachSocket);
+		}
+	}
+		break;
+	case EItemEnum::E_Equip_TopArmor:
+		break;
+	case EItemEnum::E_Equip_BottomArmor:
+		break;
+	case EItemEnum::E_Equip_Boots:
+		break;
+	case EItemEnum::E_Equip_Gloves:
+		break;
+	default:
+		break;
+	}
 }

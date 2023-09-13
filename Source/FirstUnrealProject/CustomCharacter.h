@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "CustomCharacter.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE(FStopAttack);
+
 UCLASS()
 class FIRSTUNREALPROJECT_API ACustomCharacter : public ACharacter
 {
@@ -32,6 +35,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction");
 		float TraceDistance;
+
+		FStopAttack StopAttack;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -50,4 +55,5 @@ public:
 	virtual void Attack();
 	virtual void OnHitActor();
 	virtual void Interaction();
+	virtual void DodgeAction();
 };

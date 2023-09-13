@@ -6,6 +6,7 @@
 #include "CustomCharacter.h"
 #include "PlayerCharacter.generated.h"
 
+
 UCLASS()
 class FIRSTUNREALPROJECT_API APlayerCharacter : public ACustomCharacter
 {
@@ -34,6 +35,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsRun = false;
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -57,7 +59,7 @@ public:
 	void Running(float DeltaTime);
 	void JumpStart();
 	void JumpEnd();
-	void DodgeAction();
+	void DodgeAction() override;
 	void CrouchAction();
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void UseItem(UItemObject* Item);

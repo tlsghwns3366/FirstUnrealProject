@@ -163,4 +163,5 @@ public:
 	virtual void SetEquipState();
 	virtual void HpMpRegen(float DeltaTime);
 	virtual void StaminaRegen(float DeltaTime);
+	virtual void EquipItemSpawn(UEquipItemObject* Item);
 };

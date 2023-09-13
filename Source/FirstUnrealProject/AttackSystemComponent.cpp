@@ -13,6 +13,9 @@
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
 #include "CharacterAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "WeaponEquipItemObject.h"
+
 
 // Sets default values for this component's properties
 UAttackSystemComponent::UAttackSystemComponent()
@@ -28,11 +31,15 @@ void UAttackSystemComponent::BeginPlay()
 	Super::BeginPlay();
 	Character = Cast<ACustomCharacter>(GetOwner());
 	AnimInstance = Cast<UCharacterAnimInstance>(Character->GetMesh()->GetAnimInstance());
-	if (AnimInstance)
+	if (IsValid(AnimInstance))
 	{
 		AnimInstance->OnAttackHit.AddUObject(this, &UAttackSystemComponent::Trace);
 		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UAttackSystemComponent::OnNotifyBeginReceived);
 		AnimInstance->OnMontageEnded.AddDynamic(this, &UAttackSystemComponent::OnAttackMontageEnded);
+	}
+	if (IsValid(Character))
+	{
+		Character->StopAttack.AddUObject(this, &UAttackSystemComponent::StopAttack);
 	}
 }
 
@@ -48,7 +55,7 @@ void UAttackSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
 	AttackWeapon->WeaponAction();
-	Character->MainStateComponent->UseStamina(AttackWeapon->StaminaCost);
+	Character->MainStateComponent->UseStamina(AttackWeapon->EquipItem->StaminaCost);
 	Character->MainStateComponent->StaminaUseDelay = 1.5f;
 	UseStamaina = 0.f;
 	AttackIndex--;
@@ -62,7 +69,7 @@ void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBran
 
 bool UAttackSystemComponent::PlayAttackMontage(UAnimMontage* AttackMontage)
 {
-	AttackWeapon->WeaponInitialize();
+	AttackWeapon->WeaponInitialize(AttackWeapon->EquipItem);
 	const float PlayRate = 1.0f;
 	bool bPlayedSuccessfully = Character->PlayAnimMontage(AttackMontage, PlayRate) > 0.0f;
 	if (bPlayedSuccessfully)
@@ -87,12 +94,12 @@ bool UAttackSystemComponent::Attack()
 	SetWeaponAttackMontage();
 	if (!IsValid(AttackWeapon))
 		return false;
-	if (Character->MainStateComponent->CurrentStamina < AttackWeapon->StaminaCost + UseStamaina)
+	if (Character->MainStateComponent->CurrentStamina < AttackWeapon->EquipItem->StaminaCost + UseStamaina)
 	{
 		AttackIndex = 0;
 		return false;
 	}
-	UseStamaina = AttackWeapon->StaminaCost;
+	UseStamaina = AttackWeapon->EquipItem->StaminaCost;
 
 	if (AnimInstance != nullptr)
 	{
@@ -169,4 +176,9 @@ void UAttackSystemComponent::SetWeaponAttackMontage()
 		if (AttackWeapon != nullptr && AttackWeapon->CharacterAttackMontage.Num() > 0)
 			WeaponAttackMontage = AttackWeapon->CharacterAttackMontage[0];
 	}
+}
+
+void UAttackSystemComponent::StopAttack()
+{
+	Character->StopAnimMontage(WeaponAttackMontage);
 }

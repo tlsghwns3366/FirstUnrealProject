@@ -154,6 +154,7 @@ void APlayerCharacter::DodgeAction()
 		if (Anim->ForwardInput == 0 && Anim->SideInput == 0)
 			return;
 
+		StopAttack.Broadcast();
 		if (MainStateComponent->UseStamina(30.f))
 		{
 			float DeshSize = 1000.f;

@@ -60,9 +60,12 @@ bool UInventoryComponent::RemoveItem(UItemObject* Item)
 	{
 		if (UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item))
 		{
-			MainStateComponent->SetEquip(nullptr, EquipItem->ItemEnum);
-			EquipInventory.RemoveSingle(EquipItem);
-			EquipItem->Equip = false;
+			if (EquipItem->Equip)
+			{
+				MainStateComponent->SetEquip(nullptr, EquipItem->ItemEnum);
+				EquipInventory.RemoveSingle(EquipItem);
+				EquipItem->Equip = false;
+			}
 		}
 		Item->World = nullptr;
 		Item->Inventory = nullptr;
