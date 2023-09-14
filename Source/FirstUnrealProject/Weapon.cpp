@@ -23,6 +23,7 @@ AWeapon::AWeapon()
 	StartPoint->SetupAttachment(StaticMesh);
 	EndPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("EndPoint"));
 	EndPoint->SetupAttachment(StaticMesh);
+
 }
 
 // Called when the game starts or when spawned
@@ -50,4 +51,3 @@ void AWeapon::WeaponInitialize_Implementation(UWeaponEquipItemObject* Item)
 		CharacterAttackMontage = EquipItem->CharacterAttackMontage;
 	}
 }
-

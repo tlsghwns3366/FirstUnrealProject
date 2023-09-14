@@ -35,6 +35,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsRun = false;
 
+	AActor* FocusedActor;;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -53,15 +55,19 @@ public:
 public:
 
 	virtual void Attack() override;
+	void DodgeAction() override;
+	virtual void Interaction() override;
 
 	bool SetIsRunTrue();
 	void SetIsRunFalse();
 	void Running(float DeltaTime);
 	void JumpStart();
 	void JumpEnd();
-	void DodgeAction() override;
 	void CrouchAction();
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void UseItem(UItemObject* Item);
+	void ForwardTrace();
+	void StartFocus(AActor* TraceActor);
+	void EndFocus(AActor* TraceActor);
 
 };

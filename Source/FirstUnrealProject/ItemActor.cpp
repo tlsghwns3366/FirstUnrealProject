@@ -4,6 +4,8 @@
 #include "ItemActor.h"
 #include "ItemObject.h"
 #include "InventoryComponent.h"
+#include "Components/WidgetComponent.h"
+
 // Sets default values
 AItemActor::AItemActor()
 {
@@ -15,6 +17,17 @@ AItemActor::AItemActor()
 	{
 		StaticMesh->SetOverlayMaterial(FoundMaterial.Object);
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget>BlueprintWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WBP_PickUpIcon.WBP_PickUpIcon_C'"));
+	if (BlueprintWidget.Succeeded())
+	{
+		Widget = BlueprintWidget.Class;
+	}
+	PickUpWidget = CreateWidget<UUserWidget>(GetWorld(), Widget);
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetWidget(PickUpWidget);
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	WidgetComponent->SetupAttachment(StaticMesh);
+	WidgetComponent->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -48,4 +61,19 @@ void AItemActor::Iteminitialization(UItemObject* _Item)
 		StaticMesh->SetStaticMesh(Item->StaticMesh);
 		StaticMesh->SetSimulatePhysics(true);
 	}
+}
+
+void AItemActor::OnInteract_Implementation(AActor* Caller)
+{
+}
+
+void AItemActor::StartFocus_Implementation()
+{
+	WidgetComponent->SetVisibility(true);
+}
+
+
+void AItemActor::EndFocus_Implementation()
+{
+	WidgetComponent->SetVisibility(false);
 }

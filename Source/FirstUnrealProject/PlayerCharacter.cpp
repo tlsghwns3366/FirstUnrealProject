@@ -80,6 +80,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		Running(DeltaTime);
 	if(Anim->ForwardInput != 0 || Anim->SideInput != 0)
 		SetActorRotation(FRotator(0.f,UKismetMathLibrary::RInterpTo(GetActorRotation(), GetController()->GetControlRotation(), DeltaTime,0.f).Yaw,0.f));
+	ForwardTrace();
 }
 
 // Called to bind functionality to input
@@ -153,17 +154,18 @@ void APlayerCharacter::DodgeAction()
 			return;
 		if (Anim->ForwardInput == 0 && Anim->SideInput == 0)
 			return;
-
+		Anim->Montage_Stop(0.f,AttackSystemComponent->WeaponAttackMontage);
 		StopAttack.Broadcast();
 		if (MainStateComponent->UseStamina(30.f))
 		{
-			float DeshSize = 1000.f;
+			float DeshSize = 700.f;
 			FRotator YawRotation(0, GetControlRotation().Yaw, 0);
 			FVector Input = FVector(Anim->ForwardInput, Anim->SideInput, 0.f);
 			Input = YawRotation.RotateVector(Input);
 			FVector LaunchVelocity = Input * DeshSize;
 			LaunchVelocity.Z = 150.f;
-			GetCharacterMovement()->Launch(LaunchVelocity);
+			GetCharacterMovement()->AddImpulse(LaunchVelocity, true);
+			//GetCharacterMovement()->Launch(LaunchVelocity);
 			MainStateComponent->StaminaUseDelay = 1.5f;
 		}
 	}
@@ -201,5 +203,80 @@ void APlayerCharacter::UseItem(UItemObject* Item)
 	if (Item)
 	{
 		Item->OnUse(this);
+	}
+}
+
+void APlayerCharacter::ForwardTrace()
+{
+	FVector Loc;
+	FRotator Rot;
+	FHitResult HitResult;
+	GetController()->GetPlayerViewPoint(Loc, Rot);
+
+	FVector Start = Loc;
+	FVector End = Start + (Rot.Vector() * TraceDistance);
+
+	FCollisionQueryParams TraceParams;
+	bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, TraceParams);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+
+	if (Result)
+	{
+		AActor* Interactable = HitResult.GetActor();
+		if (Interactable)
+		{
+			if (FocusedActor != Interactable)
+			{
+				if (FocusedActor)
+				{
+					EndFocus(FocusedActor);
+				}
+				StartFocus(Interactable);
+				FocusedActor = Interactable;
+			}
+		}
+		else
+		{
+			if (FocusedActor)
+			{
+				EndFocus(FocusedActor);
+			}
+			FocusedActor = nullptr;
+		}
+	}
+	else
+	{
+		EndFocus(FocusedActor);
+		FocusedActor = nullptr;
+	}
+}
+
+void APlayerCharacter::StartFocus(AActor* TraceActor)
+{
+	IInteractionInterface* Interface = Cast<IInteractionInterface>(TraceActor);
+	if (Interface)
+	{
+		Interface->Execute_StartFocus(TraceActor);
+	}
+}
+
+void APlayerCharacter::EndFocus(AActor* TraceActor)
+{
+	IInteractionInterface* Interface = Cast<IInteractionInterface>(TraceActor);
+	if (Interface)
+	{
+		Interface->Execute_EndFocus(TraceActor);
+	}
+}
+
+
+void APlayerCharacter::Interaction()
+{
+	if (IsValid(FocusedActor))
+	{
+		if (AItemActor* Item = Cast< AItemActor>(FocusedActor))
+		{
+			Item->AddInventory(InventoryComponent);
+		}
 	}
 }

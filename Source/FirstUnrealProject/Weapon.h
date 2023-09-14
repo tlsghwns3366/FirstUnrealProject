@@ -62,4 +62,5 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void WeaponInitialize(UWeaponEquipItemObject* Item);
 	virtual void WeaponInitialize_Implementation(UWeaponEquipItemObject* Item);
+
 };

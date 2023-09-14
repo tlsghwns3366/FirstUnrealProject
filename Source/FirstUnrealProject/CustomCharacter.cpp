@@ -73,27 +73,6 @@ void ACustomCharacter::OnHitActor()
 
 void ACustomCharacter::Interaction()
 {
-	FVector Loc;
-	FRotator Rot;
-	FHitResult HitResult;
-	GetController()->GetPlayerViewPoint(Loc, Rot);
-
-	FVector Start = Loc;
-	FVector End = Start + (Rot.Vector() * TraceDistance);
-
-	FCollisionQueryParams TraceParams;
-	bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, TraceParams);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
-
-	if (Result)
-	{
-		AActor* Interactable = HitResult.GetActor();
-
-		if (AItemActor* Item = Cast< AItemActor>(Interactable))
-		{
-			Item->AddInventory(InventoryComponent);
-		}
-	}
 }
 
 void ACustomCharacter::DodgeAction()
