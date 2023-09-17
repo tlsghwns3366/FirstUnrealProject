@@ -54,6 +54,7 @@ void UDamageComponent::DamageTaken(float Damage, FColor Color)
 	ADamageActor* DamageActor = GetWorld()->SpawnActor<ADamageActor>(DamageActor->StaticClass(), Location, FRotator::ZeroRotator);
 	DamageActor->SetDamage(Damage);
 	DamageActor->SetColor(Color);
+	DamageActor->SetRandomPosition();
 }
 
 void UDamageComponent::OnPhysical(float Damage)

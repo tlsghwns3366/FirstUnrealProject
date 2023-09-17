@@ -126,8 +126,8 @@ public:
 		class UEquipItemObject* Ring_1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Ring_2;
-
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
+		class AWeapon* AttachedWeapon;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		FEquipItemInfo CharacterEquipItemState;
 

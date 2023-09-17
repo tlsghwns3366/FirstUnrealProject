@@ -122,6 +122,11 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 		{
 			EquipItemSpawn(Weapons_1);
 		}
+		else
+		{
+			if (AttachedWeapon != nullptr)
+				AttachedWeapon->Destroy();
+		}
 		SetEquipState();
 		return true;
 		break;
@@ -230,9 +235,12 @@ void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
 
 		if (IsValid(WeaponItem))
 		{
+			if (AttachedWeapon != nullptr)
+				AttachedWeapon->Destroy();
+
 			FVector ActorLocation = GetOwner()->GetActorLocation();
 			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(WeaponItem->AttachSocket);
-			AWeapon* AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(AttachedWeapon->StaticClass(), WeaponSocketTransform);
+			AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(AttachedWeapon->StaticClass(), WeaponSocketTransform);
 			AttachedWeapon->WeaponInitialize(WeaponItem);
 			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponItem->AttachSocket);
 		}

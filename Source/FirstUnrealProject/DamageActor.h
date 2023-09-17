@@ -34,5 +34,6 @@ public:
 public:
 	void SetDamage(float Damage);
 	void SetColor(FColor Color);
+	void SetRandomPosition();
 
 };

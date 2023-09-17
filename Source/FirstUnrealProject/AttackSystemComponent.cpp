@@ -180,5 +180,5 @@ void UAttackSystemComponent::SetWeaponAttackMontage()
 
 void UAttackSystemComponent::StopAttack()
 {
-	Character->StopAnimMontage(WeaponAttackMontage);
+	AnimInstance->Montage_Stop(0.f, WeaponAttackMontage);
 }

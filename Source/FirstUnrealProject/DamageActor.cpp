@@ -52,3 +52,8 @@ void ADamageActor::SetColor(FColor Color)
 {
 	DamageWidget->SetTextColor(Color);
 }
+
+void ADamageActor::SetRandomPosition()
+{
+	DamageWidget->SetRandomPosition();
+}

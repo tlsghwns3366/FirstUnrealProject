@@ -154,16 +154,17 @@ void APlayerCharacter::DodgeAction()
 			return;
 		if (Anim->ForwardInput == 0 && Anim->SideInput == 0)
 			return;
-		Anim->Montage_Stop(0.f,AttackSystemComponent->WeaponAttackMontage);
 		StopAttack.Broadcast();
-		if (MainStateComponent->UseStamina(30.f))
+		if (MainStateComponent->UseStamina(50.f))
 		{
-			float DeshSize = 700.f;
+			float DeshSize = 1000.f;
 			FRotator YawRotation(0, GetControlRotation().Yaw, 0);
 			FVector Input = FVector(Anim->ForwardInput, Anim->SideInput, 0.f);
+			if ((Anim->ForwardInput == 1 || Anim->ForwardInput == -1) && (Anim->SideInput == 1 || Anim->SideInput == -1))
+				Input = Input * 0.5f;
 			Input = YawRotation.RotateVector(Input);
 			FVector LaunchVelocity = Input * DeshSize;
-			LaunchVelocity.Z = 150.f;
+			LaunchVelocity.Z = 100.f;
 			GetCharacterMovement()->AddImpulse(LaunchVelocity, true);
 			//GetCharacterMovement()->Launch(LaunchVelocity);
 			MainStateComponent->StaminaUseDelay = 1.5f;
