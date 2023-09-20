@@ -65,6 +65,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 		float DropChance;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		float CoolTime = 1.0f;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		EItemRank ItemRank = EItemRank::E_Rank_Normal;

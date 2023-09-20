@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsRun = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UQuickSlotComponent* QuickSlotComponent;
+
 	AActor* FocusedActor;;
 
 

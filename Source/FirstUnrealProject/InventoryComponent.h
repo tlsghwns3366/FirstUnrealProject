@@ -54,9 +54,4 @@ public:
 	virtual bool AddItem(class UItemObject* Item);
 	UFUNCTION(BlueprintCallable)
 	virtual bool RemoveItem(class UItemObject* Item);
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool EquipItem(class UEquipItemObject* Item);
-	UFUNCTION(BlueprintCallable)
-	virtual bool UnEquipItem(UEquipItemObject* Item);
 };

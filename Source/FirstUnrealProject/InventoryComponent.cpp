@@ -76,39 +76,3 @@ bool UInventoryComponent::RemoveItem(UItemObject* Item)
 	else
 		return false;
 }
-
-bool UInventoryComponent::EquipItem(UEquipItemObject* Item)
-{
-	if (!Item->Equip)
-	{
-		if (MainStateComponent != nullptr && MainStateComponent->GetEquip(Item) != nullptr)
-		{
-			if (Item->ItemEnum == MainStateComponent->GetEquip(Item)->ItemEnum)
-			{
-				UnEquipItem(MainStateComponent->GetEquip(Item));
-			}
-		}
-		Item->Equip = true;
-		MainStateComponent->SetEquip(Item, Item->ItemEnum);
-		ItemInventory.RemoveSingle(Item);
-		EquipInventory.Add(Item);
-		OnInventoryUpdated.Broadcast();
-		return true;
-	}
-	else
-		return false;
-}
-bool UInventoryComponent::UnEquipItem(UEquipItemObject* Item)
-{
-	if (Item->Equip)
-	{
-		MainStateComponent->SetEquip(nullptr, Item->ItemEnum);
-		Item->Equip = false;
-		EquipInventory.RemoveSingle(Item);
-		ItemInventory.Add(Item);
-		OnInventoryUpdated.Broadcast();
-		return true;
-	}
-	else
-		return false;
-}

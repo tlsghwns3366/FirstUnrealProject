@@ -79,9 +79,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		FEquipItemInfo EquipItemState;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UCharacterStateComponent* MainStateComponent;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void OnUse_Implementation(class ACustomCharacter* Character) override;
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void SetDescription();
+
+		virtual bool EquipItem(class UEquipItemObject* Item);
+		virtual bool UnEquipItem(UEquipItemObject* Item);
+
 };

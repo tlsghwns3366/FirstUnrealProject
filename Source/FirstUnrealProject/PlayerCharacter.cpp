@@ -16,6 +16,7 @@
 #include "AttackSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
+#include "QuickSlotComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -27,6 +28,7 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstance(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	QuickSlotComponent = CreateDefaultSubobject<UQuickSlotComponent>("QuickSlotComponent");
 
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 	if (SkeletalMesh.Succeeded())
@@ -59,6 +61,7 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetAnimClass(AnimInstance.Class);
 	}
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
 }
 
 // Called when the game starts or when spawned

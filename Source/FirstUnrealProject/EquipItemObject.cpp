@@ -2,7 +2,9 @@
 
 
 #include "EquipItemObject.h"
+#include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
+#include "InventoryComponent.h"
 
 UEquipItemObject::UEquipItemObject()
 {
@@ -10,7 +12,18 @@ UEquipItemObject::UEquipItemObject()
 
 void UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 {
-
+	if (IsValid(Character))
+	{
+		MainStateComponent = Character->MainStateComponent;
+	}
+	if (!Equip)
+	{
+		EquipItem(this);
+	}
+	else
+	{
+		UnEquipItem(this);
+	}
 }
 
 void UEquipItemObject::SetDescription()
@@ -32,4 +45,41 @@ void UEquipItemObject::SetDescription()
 		EquipDescription += FString::Printf(TEXT("CriticalDamage + %.1f\n"), EquipItemState.AddCriticalDamage);
 	if (EquipItemState.AddDodgeChance != 0)
 		EquipDescription += FString::Printf(TEXT("DodgeChance + %.1f\n"), EquipItemState.AddDodgeChance);
+}
+
+bool UEquipItemObject::EquipItem(UEquipItemObject* Item)
+{
+	if (!Item->Equip)
+	{
+		if (MainStateComponent != nullptr && MainStateComponent->GetEquip(Item) != nullptr)
+		{
+			if (Item->ItemEnum == MainStateComponent->GetEquip(Item)->ItemEnum)
+			{
+				UnEquipItem(MainStateComponent->GetEquip(Item));
+			}
+		}
+		Item->Equip = true;
+		MainStateComponent->SetEquip(Item, Item->ItemEnum);
+		Item->Inventory->ItemInventory.RemoveSingle(Item);
+		Item->Inventory->EquipInventory.Add(Item);
+		Item->Inventory->OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	else
+		return false;
+}
+
+bool UEquipItemObject::UnEquipItem(UEquipItemObject* Item)
+{
+	if (Item->Equip)
+	{
+		MainStateComponent->SetEquip(nullptr, Item->ItemEnum);
+		Item->Equip = false;
+		Item->Inventory->EquipInventory.RemoveSingle(Item);
+		Item->Inventory->ItemInventory.Add(Item);
+		Item->Inventory->OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	else
+		return false;
 }
