@@ -74,7 +74,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool TargetLook;
 
-	class AEnemyCharacter* TargetActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class AEnemyCharacter* TargetActor;
 
 public:
 	AMainPlayerController();

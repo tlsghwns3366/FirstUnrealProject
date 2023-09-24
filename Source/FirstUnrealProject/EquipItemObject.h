@@ -83,7 +83,6 @@ public:
 		class UCharacterStateComponent* MainStateComponent;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void OnUse_Implementation(class ACustomCharacter* Character) override;
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void SetDescription();

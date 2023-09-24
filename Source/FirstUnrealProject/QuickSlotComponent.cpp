@@ -8,7 +8,7 @@ UQuickSlotComponent::UQuickSlotComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -17,7 +17,7 @@ UQuickSlotComponent::UQuickSlotComponent()
 // Called when the game starts
 void UQuickSlotComponent::BeginPlay()
 {
-	Super::BeginPlay(); 
+	Super::BeginPlay();
 	QuickSlot.SetNum(10);
 	// ...
 }
@@ -31,14 +31,26 @@ void UQuickSlotComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
-void UQuickSlotComponent::AddObject(int32 Num,UObject* Object)
+bool UQuickSlotComponent::AddObject(int32 Num, UObject* Object)
 {
-	QuickSlot.Insert(Object, Num);
-	QuickSlotUpdste.Broadcast();
+	int32 FindIndex = QuickSlot.Find(Object);
+	if (FindIndex == -1)
+	{
+		QuickSlot[Num] = Object;
+		QuickSlotUpdste.Broadcast();
+		return true;
+	}
+	else
+	{
+		RemoveObject(QuickSlot.Find(Object));
+		QuickSlot[Num] = Object;
+		QuickSlotUpdste.Broadcast();
+		return true;
+	}
 }
 
 void UQuickSlotComponent::RemoveObject(int32 Num)
 {
-	QuickSlot.RemoveAt(Num);
+	QuickSlot[Num] = nullptr;
 	QuickSlotUpdste.Broadcast();
 }

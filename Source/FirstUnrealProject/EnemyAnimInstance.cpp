@@ -10,7 +10,7 @@
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-	if(IsValid(Character))
+	if (IsValid(Character))
 		EnemyController = Cast<AEnemyAIController>(Character->GetController());
 }
 
@@ -19,7 +19,7 @@ void UEnemyAnimInstance::NativeBeginPlay()
 	Super::NativeBeginPlay();
 }
 
-void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)	
+void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	if (IsValid(Character))

@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UInventoryComponent* InventoryComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UCoolDownComponent* CoolDownComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction");
 		float TraceDistance;
 

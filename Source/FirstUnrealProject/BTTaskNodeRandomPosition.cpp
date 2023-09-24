@@ -22,12 +22,13 @@ EBTNodeResult::Type UBTTaskNodeRandomPosition::ExecuteTask(UBehaviorTreeComponen
 		if (NavSystem != nullptr)
 		{
 			FNavLocation RandomLocation; 
-			if (NavSystem->GetRandomPointInNavigableRadius(CurrentPawn->GetActorLocation(), 500.f, RandomLocation))
+			auto Location = OwnerComp.GetBlackboardComponent()->GetValueAsVector(FName(TEXT("StartPosition")));
+			if (NavSystem->GetRandomPointInNavigableRadius(Location, 500.f, RandomLocation))
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsVector(FName(TEXT("RandomPosition")), RandomLocation.Location);
 				return EBTNodeResult::Succeeded;
 			}
 		}
 	}
-	return EBTNodeResult::Type();
+	return EBTNodeResult::Failed;
 }

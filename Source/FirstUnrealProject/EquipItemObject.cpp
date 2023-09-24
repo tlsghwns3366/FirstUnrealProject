@@ -5,25 +5,38 @@
 #include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
 #include "InventoryComponent.h"
-
+#include "CoolDownComponent.h"
 UEquipItemObject::UEquipItemObject()
 {
 }
 
 void UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 {
-	if (IsValid(Character))
-	{
-		MainStateComponent = Character->MainStateComponent;
-	}
-	if (!Equip)
-	{
-		EquipItem(this);
-	}
+	if (IsUse)
+		return;
 	else
 	{
-		UnEquipItem(this);
+		ICoolTimeInterface* Interface = Cast<ICoolTimeInterface>(this);
+		if (Interface)
+		{
+			Interface->Execute_StartCooldown(this,CoolTime);
+		}
+		IsUse = true;
+		if (IsValid(Character))
+		{
+			MainStateComponent = Character->MainStateComponent;
+			Character->CoolDownComponent->AddCoolDownObject(this);
+		}
+		if (!Equip)
+		{
+			EquipItem(this);
+		}
+		else
+		{
+			UnEquipItem(this);
+		}
 	}
+
 }
 
 void UEquipItemObject::SetDescription()

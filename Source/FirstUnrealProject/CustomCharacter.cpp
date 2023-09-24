@@ -13,6 +13,7 @@
 #include "AttackSystemComponent.h"
 #include "InventoryComponent.h"
 #include "ItemActor.h"
+#include "CoolDownComponent.h"
 
 // Sets default values
 ACustomCharacter::ACustomCharacter()
@@ -23,6 +24,7 @@ ACustomCharacter::ACustomCharacter()
 	MainStateComponent = CreateDefaultSubobject<UCharacterStateComponent>(TEXT("MainStateComponent"));
 	AttackSystemComponent = CreateDefaultSubobject< UAttackSystemComponent>(TEXT("AttackSystemComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	CoolDownComponent = CreateDefaultSubobject<UCoolDownComponent>(TEXT("CoolDownComponent"));
 
 	TraceDistance = 2000;
 }

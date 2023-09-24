@@ -8,12 +8,12 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FQuickSlotUpdated);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIRSTUNREALPROJECT_API UQuickSlotComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UQuickSlotComponent();
 public:
@@ -26,13 +26,14 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	void AddObject(int32 Num,UObject* Object);
+		bool AddObject(int32 Num, UObject* Object);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveObject(int32 Num);
+		void RemoveObject(int32 Num);
+
 };

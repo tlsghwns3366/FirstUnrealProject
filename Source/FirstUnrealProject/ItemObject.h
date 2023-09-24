@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "CoolTimeInterface.h"
 #include "ItemObject.generated.h"
 
 UENUM(BlueprintType)
@@ -36,10 +37,10 @@ enum class EItemEnum : uint8
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced)
-class FIRSTUNREALPROJECT_API UItemObject : public UObject
+class FIRSTUNREALPROJECT_API UItemObject : public UObject, public ICoolTimeInterface
 {
 	GENERATED_BODY()
 public:
@@ -47,7 +48,7 @@ public:
 public:
 
 	UPROPERTY(Transient)
-	class UWorld* World;
+		class UWorld* World;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 		FString UseActionText = "";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
@@ -65,8 +66,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 		float DropChance;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Time")
 		float CoolTime = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Time")
+		float CurrentCoolTime = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Time")
+		bool IsUse = false;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
@@ -77,8 +82,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 		class UInventoryComponent* Inventory;
-	
+
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+		void StartCooldown(float CooldownTime);
+	virtual void StartCooldown_Implementation(float CooldownTime);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+		void EndCooldown();
+	virtual void EndCooldown_Implementation();
+
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")
 		void OnUse(class ACustomCharacter* Character);
+	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void OnUse_Implementation(class ACustomCharacter* Character);
 };
