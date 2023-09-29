@@ -36,4 +36,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void RemoveObject(int32 Num);
 
+	void UseSlot(int32 Num);
+
 };

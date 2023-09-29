@@ -3,7 +3,7 @@
 
 #include "CharacterStateComponent.h"
 #include "Weapon.h"
-#include "WeaponEquipItemObject.h"
+#include "EquipItemObject.h"
 #include "CustomCharacter.h"
 
 // Sets default values for this component's properties
@@ -50,15 +50,21 @@ void UCharacterStateComponent::SetState()
 	FinalState = CharacterState + CharacterEquipItemState;
 }
 
-void UCharacterStateComponent::SetHp(float NewHp)
+bool UCharacterStateComponent::SetHp(float NewHp)
 {
 	CurrentHp = NewHp;
 	if (CurrentHp <= 0.f)
 	{
 		IsDie = true;
 		CurrentHp = 0.f;
+		OnHpbarUpdated.Broadcast();
+		return false;
 	}
-	OnHpbarUpdated.Broadcast();
+	else
+	{
+		OnHpbarUpdated.Broadcast();
+		return true;
+	}
 }
 
 bool UCharacterStateComponent::UseStamina(float Amount)
@@ -67,6 +73,7 @@ bool UCharacterStateComponent::UseStamina(float Amount)
 	{
 		CurrentStamina -= Amount;
 		OnStaminaUpdated.Broadcast();
+		StaminaUseDelay = 1.5f;
 		return true;
 	}
 	else
@@ -231,18 +238,16 @@ void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
 		break;
 	case EItemEnum::E_Equip_Weapons:
 	{
-		UWeaponEquipItemObject* WeaponItem = Cast<UWeaponEquipItemObject>(Item);
-
-		if (IsValid(WeaponItem))
+		UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item);
+		if (IsValid(EquipItem))
 		{
 			if (AttachedWeapon != nullptr)
 				AttachedWeapon->Destroy();
 
 			FVector ActorLocation = GetOwner()->GetActorLocation();
-			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(WeaponItem->AttachSocket);
-			AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(AttachedWeapon->StaticClass(), WeaponSocketTransform);
-			AttachedWeapon->WeaponInitialize(WeaponItem);
-			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponItem->AttachSocket);
+			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(EquipItem->AttachSocket);
+			AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(EquipItem->WeaponBlueprint);
+			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, EquipItem->AttachSocket);
 		}
 	}
 		break;

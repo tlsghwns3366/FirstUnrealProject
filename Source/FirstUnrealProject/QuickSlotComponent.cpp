@@ -2,6 +2,8 @@
 
 
 #include "QuickSlotComponent.h"
+#include "EquipItemObject.h"
+#include "CustomCharacter.h"
 
 // Sets default values for this component's properties
 UQuickSlotComponent::UQuickSlotComponent()
@@ -53,4 +55,16 @@ void UQuickSlotComponent::RemoveObject(int32 Num)
 {
 	QuickSlot[Num] = nullptr;
 	QuickSlotUpdste.Broadcast();
+}
+
+void UQuickSlotComponent::UseSlot(int32 Num)
+{
+	Num = Num - 1.f;
+	if (QuickSlot[Num] != nullptr)
+	{
+		if (UEquipItemObject* EquipItem = Cast<UEquipItemObject>(QuickSlot[Num]))
+		{
+			EquipItem->OnUse_Implementation(Cast<ACustomCharacter>(GetOwner()));
+		}
+	}
 }

@@ -71,6 +71,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputAction* CtrlAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+		UInputAction* SlotAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool TargetLook;
 
@@ -119,5 +122,8 @@ public:
 
 		/** Called for attack input **/
 		void RequestCrouch();
+
+
+		void RequestSlotAction(const FInputActionValue& Value);
 
 };

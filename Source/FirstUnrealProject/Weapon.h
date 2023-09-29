@@ -44,10 +44,10 @@ public:
 		class UArrowComponent* EndPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Info")
-		class UWeaponEquipItemObject* EquipItem;
+		class UEquipItemObject* EquipItem;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-		TArray<UAnimMontage*> CharacterAttackMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+		float StaminaCost;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -60,7 +60,7 @@ public:
 	void WeaponAction();
 
 	UFUNCTION(BlueprintNativeEvent)
-	void WeaponInitialize(UWeaponEquipItemObject* Item);
-	virtual void WeaponInitialize_Implementation(UWeaponEquipItemObject* Item);
+	void WeaponInitialize(UEquipItemObject* Item);
+	virtual void WeaponInitialize_Implementation(UEquipItemObject* Item);
 
 };

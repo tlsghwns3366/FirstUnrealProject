@@ -10,10 +10,10 @@ UEquipItemObject::UEquipItemObject()
 {
 }
 
-void UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
+bool UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 {
-	if (IsUse)
-		return;
+	if (IsUse || Inventory == nullptr)
+		return false;
 	else
 	{
 		ICoolTimeInterface* Interface = Cast<ICoolTimeInterface>(this);
@@ -35,6 +35,7 @@ void UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 		{
 			UnEquipItem(this);
 		}
+		return true;
 	}
 
 }

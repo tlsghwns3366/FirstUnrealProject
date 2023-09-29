@@ -59,21 +59,21 @@ void UDamageComponent::DamageTaken(float Damage, FColor Color)
 
 void UDamageComponent::OnPhysical(float Damage)
 {
-	UE_LOG(LogTemp, Log, TEXT("Physical"));
+	//UE_LOG(LogTemp, Log, TEXT("Physical"));
 	OnDamaged(Damage);
 	DamageTaken(Damage,FColor::White);
 }
 
 void UDamageComponent::OnFire(float Damage)
 {
-	UE_LOG(LogTemp, Log, TEXT("Fire"));
+	//UE_LOG(LogTemp, Log, TEXT("Fire"));
 	OnDamaged(Damage);
 	DamageTaken(Damage,FColor::Orange);
 }
 
 void UDamageComponent::OnCritical(float Damage)
 {
-	UE_LOG(LogTemp, Log, TEXT("Critical"));
+	//UE_LOG(LogTemp, Log, TEXT("Critical"));
 	OnDamaged(Damage);
 	DamageTaken(Damage,FColor::Red);
 }

@@ -4,15 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/DataTable.h"
+#include "Weapon.h"
 #include "AttackSystemComponent.generated.h"
 
+USTRUCT()
+struct FWeaponAnim : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EWeaponEnum WeaponEnum;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UAnimMontage* AnimMontage;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+};
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIRSTUNREALPROJECT_API UAttackSystemComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UAttackSystemComponent();
 	UPROPERTY(EditAnywhere)
@@ -27,7 +40,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class AWeapon* AttackWeapon;
 
-
 	UPROPERTY(EditAnywhere, Category = "Animation")
 		class UCharacterAnimInstance* AnimInstance;
 
@@ -37,20 +49,27 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		float UseStamaina;
 
-		TArray<AActor*> ActorsToIgnore;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UDataTable* AttackMontageTable;
+
+	FTimerHandle AttackTraceLoop;
+
+	TArray<AActor*> ActorsToIgnore;
+
+	AActor* HitActor;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
 public:
 	UFUNCTION()
-	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
-
+		void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+	UFUNCTION()
 	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	bool PlayAttackMontage(UAnimMontage* AttackMontage);
 	bool PlayHitReactMontage();
@@ -58,4 +77,8 @@ public:
 	void Trace();
 	void SetWeaponAttackMontage();
 	void StopAttack();
+	void AttackDamage();
+
+	FWeaponAnim* GetAttackMontage(EWeaponEnum Enum);
+
 };

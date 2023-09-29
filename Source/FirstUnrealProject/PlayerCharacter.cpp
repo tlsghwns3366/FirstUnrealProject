@@ -139,7 +139,6 @@ void APlayerCharacter::JumpStart()
 		if (MainStateComponent->UseStamina(30.f))
 		{
 			Jump();
-			MainStateComponent->StaminaUseDelay = 1.5f;
 		}
 	}
 }
@@ -170,7 +169,6 @@ void APlayerCharacter::DodgeAction()
 			LaunchVelocity.Z = 100.f;
 			GetCharacterMovement()->AddImpulse(LaunchVelocity, true);
 			//GetCharacterMovement()->Launch(LaunchVelocity);
-			MainStateComponent->StaminaUseDelay = 1.5f;
 		}
 	}
 }
@@ -199,14 +197,6 @@ void APlayerCharacter::CrouchAction()
 			Anim->IsCrouch = true;
 			GetCharacterMovement()->Crouch(true);
 		}
-	}
-}
-
-void APlayerCharacter::UseItem(UItemObject* Item)
-{
-	if (Item)
-	{
-		Item->OnUse(this);
 	}
 }
 
@@ -273,7 +263,6 @@ void APlayerCharacter::EndFocus(AActor* TraceActor)
 	}
 }
 
-
 void APlayerCharacter::Interaction()
 {
 	if (IsValid(FocusedActor))
@@ -283,4 +272,9 @@ void APlayerCharacter::Interaction()
 			Item->AddInventory(InventoryComponent);
 		}
 	}
+}
+
+void APlayerCharacter::SlotUse(float Num)
+{
+	QuickSlotComponent->UseSlot(Num);
 }

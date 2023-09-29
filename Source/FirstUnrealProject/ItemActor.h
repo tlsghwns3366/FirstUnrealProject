@@ -1,63 +1,63 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+	// Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma once
+	#pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "InteractionInterface.h"
-#include "ItemActor.generated.h"
+	#include "CoreMinimal.h"
+	#include "GameFramework/Actor.h"
+	#include "InteractionInterface.h"
+	#include "ItemActor.generated.h"
 
-UCLASS()
-class FIRSTUNREALPROJECT_API AItemActor : public AActor, public IInteractionInterface
-{
-	GENERATED_BODY()
+	UCLASS()
+	class FIRSTUNREALPROJECT_API AItemActor : public AActor, public IInteractionInterface
+	{
+		GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
-	AItemActor();
+	public:	
+		// Sets default values for this actor's properties
+		AItemActor();
 
-public:
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UWidgetComponent* WidgetComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<class UUserWidget> Widget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UUserWidget* PickUpWidget;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Instanced)
-		class UItemObject* Item;
-	UPROPERTY(EditAnywhere)
-		UStaticMeshComponent* StaticMesh;
+	public:
 
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			class UWidgetComponent* WidgetComponent;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			TSubclassOf<class UUserWidget> Widget;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			class UUserWidget* PickUpWidget;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-public:
-	bool AddInventory(class UInventoryComponent * Inventory);
-
-public:
-	UFUNCTION(BlueprintCallable)
-	void Iteminitialization(UItemObject* _Item);
+		UPROPERTY(EditAnywhere,BlueprintReadWrite, Instanced)
+			class UItemObject* Item;
+		UPROPERTY(EditAnywhere)
+			UStaticMeshComponent* StaticMesh;
 
 
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-		void OnInteract(AActor* Caller);
-	virtual void OnInteract_Implementation(AActor* Caller);
+	protected:
+		// Called when the game starts or when spawned
+		virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-		void StartFocus();
-	virtual void StartFocus_Implementation();
+	public:	
+		// Called every frame
+		virtual void Tick(float DeltaTime) override;
+	public:
+		bool AddInventory(class UInventoryComponent * Inventory);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-		void EndFocus();
-	virtual void EndFocus_Implementation();
-};
+	public:
+		UFUNCTION(BlueprintCallable)
+		void Iteminitialization(UItemObject* _Item);
+
+
+
+		UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+			void OnInteract(AActor* Caller);
+		virtual void OnInteract_Implementation(AActor* Caller);
+
+		UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+			void StartFocus();
+		virtual void StartFocus_Implementation();
+
+		UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+			void EndFocus();
+		virtual void EndFocus_Implementation();
+	};

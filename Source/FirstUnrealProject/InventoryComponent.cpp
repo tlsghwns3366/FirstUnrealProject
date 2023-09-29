@@ -22,7 +22,7 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	for (auto& item : DefaultInventory)
+	for (UItemObject* item : DefaultInventory)
 	{
 		AddItem(item);
 	}

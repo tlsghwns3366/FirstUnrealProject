@@ -29,8 +29,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float AddDodgeChance = 0.f;
 
-
-
 	FEquipItemInfo operator+(const FEquipItemInfo& Other) const
 	{
 		FEquipItemInfo Result;
@@ -79,11 +77,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		FEquipItemInfo EquipItemState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		class UCharacterStateComponent* MainStateComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+		 TSubclassOf<class AWeapon> WeaponBlueprint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+		FName AttachSocket;
 public:
-		virtual void OnUse_Implementation(class ACustomCharacter* Character) override;
+		virtual bool OnUse_Implementation(class ACustomCharacter* Character) override;
 	UFUNCTION(BlueprintCallable, Category = "Item")
 		virtual void SetDescription();
 

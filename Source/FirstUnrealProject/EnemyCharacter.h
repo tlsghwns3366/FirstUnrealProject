@@ -54,6 +54,7 @@ public:
 		void SetEnemyInventory();
 
 public:
+	void EnemyDie();
 	void DropItem();
 
 };

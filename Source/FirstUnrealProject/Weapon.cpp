@@ -4,7 +4,7 @@
 #include "Weapon.h"
 #include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "WeaponEquipItemObject.h"
+#include "EquipItemObject.h"
 
 
 // Sets default values
@@ -39,15 +39,6 @@ void AWeapon::Tick(float DeltaTime)
 
 }
 
-void AWeapon::WeaponInitialize_Implementation(UWeaponEquipItemObject* Item)
+void AWeapon::WeaponInitialize_Implementation(UEquipItemObject* Item)
 {
-	EquipItem = Cast<UWeaponEquipItemObject>(Item);
-	if (EquipItem != nullptr)
-	{
-		StaticMesh->SetStaticMesh(EquipItem->StaticMesh);
-		StaticMesh->SetRelativeTransform(EquipItem->StaticMeshTransform);
-		StartPoint->SetRelativeTransform(EquipItem->StartPoint);
-		EndPoint->SetRelativeTransform(EquipItem->EndPoint);
-		CharacterAttackMontage = EquipItem->CharacterAttackMontage;
-	}
 }

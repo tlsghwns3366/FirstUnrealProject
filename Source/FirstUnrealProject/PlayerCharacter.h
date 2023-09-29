@@ -67,10 +67,8 @@ public:
 	void JumpStart();
 	void JumpEnd();
 	void CrouchAction();
-	UFUNCTION(BlueprintCallable, Category = "Item")
-	void UseItem(UItemObject* Item);
 	void ForwardTrace();
 	void StartFocus(AActor* TraceActor);
 	void EndFocus(AActor* TraceActor);
-
+	void SlotUse(float Num);
 };

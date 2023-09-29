@@ -155,7 +155,7 @@ public:
 
 public:
 	virtual void SetState();
-	virtual void SetHp(float NewHp);
+	virtual bool SetHp(float NewHp);
 	virtual bool UseStamina(float Amount);
 	virtual float GetPhysicalDamage();
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);

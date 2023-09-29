@@ -18,6 +18,7 @@ void UItemObject::EndCooldown_Implementation()
 	IsUse = false;
 }
 
-void UItemObject::OnUse_Implementation(ACustomCharacter* Character)
+bool UItemObject::OnUse_Implementation(ACustomCharacter* Character)
 {
+	return false;
 }

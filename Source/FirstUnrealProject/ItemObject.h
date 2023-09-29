@@ -93,7 +93,7 @@ public:
 	virtual void EndCooldown_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")
-		void OnUse(class ACustomCharacter* Character);
+		bool OnUse(class ACustomCharacter* Character);
 	UFUNCTION(BlueprintCallable, Category = "Item")
-		virtual void OnUse_Implementation(class ACustomCharacter* Character);
+		virtual bool OnUse_Implementation(class ACustomCharacter* Character);
 };
