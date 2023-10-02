@@ -18,6 +18,8 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
 		TArray<class UObject*> CoolDownTimeObject;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+		TArray<class UConsumableItemObject*>CoolDownTimeConsumableItem;
 	
 protected:
 	// Called when the game starts
@@ -29,5 +31,9 @@ public:
 
 	void AddCoolDownObject(UObject* Object);
 	void RemoveCoolDownObject(UObject* Object);
+	void RemoveBuffCoolDownObject(UConsumableItemObject* Object);
+
+
 	void TickCoolTime(UObject* Object, float DeltaTime);
+	void TickCoolTimeConsumbleItem(UConsumableItemObject* Object, float DeltaTime);
 };

@@ -36,6 +36,57 @@ enum class EItemEnum : uint8
 	E_Equip_Ring UMETA(DisplayName = "Ring")
 };
 
+USTRUCT(BlueprintType)
+struct FAddItemInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddDamage = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddShild = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddHP = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddMP = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddStamina = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddCriticalChance = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddCriticalDamage = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float AddDodgeChance = 0.f;
+
+	FAddItemInfo operator+(const FAddItemInfo& Other) const
+	{
+		FAddItemInfo Result;
+		Result.AddDamage = AddDamage + Other.AddDamage;
+		Result.AddShild = AddShild + Other.AddShild;
+		Result.AddHP = AddHP + Other.AddHP;
+		Result.AddMP = AddMP + Other.AddMP;
+		Result.AddStamina = AddStamina + Other.AddStamina;
+		Result.AddCriticalChance = AddCriticalChance + Other.AddCriticalChance;
+		Result.AddCriticalDamage = AddCriticalDamage + Other.AddCriticalDamage;
+		Result.AddDodgeChance = AddDodgeChance + Other.AddDodgeChance;
+		return Result;
+	}
+	FAddItemInfo operator-(const FAddItemInfo& Other) const
+	{
+		FAddItemInfo Result;
+		Result.AddDamage = AddDamage - Other.AddDamage;
+		Result.AddShild = AddShild - Other.AddShild;
+		Result.AddHP = AddHP - Other.AddHP;
+		Result.AddMP = AddMP - Other.AddMP;
+		Result.AddStamina = AddStamina - Other.AddStamina;
+		Result.AddCriticalChance = AddCriticalChance - Other.AddCriticalChance;
+		Result.AddCriticalDamage = AddCriticalDamage - Other.AddCriticalDamage;
+		Result.AddDodgeChance = AddDodgeChance - Other.AddDodgeChance;
+		return Result;
+	}
+};
+
 /**
  *
  */
@@ -84,12 +135,7 @@ public:
 		class UInventoryComponent* Inventory;
 
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-		void StartCooldown(float CooldownTime);
 	virtual void StartCooldown_Implementation(float CooldownTime);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-		void EndCooldown();
 	virtual void EndCooldown_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")

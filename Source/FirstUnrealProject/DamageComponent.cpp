@@ -42,8 +42,7 @@ void UDamageComponent::OnDamaged(float Damage)
 {
 	if (MainStateComponent != nullptr)
 	{
-		float TempHp = MainStateComponent->CurrentHp - Damage;
-		MainStateComponent->SetHp(TempHp);
+		MainStateComponent->UseHp(Damage);
 		MainStateComponent->OnHpMpUpdated.Broadcast();
 	}
 }

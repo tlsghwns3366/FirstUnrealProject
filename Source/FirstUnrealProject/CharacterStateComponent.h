@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "EquipItemObject.h"
+#include "ItemObject.h"
 #include "CharacterStateComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpMpUpdated);
@@ -14,6 +14,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpUpdated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaUpdated);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHpbarUpdated);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStateUpdated);
 
 USTRUCT(BlueprintType)
 struct FCharacterState
@@ -54,7 +56,7 @@ public:
 		float RunSpeed;
 
 
-	FCharacterState operator+(const FEquipItemInfo& Other) const
+	FCharacterState operator+(const FAddItemInfo& Other) const
 	{
 		FCharacterState Result;
 		Result.AttackDamage = AttackDamage + Other.AddDamage;
@@ -96,6 +98,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float StaminaUseDelay;
 
+	//Current State
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
 		float CurrentHp = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
@@ -107,7 +110,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
 		float CurrentSpeed;
 
-
+	//Equip Item
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Helmat;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
@@ -128,10 +131,17 @@ public:
 		class UEquipItemObject* Ring_2;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class AWeapon* AttachedWeapon;
+
+	//Info
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
-		FEquipItemInfo CharacterEquipItemState;
+		FAddItemInfo CharacterInfo;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+		TArray<class UObject*> CharacterAddStateInfo;
+
+
+	//DELEGATE
 	UPROPERTY(BlueprintAssignable)
 		FOnHpMpUpdated OnHpMpUpdated;
 
@@ -141,8 +151,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FOnStaminaUpdated OnStaminaUpdated;
 
+	//EnemyHpBar
 	UPROPERTY(BlueprintAssignable)
 		FOnHpbarUpdated OnHpbarUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnStateUpdated OnStateUpdated;
 
 
 protected:
@@ -155,13 +169,23 @@ public:
 
 public:
 	virtual void SetState();
-	virtual bool SetHp(float NewHp);
+	virtual void SetAddState();
+
+
+	virtual bool UseHp(float NewHp);
 	virtual bool UseStamina(float Amount);
+
 	virtual float GetPhysicalDamage();
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
-	virtual bool SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
-	virtual void SetEquipState();
+	virtual void SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
+
+	// Regen
 	virtual void HpMpRegen(float DeltaTime);
 	virtual void StaminaRegen(float DeltaTime);
+
 	virtual void EquipItemSpawn(UEquipItemObject* Item);
+
+	// AddState
+	virtual bool CharacterAddState(UObject* Object);
+	virtual bool CharacterRemoveState(UObject* Object);
 };

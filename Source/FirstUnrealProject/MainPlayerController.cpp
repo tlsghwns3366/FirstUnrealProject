@@ -99,6 +99,8 @@ void AMainPlayerController::RequestMove(const FInputActionValue& Value)
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (IsValid(MainPlayer))
 	{
+		if (MainPlayer->IsAttacking)
+			return;
 		// find out which way is forward
 		const FRotator Rotation = MainPlayer->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);

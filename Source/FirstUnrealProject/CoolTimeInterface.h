@@ -25,5 +25,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 		void StartCooldown(float CooldownTime);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+		void StartBuffCooldown(float CooldownTime);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 		void EndCooldown();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+		void EndBuffCooldown();
 };

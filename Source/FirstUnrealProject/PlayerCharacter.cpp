@@ -100,8 +100,7 @@ void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void APlayerCharacter::Attack()
 {
-	IsAttacking = true;
-	AttackSystemComponent->Attack();
+	IsAttacking = AttackSystemComponent->Attack();
 }
 
 bool APlayerCharacter::SetIsRunTrue()

@@ -3,6 +3,7 @@
 
 #include "QuickSlotComponent.h"
 #include "EquipItemObject.h"
+#include "ConsumableItemObject.h"
 #include "CustomCharacter.h"
 
 // Sets default values for this component's properties
@@ -66,5 +67,10 @@ void UQuickSlotComponent::UseSlot(int32 Num)
 		{
 			EquipItem->OnUse_Implementation(Cast<ACustomCharacter>(GetOwner()));
 		}
+		if (UConsumableItemObject* ConsumbleItem = Cast<UConsumableItemObject>(QuickSlot[Num]))
+		{
+			ConsumbleItem->OnUse_Implementation(Cast<ACustomCharacter>(GetOwner()));
+		}
+
 	}
 }

@@ -4,6 +4,7 @@
 #include "CoolDownComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ItemObject.h"
+#include "ConsumableItemObject.h"
 
 // Sets default values for this component's properties
 UCoolDownComponent::UCoolDownComponent()
@@ -22,7 +23,7 @@ void UCoolDownComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -32,9 +33,16 @@ void UCoolDownComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (CoolDownTimeObject.Num() > 0)
 	{
-		for (auto* Object : CoolDownTimeObject)
+		for (int32 i = 0; i < CoolDownTimeObject.Num(); i++)
 		{
-			TickCoolTime(Object, DeltaTime);
+			TickCoolTime(CoolDownTimeObject[i], DeltaTime);
+		}
+	}
+	if (CoolDownTimeConsumableItem.Num() > 0)
+	{
+		for (int32 i = 0; i < CoolDownTimeConsumableItem.Num(); i++)
+		{
+			TickCoolTimeConsumbleItem(CoolDownTimeConsumableItem[i], DeltaTime);
 		}
 	}
 	// ...
@@ -44,12 +52,20 @@ void UCoolDownComponent::AddCoolDownObject(UObject* Object)
 {
 	if (Object != nullptr)
 		CoolDownTimeObject.Add(Object);
+	if (UConsumableItemObject* ConsumableItem = Cast<UConsumableItemObject>(Object))
+		CoolDownTimeConsumableItem.Add(ConsumableItem);
 }
 
 void UCoolDownComponent::RemoveCoolDownObject(UObject* Object)
 {
 	if (Object != nullptr)
 		CoolDownTimeObject.RemoveSingle(Object);
+}
+
+void UCoolDownComponent::RemoveBuffCoolDownObject(UConsumableItemObject* Object)
+{
+	if (Object != nullptr)
+		CoolDownTimeConsumableItem.RemoveSingle(Object);
 }
 
 void UCoolDownComponent::TickCoolTime(UObject* Object, float DeltaTime)
@@ -67,7 +83,28 @@ void UCoolDownComponent::TickCoolTime(UObject* Object, float DeltaTime)
 				{
 					Interface->Execute_EndCooldown(Item);
 				}
-				CoolDownTimeObject.RemoveSingle(Item);
+				RemoveCoolDownObject(Item);
+			}
+		}
+	}
+}
+
+void UCoolDownComponent::TickCoolTimeConsumbleItem(UConsumableItemObject* Object, float DeltaTime)
+{
+	if (Object != nullptr)
+	{
+		if (Object->IsDuration)
+		{
+			float CurrentTime = Object->CurrentBuffDuration;
+			Object->CurrentBuffDuration = UKismetMathLibrary::FInterpTo(CurrentTime, CurrentTime - 1.0f, DeltaTime, 1.0f);
+			if (Object->CurrentBuffDuration <= 0.f)
+			{
+				ICoolTimeInterface* Interface = Cast<ICoolTimeInterface>(Object);
+				if (Interface)
+				{
+					Interface->Execute_EndBuffCooldown(Object);
+				}
+				RemoveBuffCoolDownObject(Object);
 			}
 		}
 	}

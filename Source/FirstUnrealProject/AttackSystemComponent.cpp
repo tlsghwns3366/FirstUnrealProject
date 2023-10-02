@@ -58,7 +58,7 @@ void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBran
 	AttackIndex--;
 	if (AttackIndex < 0)
 	{
-		Character->StopAnimMontage(WeaponAttackMontage);
+		AnimInstance->Montage_Stop(0.5f, WeaponAttackMontage);
 		AttackIndex = 0;
 	}
 }
@@ -143,7 +143,7 @@ void UAttackSystemComponent::Trace()
 				UEngineTypes::ConvertToTraceType(ECC_Pawn),
 				false,
 				ActorsToIgnore,
-				EDrawDebugTrace::ForDuration,
+				EDrawDebugTrace::None,
 				HitResult,
 				true,
 				FLinearColor::Red,

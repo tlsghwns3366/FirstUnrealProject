@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "EquipItemObject.h"
 #include "CustomCharacter.h"
+#include "ConsumableItemObject.h"
 
 // Sets default values for this component's properties
 UCharacterStateComponent::UCharacterStateComponent()
@@ -20,7 +21,7 @@ UCharacterStateComponent::UCharacterStateComponent()
 void UCharacterStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetEquipState();
+	SetAddState();
 	CurrentHp = FinalState.MaxHp;
 	CurrentMp = FinalState.MaxMp;
 	CurrentStamina = FinalState.MaxStamina;
@@ -47,21 +48,34 @@ void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UCharacterStateComponent::SetState()
 {
-	FinalState = CharacterState + CharacterEquipItemState;
+	float HpPer = CurrentHp / FinalState.MaxHp;
+	float MpPer = CurrentMp / FinalState.MaxMp;
+	float StaminaPer = CurrentStamina / FinalState.MaxStamina;
+
+	FinalState = CharacterState + CharacterInfo;
+
+	CurrentHp = HpPer * FinalState.MaxHp;
+	CurrentMp = MpPer * FinalState.MaxMp;
+	CurrentStamina = StaminaPer * FinalState.MaxStamina;
+
+	OnHpMpUpdated.Broadcast();
+	OnStaminaUpdated.Broadcast();
 }
 
-bool UCharacterStateComponent::SetHp(float NewHp)
+bool UCharacterStateComponent::UseHp(float NewHp)
 {
-	CurrentHp = NewHp;
+	CurrentHp = CurrentHp - NewHp;
 	if (CurrentHp <= 0.f)
 	{
 		IsDie = true;
 		CurrentHp = 0.f;
 		OnHpbarUpdated.Broadcast();
+		OnHpMpUpdated.Broadcast();
 		return false;
 	}
 	else
 	{
+		OnHpMpUpdated.Broadcast();
 		OnHpbarUpdated.Broadcast();
 		return true;
 	}
@@ -114,14 +128,12 @@ UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
 	return EquippedItem;
 }
 
-bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum)
+void UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum)
 {
 	switch (ItemEnum)
 	{
 	case EItemEnum::E_Equip_Helmet:
 		Helmat = Item;
-		SetEquipState();
-		return true;
 		break;
 	case EItemEnum::E_Equip_Weapons:
 		Weapons_1 = Item;
@@ -134,28 +146,18 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 			if (AttachedWeapon != nullptr)
 				AttachedWeapon->Destroy();
 		}
-		SetEquipState();
-		return true;
 		break;
 	case EItemEnum::E_Equip_TopArmor:
 		TopArmor = Item;
-		SetEquipState();
-		return true;
 		break;
 	case EItemEnum::E_Equip_BottomArmor:
 		BottomArmor = Item;
-		SetEquipState();
-		return true;
 		break;
 	case EItemEnum::E_Equip_Boots:
 		Boots = Item;
-		SetEquipState();
-		return true;
 		break;
 	case EItemEnum::E_Equip_Gloves:
 		Gloves = Item;
-		SetEquipState();
-		return true;
 		break;
 	case EItemEnum::E_Equip_Ring:
 		if (Item == nullptr)
@@ -172,37 +174,42 @@ bool UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 			else
 				Ring_2 = Item;
 		}
-		SetEquipState();
-		return true;
 		break;
 	default:
 		break;
 	}
-	return false;
+	SetAddState();
 }
 
-void UCharacterStateComponent::SetEquipState()
+void UCharacterStateComponent::SetAddState()
 {
-	FEquipItemInfo TempInfo;
+	FAddItemInfo TempInfo;
 	if (Helmat != nullptr)
-		TempInfo = TempInfo + Helmat->EquipItemState;
+		TempInfo = TempInfo + Helmat->EquipItemInfo;
 	if (TopArmor != nullptr)
-		TempInfo = TempInfo + TopArmor->EquipItemState;
+		TempInfo = TempInfo + TopArmor->EquipItemInfo;
 	if (BottomArmor != nullptr)
-		TempInfo = TempInfo + BottomArmor->EquipItemState;
+		TempInfo = TempInfo + BottomArmor->EquipItemInfo;
 	if (Boots != nullptr)
-		TempInfo = TempInfo + Boots->EquipItemState;
+		TempInfo = TempInfo + Boots->EquipItemInfo;
 	if (Gloves != nullptr)
-		TempInfo = TempInfo + Gloves->EquipItemState;
+		TempInfo = TempInfo + Gloves->EquipItemInfo;
 	if (Weapons_1 != nullptr)
-		TempInfo = TempInfo + Weapons_1->EquipItemState;
+		TempInfo = TempInfo + Weapons_1->EquipItemInfo;
 	if (Weapons_2 != nullptr)
-		TempInfo = TempInfo + Weapons_2->EquipItemState;
+		TempInfo = TempInfo + Weapons_2->EquipItemInfo;
 	if (Ring_1 != nullptr)
-		TempInfo = TempInfo + Ring_1->EquipItemState;
+		TempInfo = TempInfo + Ring_1->EquipItemInfo;
 	if (Ring_2 != nullptr)
-		TempInfo = TempInfo + Ring_2->EquipItemState;
-	CharacterEquipItemState = TempInfo;
+		TempInfo = TempInfo + Ring_2->EquipItemInfo;
+	for (auto* Object : CharacterAddStateInfo)
+	{
+		if (UConsumableItemObject* ConsumableItemObject = Cast<UConsumableItemObject>(Object))
+		{
+			TempInfo = TempInfo + ConsumableItemObject->ConsumableItemInfo;
+		}
+	}
+	CharacterInfo = TempInfo;
 	SetState();
 }
 void UCharacterStateComponent::HpMpRegen(float DeltaTime)
@@ -261,5 +268,36 @@ void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
 		break;
 	default:
 		break;
+	}
+}
+
+bool UCharacterStateComponent::CharacterAddState(UObject* Object)
+{
+	if (Object != nullptr)
+	{
+		CharacterAddStateInfo.Add(Object);
+		SetAddState();
+		OnStateUpdated.Broadcast();
+		OnHpMpUpdated.Broadcast();
+		return true;
+	}
+	{
+		return false;
+	}
+}
+
+bool UCharacterStateComponent::CharacterRemoveState(UObject* Object)
+{
+	if (Object != nullptr)
+	{
+		CharacterAddStateInfo.RemoveSingle(Object);
+		SetAddState();
+		OnStateUpdated.Broadcast();
+		OnHpMpUpdated.Broadcast();
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
