@@ -4,6 +4,7 @@
 #include "CharacterAnimInstance.h"
 #include "CustomCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -15,6 +16,7 @@ void UCharacterAnimInstance::NativeInitializeAnimation()
 		if (IsValid(Character))
 		{
 			CharacterMovement = Character->GetCharacterMovement();
+			SkeletalMeshComponent = Character->GetMesh();
 		}
 	}
 }
@@ -31,7 +33,8 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("%f"), Speed);
 		Velocity = CharacterMovement->Velocity;
-		Speed = Velocity.Size();
+		Speed = Velocity.Length();
+		InputVector = CharacterMovement->GetLastInputVector().GetClampedToSize(0.0f, 1.0f);
 		IsMoving = Speed > 3.0f;
 		IsFalling = CharacterMovement->IsFalling();
 	}
@@ -40,4 +43,12 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 void UCharacterAnimInstance::AnimNotify_Hit()
 {
 	OnAttackHit.Broadcast();
+}
+
+bool UCharacterAnimInstance::IsMovementWithinThresholds(float MinCurrentSpeed, float MinMaxSpeed, float MinInputAcceleration)
+{
+	if (MinCurrentSpeed <= Speed && MinMaxSpeed <= CharacterMovement->GetMaxSpeed() && MinInputAcceleration <= InputVector.Length())
+		return true;
+	else
+		return false;
 }

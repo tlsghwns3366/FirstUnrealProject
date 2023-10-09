@@ -6,6 +6,8 @@
 #include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
 #include "InventoryComponent.h"
+#include "PlayerCharacter.h"
+#include "QuickSlotComponent.h"
 
 void UConsumableItemObject::SetDescription()
 {
@@ -35,9 +37,7 @@ bool UConsumableItemObject::OnUse_Implementation(ACustomCharacter* Character)
 	if (IsValid(Character))
 	{
 		MainCharacter = Character;
-		Character->CoolDownComponent->RemoveBuffCoolDownObject(this);
 		Character->CoolDownComponent->AddCoolDownObject(this);
-		Character->MainStateComponent->CharacterRemoveState(this);
 		Character->MainStateComponent->CharacterAddState(this);
 		ICoolTimeInterface* Interface = Cast<ICoolTimeInterface>(this);
 		if (Interface)
@@ -46,7 +46,15 @@ bool UConsumableItemObject::OnUse_Implementation(ACustomCharacter* Character)
 			Interface->Execute_StartBuffCooldown(this, CoolTime);
 		}
 		IsUse = true;
+		Count = Count - 1.0f;
 		Inventory->OnInventoryUpdated.Broadcast();
+		if (Count <= 0.f)
+		{
+			Inventory->RemoveItem(this);
+			if (QuickSlotNumber != -1.f)
+				Cast<APlayerCharacter>(Character)->QuickSlotComponent->RemoveObject(QuickSlotNumber);
+			ConditionalBeginDestroy();
+		}
 		return true;
 	}
 	return false;

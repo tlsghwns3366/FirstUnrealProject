@@ -125,6 +125,9 @@ public:
 		bool IsUse = false;
 
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+		int32 QuickSlotNumber = -1.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		EItemRank ItemRank = EItemRank::E_Rank_Normal;
 

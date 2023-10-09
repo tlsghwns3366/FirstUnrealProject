@@ -90,7 +90,7 @@ bool UAttackSystemComponent::PlayHitReactMontage()
 bool UAttackSystemComponent::Attack()
 {
 	SetWeaponAttackMontage();
-	if (!IsValid(AttackWeapon))
+	if (!IsValid(AttackWeapon) || WeaponAttackMontage == nullptr)
 		return false;
 	if (Character->MainStateComponent->CurrentStamina < AttackWeapon->StaminaCost + UseStamaina)
 	{
@@ -101,15 +101,14 @@ bool UAttackSystemComponent::Attack()
 
 	if (AnimInstance != nullptr)
 	{
-		AnimInstance->IsAttack = true;
+		if (!GetWorld()->GetTimerManager().IsTimerActive(AttackTraceLoop))
+		{
+			GetWorld()->GetTimerManager().SetTimer(AttackTraceLoop, this, &UAttackSystemComponent::Trace, 0.03f, true);
+		}
 		if (!AnimInstance->Montage_IsPlaying(WeaponAttackMontage))
 		{
-			if (WeaponAttackMontage != nullptr)
-			{
-				PlayAttackMontage(WeaponAttackMontage);
-				GetWorld()->GetTimerManager().SetTimer(AttackTraceLoop, this, &UAttackSystemComponent::Trace, 0.03f, true);
-			}
-
+			AnimInstance->IsAttack = true;
+			PlayAttackMontage(WeaponAttackMontage);
 			AttackIndex = 0;
 		}
 		else
@@ -173,6 +172,8 @@ void UAttackSystemComponent::SetWeaponAttackMontage()
 		FWeaponAnim* TempMontage = GetAttackMontage(AttackWeapon->WeaponEnum);
 		if (TempMontage != nullptr)
 			WeaponAttackMontage = TempMontage->AnimMontage;
+		else
+			WeaponAttackMontage = nullptr;
 	}
 }
 

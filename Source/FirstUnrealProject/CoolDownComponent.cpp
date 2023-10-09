@@ -53,7 +53,18 @@ void UCoolDownComponent::AddCoolDownObject(UObject* Object)
 	if (Object != nullptr)
 		CoolDownTimeObject.Add(Object);
 	if (UConsumableItemObject* ConsumableItem = Cast<UConsumableItemObject>(Object))
+	{
+		//Duplicate check
+		int32 BuffCount= CoolDownTimeConsumableItem.Num();
+		for (int32 i = 0; i < BuffCount; i++)
+		{
+			if (CoolDownTimeConsumableItem[i]->ItemName == ConsumableItem->ItemName)
+			{
+				RemoveBuffCoolDownObject(CoolDownTimeConsumableItem[i]);
+			}
+		}
 		CoolDownTimeConsumableItem.Add(ConsumableItem);
+	}
 }
 
 void UCoolDownComponent::RemoveCoolDownObject(UObject* Object)

@@ -38,5 +38,4 @@ public:
 	virtual bool OnUse_Implementation(class ACustomCharacter* Character) override;
 	virtual void StartBuffCooldown_Implementation(float CooldownTime) override;
 	virtual void EndBuffCooldown_Implementation() override;
-	
 };

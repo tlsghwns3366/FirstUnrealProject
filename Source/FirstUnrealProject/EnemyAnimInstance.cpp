@@ -24,7 +24,6 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	if (IsValid(Character))
 	{
-		LeftRight = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
 		if (EnemyController != nullptr)
 		{
 			IsNight = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("IsNight"));

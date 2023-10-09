@@ -101,14 +101,12 @@ void AEnemyCharacter::EnemyDie()
 	GetMesh()->SetSimulatePhysics(true);
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
-		Destroy();
-		}, DestroyTime, false);
-
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
 		TArray<FName> SocketName = GetMesh()->GetAllSocketNames();
-		for (FName Name : SocketName)
+
+		int32 SocketSize = SocketName.Num();
+		for (int32 i = 0; i < SocketSize; i++)
 		{
-			GetMesh()->PutRigidBodyToSleep(Name);
+			GetMesh()->PutRigidBodyToSleep(SocketName[i]);
 			GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 		}
 		}, 5.0f, false);
@@ -124,6 +122,10 @@ void AEnemyCharacter::EnemyDie()
 		EnemyCapsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	DropItem();
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
+		Destroy();
+		}, DestroyTime, false);
 }
 
 void AEnemyCharacter::DropItem()

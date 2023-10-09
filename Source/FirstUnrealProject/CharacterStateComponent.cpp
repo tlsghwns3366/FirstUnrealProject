@@ -31,7 +31,7 @@ void UCharacterStateComponent::BeginPlay()
 	OnStaminaUpdated.Broadcast();
 
 	// ...
-	
+
 }
 
 
@@ -41,7 +41,7 @@ void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (CurrentHp < FinalState.MaxHp || CurrentMp < FinalState.MaxMp)
 		HpMpRegen(DeltaTime);
-	if(CurrentStamina < FinalState.MaxStamina)
+	if (CurrentStamina < FinalState.MaxStamina)
 		StaminaRegen(DeltaTime);
 	// ...
 }
@@ -257,7 +257,7 @@ void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
 			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, EquipItem->AttachSocket);
 		}
 	}
-		break;
+	break;
 	case EItemEnum::E_Equip_TopArmor:
 		break;
 	case EItemEnum::E_Equip_BottomArmor:
@@ -275,6 +275,18 @@ bool UCharacterStateComponent::CharacterAddState(UObject* Object)
 {
 	if (Object != nullptr)
 	{
+		//Duplicate check
+		if (UConsumableItemObject* ConsumableItemObject = Cast<UConsumableItemObject>(Object))
+		{
+			int32 BuffCount = CharacterAddStateInfo.Num();
+			for (int32 i = 0; i < BuffCount; i++)
+			{
+				if (ConsumableItemObject->ItemName == Cast<UConsumableItemObject>(CharacterAddStateInfo[i])->ItemName)
+				{
+					CharacterRemoveState(CharacterAddStateInfo[i]);
+				}
+			}
+		}
 		CharacterAddStateInfo.Add(Object);
 		SetAddState();
 		OnStateUpdated.Broadcast();

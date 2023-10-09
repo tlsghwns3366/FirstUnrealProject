@@ -5,7 +5,6 @@
 #include "EquipItemObject.h"
 #include "ConsumableItemObject.h"
 #include "CustomCharacter.h"
-
 // Sets default values for this component's properties
 UQuickSlotComponent::UQuickSlotComponent()
 {
@@ -36,24 +35,30 @@ void UQuickSlotComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 bool UQuickSlotComponent::AddObject(int32 Num, UObject* Object)
 {
-	int32 FindIndex = QuickSlot.Find(Object);
-	if (FindIndex == -1)
+	if (Object != nullptr)
 	{
+		int32 FindIndex = QuickSlot.Find(Object);
 		QuickSlot[Num] = Object;
+		if (UItemObject* ItemObject = Cast<UItemObject>(Object))
+		{
+			ItemObject->QuickSlotNumber = Num;
+		}
+		if (FindIndex != -1)
+		{
+			RemoveObject(FindIndex);
+		}
 		QuickSlotUpdste.Broadcast();
 		return true;
 	}
-	else
-	{
-		RemoveObject(QuickSlot.Find(Object));
-		QuickSlot[Num] = Object;
-		QuickSlotUpdste.Broadcast();
-		return true;
-	}
+	return false;
 }
 
 void UQuickSlotComponent::RemoveObject(int32 Num)
 {
+	if (UItemObject* ItemObject = Cast<UItemObject>(QuickSlot[Num]))
+	{
+		ItemObject->QuickSlotNumber = -1;
+	}
 	QuickSlot[Num] = nullptr;
 	QuickSlotUpdste.Broadcast();
 }
@@ -71,6 +76,5 @@ void UQuickSlotComponent::UseSlot(int32 Num)
 		{
 			ConsumbleItem->OnUse_Implementation(Cast<ACustomCharacter>(GetOwner()));
 		}
-
 	}
 }

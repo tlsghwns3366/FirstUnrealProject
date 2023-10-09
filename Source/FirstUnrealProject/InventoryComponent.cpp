@@ -6,6 +6,7 @@
 #include "EquipItemObject.h"
 #include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
+#include "ConsumableItemObject.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -45,6 +46,19 @@ bool UInventoryComponent::AddItem(UItemObject* Item)
 {
 	if (ItemInventory.Num() < InventorySize)
 	{
+		if (UConsumableItemObject* ConsumableItem = Cast<UConsumableItemObject>(Item))
+		{
+			for (UItemObject* InventoryItem : ItemInventory)
+			{
+				if (ConsumableItem->ItemName == InventoryItem->ItemName)
+				{
+					InventoryItem->Count = InventoryItem->Count + Item->Count;
+					Item->ConditionalBeginDestroy();
+					OnInventoryUpdated.Broadcast();
+					return true;
+				}
+			}
+		}
 		Item->World = GetWorld();
 		Item->Inventory = this;
 		ItemInventory.Add(Item);
