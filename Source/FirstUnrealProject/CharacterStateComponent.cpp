@@ -202,6 +202,7 @@ void UCharacterStateComponent::SetAddState()
 		TempInfo = TempInfo + Ring_1->EquipItemInfo;
 	if (Ring_2 != nullptr)
 		TempInfo = TempInfo + Ring_2->EquipItemInfo;
+
 	for (auto* Object : CharacterAddStateInfo)
 	{
 		if (UConsumableItemObject* ConsumableItemObject = Cast<UConsumableItemObject>(Object))
@@ -293,6 +294,7 @@ bool UCharacterStateComponent::CharacterAddState(UObject* Object)
 		OnHpMpUpdated.Broadcast();
 		return true;
 	}
+	else
 	{
 		return false;
 	}

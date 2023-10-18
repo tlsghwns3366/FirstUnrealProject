@@ -90,16 +90,16 @@ void AEnemyCharacter::EnemyDie()
 {
 	TArray<AActor*> AttachedActors;
 	this->GetAttachedActors(AttachedActors);
-	for (auto GetCharacterActor : AttachedActors)
+	int32 AttachedSize = AttachedActors.Num();
+	for (int32 i = 0; i < AttachedSize; i++)
 	{
 		FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, false);
-		GetCharacterActor->DetachFromActor(DetachRules);
-		GetCharacterActor->Destroy();
+		AttachedActors[i]->DetachFromActor(DetachRules);
+		AttachedActors[i]->Destroy();
 	}
 
 	Anim->IsDie = true;
 	GetMesh()->SetSimulatePhysics(true);
-
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
 		TArray<FName> SocketName = GetMesh()->GetAllSocketNames();
 

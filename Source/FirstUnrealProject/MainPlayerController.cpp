@@ -232,7 +232,7 @@ void AMainPlayerController::Target()
 			ObjectTypes,
 			false,
 			ActorsToIgnore,
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			HitResult,
 			true,
 			FLinearColor::Red,
