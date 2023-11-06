@@ -29,7 +29,6 @@ AEnemyCharacter::AEnemyCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.0f), FRotator(0.f, -90.f, 0.f));
 	}
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-
 	WidgetComponent->SetupAttachment(GetMesh());
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	AIControllerClass = AEnemyAIController::StaticClass();
@@ -62,13 +61,6 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	}
 }
 
-// Called to bind functionality to input
-void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
 float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
@@ -97,12 +89,10 @@ void AEnemyCharacter::EnemyDie()
 		AttachedActors[i]->DetachFromActor(DetachRules);
 		AttachedActors[i]->Destroy();
 	}
-
 	Anim->IsDie = true;
 	GetMesh()->SetSimulatePhysics(true);
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
 		TArray<FName> SocketName = GetMesh()->GetAllSocketNames();
-
 		int32 SocketSize = SocketName.Num();
 		for (int32 i = 0; i < SocketSize; i++)
 		{

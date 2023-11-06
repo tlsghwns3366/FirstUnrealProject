@@ -210,7 +210,7 @@ void APlayerCharacter::ForwardTrace()
 	FVector End = Start + (Rot.Vector() * TraceDistance);
 
 	FCollisionQueryParams TraceParams;
-	bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, TraceParams);
+	bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel2, TraceParams);
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
 
 	if (Result)

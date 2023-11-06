@@ -24,14 +24,15 @@
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			TSubclassOf<class UUserWidget> Widget;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-			class UUserWidget* PickUpWidget;
+			class UInteractionUserWidget* InteractionWidget;
 
 		UPROPERTY(EditAnywhere,BlueprintReadWrite, Instanced)
 			class UItemObject* Item;
 		UPROPERTY(EditAnywhere)
 			UStaticMeshComponent* StaticMesh;
 
-
+		UPROPERTY(EditAnywhere)
+			class UMaterialInstanceDynamic* OverlayMaterialInstance;
 
 	protected:
 		// Called when the game starts or when spawned
@@ -46,6 +47,8 @@
 	public:
 		UFUNCTION(BlueprintCallable)
 		void Iteminitialization(UItemObject* _Item);
+
+		FLinearColor GetItemColor();
 
 
 

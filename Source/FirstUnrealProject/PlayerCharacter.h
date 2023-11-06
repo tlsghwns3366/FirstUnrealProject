@@ -38,7 +38,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UQuickSlotComponent* QuickSlotComponent;
 
-	AActor* FocusedActor;;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		AActor* FocusedActor;
 
 
 protected:
