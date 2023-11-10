@@ -147,6 +147,7 @@ void AMainPlayerController::RequestZoom(const FInputActionValue& Value)
 {
 	float StartArmLength = MainPlayer->SpringArm->TargetArmLength;
 	float InterpolatedInput = FMath::Lerp(StartArmLength, StartArmLength + Value.Get<float>() * 30, 1.f);
+	MainPlayer->SetTraceDistance(InterpolatedInput);
 	if (InterpolatedInput <= 2000.f && InterpolatedInput >= 200)
 		MainPlayer->SpringArm->TargetArmLength = InterpolatedInput;
 }

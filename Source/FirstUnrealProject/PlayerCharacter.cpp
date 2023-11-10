@@ -17,6 +17,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
 #include "QuickSlotComponent.h"
+#include "PlayerMessageComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -28,8 +29,8 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstance(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Player/ABP_Player.ABP_Player_C'"));
 
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	QuickSlotComponent = CreateDefaultSubobject<UQuickSlotComponent>("QuickSlotComponent");
-
+	QuickSlotComponent = CreateDefaultSubobject<UQuickSlotComponent>(TEXT("QuickSlotComponent"));
+	PlayerMessageComponent = CreateDefaultSubobject<UPlayerMessageComponent>(TEXT("PlayerMessageComponent"));
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 	if (SkeletalMesh.Succeeded())
 	{
@@ -54,6 +55,7 @@ APlayerCharacter::APlayerCharacter()
 	SpringArm->bUsePawnControlRotation = true;
 
 
+	TraceDistance = SpringArm->TargetArmLength + 300;
 	GetCharacterMovement()->MaxWalkSpeed = 500;
 	
 	if (AnimInstance.Succeeded())
@@ -61,7 +63,6 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetAnimClass(AnimInstance.Class);
 	}
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -69,10 +70,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	if (Anim)
-	{
-		Anim->OnMontageEnded.AddDynamic(this, &APlayerCharacter::OnMontageEnded);
-	}
 }
 
 // Called every frame
@@ -93,10 +90,6 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 	return Damage;
 }
 
-void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	UE_LOG(LogTemp, Log, TEXT("End"));
-}
 
 void APlayerCharacter::Attack()
 {
@@ -270,10 +263,19 @@ void APlayerCharacter::Interaction()
 		{
 			Item->AddInventory(InventoryComponent);
 		}
+		else if(IInteractionInterface* Interface = Cast<IInteractionInterface>(FocusedActor))
+		{
+			Interface->Execute_OnInteract(FocusedActor,this);
+		}
 	}
 }
 
 void APlayerCharacter::SlotUse(float Num)
 {
 	QuickSlotComponent->UseSlot(Num);
+}
+
+void APlayerCharacter::SetTraceDistance(float Value)
+{
+	TraceDistance = 300 + Value;
 }

@@ -100,7 +100,6 @@ void AEnemyCharacter::EnemyDie()
 			GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 		}
 		}, 5.0f, false);
-
 	AAIController* EnemyController = Cast<AAIController>(GetController());
 	if (EnemyController)
 	{

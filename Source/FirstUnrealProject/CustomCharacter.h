@@ -36,9 +36,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UCoolDownComponent* CoolDownComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction");
-		float TraceDistance;
-
 		FStopAttack StopAttack;
 protected:
 	// Called when the game starts or when spawned

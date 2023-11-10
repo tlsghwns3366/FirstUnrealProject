@@ -26,7 +26,6 @@ ACustomCharacter::ACustomCharacter()
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	CoolDownComponent = CreateDefaultSubobject<UCoolDownComponent>(TEXT("CoolDownComponent"));
 
-	TraceDistance = 2000;
 }
 
 // Called when the game starts or when spawned

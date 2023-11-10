@@ -17,7 +17,6 @@ public:
 	APlayerCharacter();
 public:
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class USpringArmComponent* SpringArm;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -37,9 +36,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UQuickSlotComponent* QuickSlotComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UPlayerMessageComponent* PlayerMessageComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		AActor* FocusedActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction");
+		float TraceDistance;
 
 
 protected:
@@ -54,7 +58,6 @@ public:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
-		virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 public:
 
@@ -72,4 +75,5 @@ public:
 	void StartFocus(AActor* TraceActor);
 	void EndFocus(AActor* TraceActor);
 	void SlotUse(float Num);
+	void SetTraceDistance(float Value);
 };

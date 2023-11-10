@@ -30,7 +30,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UInteractionUserWidget* InteractionWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UNpcMessageComponent* NpcMessageComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class APlayerCharacter* Player;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FName NpcId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 Index;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 QuestNum;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool IsTalk;
+
+	FTimerHandle TimerHandle;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,6 +56,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	void NpcTalk();
+	void QuestTalk();
 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")

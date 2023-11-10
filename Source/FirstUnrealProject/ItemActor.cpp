@@ -61,7 +61,7 @@ void AItemActor::Iteminitialization(UItemObject* _Item)
 		Item = _Item;
 		StaticMesh->SetStaticMesh(Item->StaticMesh);
 		StaticMesh->SetSimulatePhysics(true);
-		StaticMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+		StaticMesh->SetCollisionProfileName(TEXT("ItemActor"));
 		if (InteractionWidget != nullptr)
 		{
 			InteractionWidget->SetWidget(Item);
