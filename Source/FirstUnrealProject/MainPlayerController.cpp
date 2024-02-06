@@ -13,6 +13,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "PlayerAnimInstance.h"
 #include "Math/UnrealMathUtility.h"
+#include "CustomCharacter.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -242,7 +243,7 @@ void AMainPlayerController::Target()
 		);
 		if (Result)
 		{
-			TargetActor = Cast<AEnemyCharacter>(HitResult.GetActor());
+			TargetActor = Cast<ACustomCharacter>(HitResult.GetActor());
 			TargetLook = true;
 		}
 		else

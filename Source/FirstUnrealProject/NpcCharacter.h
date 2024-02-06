@@ -7,6 +7,22 @@
 #include "InteractionInterface.h"
 #include "NpcCharacter.generated.h"
 
+
+USTRUCT()
+struct FNpcInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FName NpcId;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FName NpcName;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FString> IdleDescription;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FString> QuestList;
+};
+
 /**
  * 
  */
@@ -31,22 +47,26 @@ public:
 		class UInteractionUserWidget* InteractionWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UNpcMessageComponent* NpcMessageComponent;
+		class UQuestComponent* QuestComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class APlayerCharacter* Player;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName NpcId;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FNpcInfo NpcInfo;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 Index;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 QuestNum;
+		int32 QuestNum = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		bool IsTalk;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UDataTable* NpcTable;
+
+	FTimerHandle IdleTalkHandle;
 	FTimerHandle TimerHandle;
 protected:
 	// Called when the game starts or when spawned
@@ -59,7 +79,12 @@ public:
 
 	void NpcTalk();
 	void QuestTalk();
+	void SetNpcInfo();
 
+	void SetQuest();
+	bool CheckQuest(int32 QuestIndex, FString QuestString);
+	void PlayTalk();
+	void PlayQuestAndTalk(FString QuestString);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 		void OnInteract(AActor* Caller);

@@ -18,6 +18,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DestroyTime = 60.f;// Default 60
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString EnemyName;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UEnemyInventoryComponent* EnemyInventoryComponent;
 

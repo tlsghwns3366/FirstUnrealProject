@@ -15,6 +15,8 @@
 #include "AttackSystemComponent.h"
 #include "MainGameState.h"
 #include "CharacterStateComponent.h"
+#include "PlayerCharacter.h"
+#include "PlayerMessageComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -67,6 +69,10 @@ float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	if (MainStateComponent->IsDie)
 	{
 		EnemyDie();
+		if (APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
+		{
+			Player->PlayerMessageComponent->EnemyKill(EnemyName);
+		}
 	}
 	return Damage;
 }
@@ -91,6 +97,7 @@ void AEnemyCharacter::EnemyDie()
 	}
 	Anim->IsDie = true;
 	GetMesh()->SetSimulatePhysics(true);
+	/*
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
 		TArray<FName> SocketName = GetMesh()->GetAllSocketNames();
 		int32 SocketSize = SocketName.Num();
@@ -99,7 +106,7 @@ void AEnemyCharacter::EnemyDie()
 			GetMesh()->PutRigidBodyToSleep(SocketName[i]);
 			GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 		}
-		}, 5.0f, false);
+		}, 5.0f, false);*/
 	AAIController* EnemyController = Cast<AAIController>(GetController());
 	if (EnemyController)
 	{
@@ -125,6 +132,6 @@ void AEnemyCharacter::DropItem()
 		ActorLocation += FVector(0.f, 0.f, 100.f);
 		AItemActor* EItem = GetWorld()->SpawnActor<AItemActor>(EItem->StaticClass(), ActorLocation, FRotator::ZeroRotator);
 		EItem->Iteminitialization(Enemyitem);
-		EnemyInventoryComponent->RemoveItem(Enemyitem);
 	}
+	EnemyInventoryComponent->ItemInventory.Empty();
 }

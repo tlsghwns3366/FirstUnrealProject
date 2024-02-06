@@ -7,6 +7,8 @@
 #include "CustomCharacter.h"
 #include "CharacterStateComponent.h"
 #include "ConsumableItemObject.h"
+#include "PlayerCharacter.h"
+#include "PlayerMessageComponent.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -46,11 +48,11 @@ bool UInventoryComponent::AddItem(UItemObject* Item)
 {
 	if (ItemInventory.Num() < InventorySize)
 	{
-		if (UConsumableItemObject* ConsumableItem = Cast<UConsumableItemObject>(Item))
+		if (Item->IsStack)
 		{
 			for (UItemObject* InventoryItem : ItemInventory)
 			{
-				if (ConsumableItem->ItemName == InventoryItem->ItemName)
+				if (Item->ItemName == InventoryItem->ItemName)
 				{
 					InventoryItem->Count = InventoryItem->Count + Item->Count;
 					Item->ConditionalBeginDestroy();

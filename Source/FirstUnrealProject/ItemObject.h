@@ -123,6 +123,8 @@ public:
 		float CurrentCoolTime = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Time")
 		bool IsUse = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Time")
+		bool IsStack = false;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
