@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "NpcCharacter.h"
 #include "QuestComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -13,17 +14,6 @@ enum class EQuestType : uint8
 	E_EnemyKill UMETA(DisplayName = "EnemyKill"),
 	E_Interact UMETA(DisplayName = "Interact"),
 	E_ItemCollect UMETA(DisplayName = "ItemCollect"),
-};
-
-USTRUCT()
-struct FTalkDescription : public FTableRowBase
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		FString TalkDescription;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 NextTalk;
 };
 
 USTRUCT()
@@ -70,7 +60,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TArray<struct FQuestObjective> QuestObjective;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		TArray<struct FTalkDescription> QuestTalkDescription;
+		int32 QuestStartTalkNumber;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 QuestEndTalkNumber;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<struct FPlayerSelect> QuestSelectMenu;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float XPReward;
@@ -101,7 +95,7 @@ public:
 		class UDataTable* QuestTable;
 
 protected:
-	// Called when the game starts
+	// Called when the game startsQ
 	virtual void BeginPlay() override;
 
 public:	
@@ -110,8 +104,9 @@ public:
 
 	void SetQuestDataTable(FString string);
 	int32 FindQuest(FString string);
-	bool QuestCheck(int32 QuestIndex, FString QuestString, AActor* Caller);
+	bool QuestCheck(int32 QuestIndex, AActor* Caller);
 	void ObjectiveCheck(int32 QuestIndex);
 	FString GetQuestTalk(int32 QuestIndex, int32* TalkIndex);
+	FQuestData GetQuestData(int32 QuestIndex);
 		
 };

@@ -4,6 +4,7 @@
 #include "QuestComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerMessageComponent.h"
+#include "CharacterStateComponent.h"
 
 // Sets default values for this component's properties
 UQuestComponent::UQuestComponent()
@@ -38,8 +39,10 @@ void UQuestComponent::SetQuestDataTable(FString string)
 	if (IsValid(QuestTable))
 	{
 		FQuestData* QuestData = QuestTable->FindRow<FQuestData>(FName(string), FString(""));
-		if(QuestData != nullptr)
+		if (QuestData != nullptr)
+		{
 			QuestInfo.Add(*QuestData);
+		}
 	}
 }
 
@@ -55,14 +58,23 @@ int32 UQuestComponent::FindQuest(FString string)
 	return -1;
 }
 
-bool UQuestComponent::QuestCheck(int32 QuestIndex, FString QuestString, AActor* Caller)
+bool UQuestComponent::QuestCheck(int32 QuestIndex, AActor* Caller)
 {
+	if (QuestIndex == -1)
+		return false;
 	APlayerCharacter* Player = Cast<APlayerCharacter>(Caller);
+	if (Player->MainStateComponent->GetFinalState().Level < QuestInfo[QuestIndex].MinLv)
+		return false;
+	if (Player->PlayerMessageComponent->CurrentCheck(QuestInfo[QuestIndex].QuestString))
+		return false;
+
+
 	for (int32 Index = 0; Index < QuestInfo[QuestIndex].ClearQuest.Num(); Index++)
 	{
-		if (Player->PlayerMessageComponent->FindQuest(QuestInfo[QuestIndex].ClearQuest[Index]))
+		if (!Player->PlayerMessageComponent->ClearCheck(QuestInfo[QuestIndex].ClearQuest[Index]))
 			return false;
 	}
+
 	return true;
 }
 
@@ -77,8 +89,13 @@ FString UQuestComponent::GetQuestTalk(int32 QuestIndex, int32* TalkIndex)
 	{
 		return FString();
 	}
-	FString QuestString = QuestInfo[QuestIndex].QuestTalkDescription[*TalkIndex].TalkDescription;
-	*TalkIndex = QuestInfo[QuestIndex].QuestTalkDescription[*TalkIndex].NextTalk;
+	//FString QuestString = QuestInfo[QuestIndex].QuestTalkDescription[*TalkIndex].TalkDescription;
+	//*TalkIndex = QuestInfo[QuestIndex].QuestTalkDescription[*TalkIndex].NextTalk;
 
-	return QuestString;
+	return FString();
+}
+
+FQuestData UQuestComponent::GetQuestData(int32 QuestIndex)
+{
+	return QuestInfo[QuestIndex];
 }

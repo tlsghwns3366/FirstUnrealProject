@@ -268,6 +268,13 @@ void APlayerCharacter::Interaction()
 			Interface->Execute_OnInteract(FocusedActor,this);
 		}
 	}
+	else if (IsValid(TalkActor) && IsTalk)
+	{
+		if (IInteractionInterface* Interface = Cast<IInteractionInterface>(TalkActor))
+		{
+			Interface->Execute_OnInteract(TalkActor, this);
+		}
+	}
 }
 
 void APlayerCharacter::SlotUse(float Num)
@@ -278,4 +285,43 @@ void APlayerCharacter::SlotUse(float Num)
 void APlayerCharacter::SetTraceDistance(float Value)
 {
 	TraceDistance = 300 + Value;
+}
+
+void APlayerCharacter::SetTalkActor(AActor* Actor)
+{
+	if (Actor == nullptr)
+	{
+		TalkActor = nullptr;
+		IsTalk = false;
+	}
+	else
+	{
+		TalkActor = Actor;
+		IsTalk = true;
+	}
+}
+
+void APlayerCharacter::TempAction()
+{
+	switch (TempActionType)
+	{
+	case ETempActionType::E_None:
+		break;
+	case ETempActionType::E_NpcTalk:
+		PlayerMessageComponent->NextSelectNumber();
+		break;
+	}
+}
+
+void APlayerCharacter::SetTempAction(int32 Index)
+{
+	switch (Index)
+	{
+	case 1:
+		TempActionType = ETempActionType::E_None;
+		break;
+	case 2:
+		TempActionType = ETempActionType::E_NpcTalk;
+		break;
+	}
 }

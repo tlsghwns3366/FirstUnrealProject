@@ -6,6 +6,12 @@
 #include "CustomCharacter.h"
 #include "PlayerCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class ETempActionType : uint8
+{
+	E_None UMETA(DisplayName = "None"),
+	E_NpcTalk UMETA(DisplayName = "NpcTalk"),
+};
 
 UCLASS()
 class FIRSTUNREALPROJECT_API APlayerCharacter : public ACustomCharacter
@@ -41,9 +47,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		AActor* FocusedActor;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		AActor* TalkActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsTalk = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction");
 		float TraceDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		ETempActionType TempActionType;
 
 
 protected:
@@ -76,4 +90,9 @@ public:
 	void EndFocus(AActor* TraceActor);
 	void SlotUse(float Num);
 	void SetTraceDistance(float Value);
+
+	void SetTalkActor(AActor* Actor);
+
+	void TempAction();
+	void SetTempAction(int32 Index);
 };

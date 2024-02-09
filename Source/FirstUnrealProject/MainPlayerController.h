@@ -74,6 +74,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 		UInputAction* SlotAction;
 
+	/** Temp Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+		UInputAction* TempAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool TargetLook;
 
@@ -120,10 +124,12 @@ public:
 		/** Called for SpaceAction input */
 		void RequestSpace();
 
-		/** Called for attack input **/
+		/** Called for Crouch input **/
 		void RequestCrouch();
 
-
 		void RequestSlotAction(const FInputActionValue& Value);
+
+		/** Called for Temp input **/
+		void RequestTemp();
 
 };

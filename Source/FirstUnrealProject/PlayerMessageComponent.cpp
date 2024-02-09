@@ -5,6 +5,7 @@
 #include "PlayerCharacter.h"
 #include "InventoryComponent.h"
 #include "ItemObject.h"
+#include "NpcCharacter.h"
 
 // Sets default values for this component's properties
 UPlayerMessageComponent::UPlayerMessageComponent()
@@ -56,21 +57,24 @@ void UPlayerMessageComponent::RemoveMessage()
 	}
 }
 
-bool UPlayerMessageComponent::AddQuest(FString String)
+void UPlayerMessageComponent::RemoveMenu()
 {
-	if (!CurrentActiveQuest.Contains(String))
-	{
-		//CurrentActiveQuest.Add(String);
-		//CurrentQuest.Add(QuestData);
+	PlayerSelect.Empty();
+	MenuUpdated.Broadcast();
+}
 
+bool UPlayerMessageComponent::AddQuest(FQuestData Data)
+{
+	if (&Data != nullptr)
+	{
+		CurrentQuest.Add(Data);
 		//QuestUpdated.Broadcast();
 		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
-bool UPlayerMessageComponent::CompleteQuest(/*FString String, FQuestData Data*/)
+bool UPlayerMessageComponent::RemoveQuest(/*FString String, FQuestData Data*/)
 {
 	/*
 	if (CurrentActiveQuest.Contains(String))
@@ -90,26 +94,39 @@ bool UPlayerMessageComponent::CompleteQuest(/*FString String, FQuestData Data*/)
 	*/
 		return false;
 }
-
-bool UPlayerMessageComponent::SetQuestInfo(/*FString string, FQuestData Data*/)
+void UPlayerMessageComponent::SetNpcMenuInfo(TArray<struct FPlayerSelect> *Menu)
 {
-	/*
-	for (int32 Index = 0; Index < Data.ClearQuest.Num(); Index++)
+	PlayerSelect.Empty();
+	PlayerSelectNumber = 0;
+	MenuUpdated.Broadcast();
+	if (Menu != nullptr)
 	{
-		if (!ClearQuest.Contains(Data.ClearQuest[Index]))
-			return false;
+		PlayerSelect = *Menu;
 	}
-	QuestData = Data;
-	QuestString = string;
-	*/
-	return true;
+	MenuUpdated.Broadcast();
 }
 
-bool UPlayerMessageComponent::FindQuest(FString String)
+void UPlayerMessageComponent::NextSelectNumber()
+{
+	PlayerSelectNumber++;
+	if (PlayerSelect.Num() <= PlayerSelectNumber)
+		PlayerSelectNumber = 0;
+	MenuUpdated.Broadcast();
+}
+
+bool UPlayerMessageComponent::CurrentCheck(FString String)
+{
+	for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
+	{
+		if (CurrentQuest[Index].QuestString == String)
+			return true;
+	}
+	return false;
+}
+
+bool UPlayerMessageComponent::ClearCheck(FString String)
 {
 	if (ClearQuest.Contains(String))
-		return true;
-	if (CurrentActiveQuest.Contains(String))
 		return true;
 	return false;
 }
@@ -135,7 +152,7 @@ bool UPlayerMessageComponent::FinishQuest(FString String)
 
 void UPlayerMessageComponent::ShowQuestWidget()
 {
-	WidgetUpdated.Broadcast();
+	MenuUpdated.Broadcast();
 	QuestUpdated.Broadcast();
 }
 

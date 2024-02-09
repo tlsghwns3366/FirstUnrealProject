@@ -7,6 +7,44 @@
 #include "InteractionInterface.h"
 #include "NpcCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class ETalkType : uint8
+{
+	E_Talk UMETA(DisplayName = "Talk"),
+	E_Quest UMETA(DisplayName = "Quest"),
+	E_Trade UMETA(DisplayName = "Trade"),
+	E_QuestSelectYes UMETA(DisplayName = "QuestSelectYes"),
+	E_QuestSelectNo UMETA(DisplayName = "QuestSelectNo"),
+};
+
+USTRUCT()
+struct FPlayerSelect : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FString NpcMenu;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		ETalkType TalkType;
+};
+
+USTRUCT()
+struct FTalkInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 TalkNumber;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FName TalkName;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FString> TalkDescription;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int32 TalkIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<struct FPlayerSelect> PlayerSelect;
+};
+
 
 USTRUCT()
 struct FNpcInfo : public FTableRowBase
@@ -18,7 +56,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FName NpcName;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		TArray<FString> IdleDescription;
+		TArray<struct FTalkInfo> TalkInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 DefaultTalkNumber;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FString> QuestList;
 };
@@ -38,7 +78,6 @@ public:
 		class UWidgetComponent* WidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UWidgetComponent* NpcWidgetComponent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UWidgetComponent* InteractionWidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -54,20 +93,23 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName NpcId;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 		FNpcInfo NpcInfo;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 QuestNum = 0;
+	UPROPERTY(EditAnywhere)
+		int32 QuestIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<struct FPlayerSelect> LastTalkSelectMenu;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		bool IsTalk;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool IsMenu;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UDataTable* NpcTable;
 
-	FTimerHandle IdleTalkHandle;
-	FTimerHandle TimerHandle;
+	FTimerHandle TalkHandle;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -81,10 +123,10 @@ public:
 	void QuestTalk();
 	void SetNpcInfo();
 
-	void SetQuest();
-	bool CheckQuest(int32 QuestIndex, FString QuestString);
-	void PlayTalk();
-	void PlayQuestAndTalk(FString QuestString);
+	void SetQuestData();
+
+	void PlayTalk(int32 TalkNumber);
+	bool PlayQuest();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 		void OnInteract(AActor* Caller);

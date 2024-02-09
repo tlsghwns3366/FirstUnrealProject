@@ -181,6 +181,11 @@ void UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 	SetAddState();
 }
 
+FCharacterState UCharacterStateComponent::GetFinalState()
+{
+	return FinalState;
+}
+
 void UCharacterStateComponent::SetAddState()
 {
 	FAddItemInfo TempInfo;

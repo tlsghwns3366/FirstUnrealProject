@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "QuestComponent.h"
 #include "PlayerMessageComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMessageUpdated);
@@ -36,10 +37,14 @@ public:
 		TArray<struct FSystemMessage> SystemMessageArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<struct FPlayerSelect> PlayerSelect;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 PlayerSelectNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FString> ClearQuest;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FString> CurrentActiveQuest;
-
+		TArray<struct FQuestData> CurrentQuest;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString QuestString;
@@ -55,7 +60,7 @@ public:
 		FQuestUpdated QuestUpdated;
 
 	UPROPERTY(BlueprintAssignable)
-		FWidgetUpdated WidgetUpdated;
+		FWidgetUpdated MenuUpdated;
 
 	UPROPERTY(BlueprintAssignable)
 		FEnemyKillUpdated EnemyKillUpdated;
@@ -71,16 +76,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool AddMessage(struct FSystemMessage Message);
 	void RemoveMessage();
+	void RemoveMenu();
 
 	UFUNCTION(BlueprintCallable)
-	bool AddQuest(FString String);
+	bool AddQuest(FQuestData Data);
 
 	UFUNCTION(BlueprintCallable)
-	bool CompleteQuest(/*FString String, FQuestData Data*/);
+	bool RemoveQuest(/*FString String, FQuestData Data*/);
 
-	bool SetQuestInfo(/*FString string, struct FQuestData Data*/);
+	void SetNpcMenuInfo(TArray<struct FPlayerSelect> *Menu);
+	void NextSelectNumber();
 
-	bool FindQuest(FString String);
+	bool CurrentCheck(FString String);
+	bool ClearCheck(FString String);
 	bool FinishQuest(FString String);
 
 	void ShowQuestWidget();

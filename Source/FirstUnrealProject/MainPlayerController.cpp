@@ -90,6 +90,9 @@ void AMainPlayerController::SetupInputComponent()
 		// ** SlotAction ** //
 		EnhancedInputComponent->BindAction(SlotAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestSlotAction);
 
+		// ** Temp ** //
+		EnhancedInputComponent->BindAction(TempAction, ETriggerEvent::Triggered, this, &AMainPlayerController::RequestTemp);
+
 
 	}
 }
@@ -280,5 +283,13 @@ void AMainPlayerController::RequestSlotAction(const FInputActionValue& Value)
 	if (IsValid(MainPlayer))
 	{
 		MainPlayer->SlotUse(Num);
+	}
+}
+
+void AMainPlayerController::RequestTemp()
+{
+	if (IsValid(MainPlayer))
+	{
+		MainPlayer->TempAction();
 	}
 }

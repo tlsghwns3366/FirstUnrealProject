@@ -43,7 +43,6 @@ ANpcCharacter::ANpcCharacter()
 	InteractionWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	InteractionWidgetComponent->SetVisibility(false);
 
-	QuestNum = -1;
 }
 
 void ANpcCharacter::BeginPlay()
@@ -54,7 +53,7 @@ void ANpcCharacter::BeginPlay()
 		InteractionWidgetComponent->SetWidget(InteractionWidget);
 	}
 	SetNpcInfo();
-	SetQuest();
+	SetQuestData();
 }
 
 void ANpcCharacter::Tick(float DeltaTime)
@@ -110,7 +109,7 @@ void ANpcCharacter::SetNpcInfo()
 	}
 }
 
-void ANpcCharacter::SetQuest()
+void ANpcCharacter::SetQuestData()
 {
 	if (QuestComponent != nullptr)
 	{
@@ -121,67 +120,122 @@ void ANpcCharacter::SetQuest()
 	}
 }
 
-bool ANpcCharacter::CheckQuest(int32 QuestIndex, FString QuestString)
+
+void ANpcCharacter::PlayTalk(int32 TalkNumber)
 {
+	FSystemMessage Message;
+	Message.SystemName = NpcInfo.NpcName;
+	int32 TalkIndex = 0;
+	int32 TalkDescriptionIndex = 0;
+	for (int32 Index = 0; Index < NpcInfo.TalkInfo.Num(); Index++)
+	{
+		if (TalkNumber == NpcInfo.TalkInfo[Index].TalkNumber)
+		{
+			TalkIndex = Index;
+			TalkDescriptionIndex = NpcInfo.TalkInfo[Index].TalkIndex;
+			if (NpcInfo.TalkInfo[TalkIndex].TalkIndex >= NpcInfo.TalkInfo[TalkIndex].TalkDescription.Num())
+			{
+				TalkDescriptionIndex = NpcInfo.TalkInfo[TalkIndex].TalkIndex = 0;
+				GetWorld()->GetTimerManager().ClearTimer(TalkHandle);
+				IsTalk = false;
+				return;
+			}
+			break;
+		}
+	}
+	Message.SystemMessage = NpcInfo.TalkInfo[TalkIndex].TalkDescription[TalkDescriptionIndex];
 	if (Player != nullptr)
 	{
-		return QuestComponent->QuestCheck(QuestIndex, QuestString, Player);
+		Player->PlayerMessageComponent->AddMessage(Message);
+		NpcInfo.TalkInfo[TalkIndex].TalkIndex++;
+	}
+}
+
+bool ANpcCharacter::PlayQuest()
+{
+	for (int32 Index = 0; Index < NpcInfo.QuestList.Num(); Index++)
+	{
+		QuestIndex = QuestComponent->FindQuest(NpcInfo.QuestList[Index]);
+		if (QuestComponent->QuestCheck(QuestIndex, Player))
+		{
+			int32 TempIndex = QuestComponent->QuestInfo[QuestIndex].QuestStartTalkNumber;
+			PlayTalk(TempIndex);
+			GetWorld()->GetTimerManager().SetTimer(TalkHandle, [this,TempIndex]() {
+				PlayTalk(TempIndex);
+				}, 2.f, true);
+			Player->PlayerMessageComponent->SetNpcMenuInfo(&QuestComponent->QuestInfo[QuestIndex].QuestSelectMenu);
+			if(&QuestComponent->QuestInfo[QuestIndex].QuestSelectMenu != nullptr)
+				LastTalkSelectMenu = QuestComponent->QuestInfo[QuestIndex].QuestSelectMenu;
+			return true;
+		}
 	}
 	return false;
-}
-
-void ANpcCharacter::PlayTalk()
-{
-	int32 Range = NpcInfo.IdleDescription.Num();
-	if (Range <= 0)
-		return;
-	FSystemMessage Message;
-	Message.SystemName = NpcInfo.NpcName;
-	Message.SystemMessage = NpcInfo.IdleDescription[FMath::RandRange(0, Range)];
-	if (Player != nullptr)
-	{
-		Player->PlayerMessageComponent->AddMessage(Message);
-	}
-}
-
-void ANpcCharacter::PlayQuestAndTalk(FString QuestString)
-{
-	if (QuestNum == -1)
-		QuestNum = 0;
-	int32 QuestIndex = QuestComponent->FindQuest(QuestString);
-	FSystemMessage Message;
-	Message.SystemName = NpcInfo.NpcName;
-	Message.SystemMessage = QuestComponent->GetQuestTalk(QuestIndex, &QuestNum);
-	if (Player != nullptr)
-	{
-		Player->PlayerMessageComponent->AddMessage(Message);
-	}
 }
 
 void ANpcCharacter::OnInteract_Implementation(AActor* Caller)
 {
 	if (APlayerCharacter* CallPlayer = Cast<APlayerCharacter>(Caller))
 	{
-		if (!IsTalk)
+		if (!IsMenu)
 		{
-			//IsTalk = true;
+			IsMenu = true;
 			Player = CallPlayer;
-			PlayTalk();
+			Player->SetTempAction(2);
+			Player->PlayerMessageComponent->SetNpcMenuInfo(&NpcInfo.TalkInfo[NpcInfo.DefaultTalkNumber].PlayerSelect);
+			LastTalkSelectMenu = NpcInfo.TalkInfo[NpcInfo.DefaultTalkNumber].PlayerSelect;
+			Player->SetTalkActor(this);
+
 			/*
-			Index = 0;
-			NpcTalk();
-			QuestNum = NpcMessageComponent->FindQuest(CallPlayer);
-			if (QuestNum == -1.f)
-			{
-				GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ANpcCharacter::NpcTalk, 2.f, true);
-			}
-			else
-			{
-				Index = 0;
 				GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ANpcCharacter::QuestTalk, 2.f, true);
-			}
 			*/
 		}
+		else if(!IsTalk)
+		{
+			int32 PlayerSelectNumber = Player->PlayerMessageComponent->PlayerSelectNumber;
+			int32 TempIndex = NpcInfo.DefaultTalkNumber;
+			IsTalk = true;
+			switch (LastTalkSelectMenu[PlayerSelectNumber].TalkType)
+			{
+			case ETalkType::E_Talk:
+				PlayTalk(NpcInfo.DefaultTalkNumber);
+				GetWorld()->GetTimerManager().SetTimer(TalkHandle, [this,TempIndex]() {
+					PlayTalk(TempIndex);
+					}, 2.f, true);
+				IsMenu = false;
+				Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
+				Player->SetTalkActor(nullptr);
+				break;
+			case ETalkType::E_Quest:
+				if (!PlayQuest())
+				{
+					IsMenu = false;
+					IsTalk = false;
+					Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
+					Player->SetTalkActor(nullptr);
+				}
+				break;
+			case ETalkType::E_Trade:
+				IsMenu = false;
+				IsTalk = false;
+				Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
+				Player->SetTalkActor(nullptr);
+				break;
+			case ETalkType::E_QuestSelectYes:
+				IsMenu = false;
+				IsTalk = false;
+				Player->PlayerMessageComponent->AddQuest(QuestComponent->GetQuestData(QuestIndex));
+				Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
+				Player->SetTalkActor(nullptr);
+				break;
+			case ETalkType::E_QuestSelectNo:
+				IsMenu = false;
+				IsTalk = false;
+				Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
+				Player->SetTalkActor(nullptr);
+				break;
+			}
+		}
+
 	}
 }
 

@@ -179,6 +179,8 @@ public:
 	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
 	virtual void SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
 
+	virtual FCharacterState GetFinalState();
+
 	// Regen
 	virtual void HpMpRegen(float DeltaTime);
 	virtual void StaminaRegen(float DeltaTime);
