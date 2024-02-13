@@ -46,56 +46,47 @@ void UQuestComponent::SetQuestDataTable(FString string)
 	}
 }
 
-int32 UQuestComponent::FindQuest(FString string)
+FQuestData* UQuestComponent::GetQuestData(FString string)
 {
 	for (int32 Index = 0; Index < QuestInfo.Num(); Index++)
 	{
 		if (string == QuestInfo[Index].QuestString)
 		{
-			return Index;
+			return &QuestInfo[Index];
 		}
 	}
-	return -1;
+	return nullptr;
 }
 
-bool UQuestComponent::QuestCheck(int32 QuestIndex, AActor* Caller)
+bool UQuestComponent::QuestCheck(FQuestData* QuestData, AActor* Caller)
 {
-	if (QuestIndex == -1)
+	if (QuestData == nullptr)
 		return false;
 	APlayerCharacter* Player = Cast<APlayerCharacter>(Caller);
-	if (Player->MainStateComponent->GetFinalState().Level < QuestInfo[QuestIndex].MinLv)
+	if (Player->MainStateComponent->GetFinalState().Level < QuestData->MinLv)
 		return false;
-	if (Player->PlayerMessageComponent->CurrentCheck(QuestInfo[QuestIndex].QuestString))
+	if (Player->PlayerMessageComponent->CurrentCheck(QuestData->QuestString))
+		return false;
+	if (Player->PlayerMessageComponent->ClearCheck(QuestData->QuestString) && !QuestData->IsLoop)
 		return false;
 
-
-	for (int32 Index = 0; Index < QuestInfo[QuestIndex].ClearQuest.Num(); Index++)
+	for (int32 Index = 0; Index < QuestData->ClearQuest.Num(); Index++)
 	{
-		if (!Player->PlayerMessageComponent->ClearCheck(QuestInfo[QuestIndex].ClearQuest[Index]))
+		if (!Player->PlayerMessageComponent->ClearCheck(QuestData->ClearQuest[Index]))
 			return false;
 	}
 
 	return true;
 }
 
-void UQuestComponent::ObjectiveCheck(int32 Index)
+bool UQuestComponent::ObjectiveCheck(FQuestData* CurrentQuest)
 {
-
-}
-
-FString UQuestComponent::GetQuestTalk(int32 QuestIndex, int32* TalkIndex)
-{
-	if (*TalkIndex == -1)
+	if (CurrentQuest == nullptr)
+		return false;
+	for (int32 Index = 0; Index < CurrentQuest->QuestObjective.Num(); Index++)
 	{
-		return FString();
+		if (!CurrentQuest->QuestObjective[Index].IsCompleted)
+			return false;
 	}
-	//FString QuestString = QuestInfo[QuestIndex].QuestTalkDescription[*TalkIndex].TalkDescription;
-	//*TalkIndex = QuestInfo[QuestIndex].QuestTalkDescription[*TalkIndex].NextTalk;
-
-	return FString();
-}
-
-FQuestData UQuestComponent::GetQuestData(int32 QuestIndex)
-{
-	return QuestInfo[QuestIndex];
+	return true;
 }

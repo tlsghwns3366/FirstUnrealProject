@@ -71,7 +71,7 @@ float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 		EnemyDie();
 		if (APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
 		{
-			Player->PlayerMessageComponent->EnemyKill(EnemyName);
+			Player->PlayerMessageComponent->EnemyKillCount(EnemyName);
 		}
 	}
 	return Damage;

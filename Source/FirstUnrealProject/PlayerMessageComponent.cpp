@@ -13,7 +13,7 @@ UPlayerMessageComponent::UPlayerMessageComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	LastSelectQuest = -1;
 	// ...
 }
 
@@ -23,10 +23,8 @@ void UPlayerMessageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	InventoryComponent = Cast<APlayerCharacter>(GetOwner())->InventoryComponent;
-
-	/*InventoryComponent->OnInventoryUpdated.AddDynamic(this,&UPlayerMessageComponent::InventoryFind);
-	InventoryFind();
-	*/
+	InventoryComponent->OnInventoryUpdated.AddDynamic(this,&UPlayerMessageComponent::InventoryCheck);
+	InventoryCheck();
 	// ...
 }
 
@@ -68,30 +66,29 @@ bool UPlayerMessageComponent::AddQuest(FQuestData Data)
 	if (&Data != nullptr)
 	{
 		CurrentQuest.Add(Data);
-		//QuestUpdated.Broadcast();
+		QuestUpdated.Broadcast();
 		return true;
 	}
 	return false;
 }
 
-bool UPlayerMessageComponent::RemoveQuest(/*FString String, FQuestData Data*/)
+bool UPlayerMessageComponent::RemoveQuest(FQuestData Data)
 {
-	/*
-	if (CurrentActiveQuest.Contains(String))
+	if (&Data != nullptr)
 	{
-		if(!ClearQuest.Contains(String))
-			ClearQuest.Add(String);
-
-		int32 Index;
-		CurrentActiveQuest.Find(String, Index);
-		CurrentActiveQuest.RemoveAt(Index);
-		CurrentQuest.RemoveAt(Index);
-
-		QuestUpdated.Broadcast();
-		return true;
+		for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
+		{
+			if (Data.QuestString == CurrentQuest[Index].QuestString)
+			{
+				if (LastSelectQuest == Index)
+					LastSelectQuest = -1;
+				CurrentQuest.RemoveAt(Index);
+				ClearQuest.AddUnique(Data.QuestString);
+				QuestUpdated.Broadcast();
+				return true;
+			}
+		}
 	}
-	else
-	*/
 		return false;
 }
 void UPlayerMessageComponent::SetNpcMenuInfo(TArray<struct FPlayerSelect> *Menu)
@@ -114,6 +111,11 @@ void UPlayerMessageComponent::NextSelectNumber()
 	MenuUpdated.Broadcast();
 }
 
+void UPlayerMessageComponent::SetIsTalk(bool NpcTalk)
+{
+	IsTalk = NpcTalk;
+}
+
 bool UPlayerMessageComponent::CurrentCheck(FString String)
 {
 	for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
@@ -131,81 +133,60 @@ bool UPlayerMessageComponent::ClearCheck(FString String)
 	return false;
 }
 
-bool UPlayerMessageComponent::FinishQuest(FString String)
+FQuestData* UPlayerMessageComponent::GetCurrentQuest(FString String)
 {
-	/*
-	for (int32 index = 0; index < CurrentQuest.Num(); index++)
+	for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
 	{
-		if (CurrentQuest[index].QuestNumber == String)
-		{
-			for (int32 QuestIndex = 0; QuestIndex < CurrentQuest[index].QuestObjective.Num(); QuestIndex++)
-			{
-				if (!CurrentQuest[index].QuestObjective[QuestIndex].IsCompleted)
-					return false;
-			}
-			return true;
-		}
+		if (CurrentQuest[Index].QuestString == String)
+			return &CurrentQuest[Index];
 	}
-	*/
-	return false;
+	return nullptr;
 }
 
-void UPlayerMessageComponent::ShowQuestWidget()
+void UPlayerMessageComponent::EnemyKillCount(FString String)
 {
-	MenuUpdated.Broadcast();
-	QuestUpdated.Broadcast();
-}
-
-void UPlayerMessageComponent::InventoryFind()
-{
-	/*
-	for (int32 IndexA = 0; IndexA < CurrentQuest.Num(); IndexA++)
+	for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
 	{
-		for (int32 IndexB = 0; IndexB < CurrentQuest[IndexA].QuestObjective.Num(); IndexB++)
+		for (int32 Index2 = 0; Index2 < CurrentQuest[Index].QuestObjective.Num(); Index2++)
 		{
-			if (CurrentQuest[IndexA].QuestObjective[IndexB].QuestType == EQuestType::E_ItemCollect)
+			if (CurrentQuest[Index].QuestObjective[Index2].ObjectiveString == String)
 			{
-				bool Itemfind = false;
-				for (UItemObject* Item : InventoryComponent->ItemInventory)
+				if (CurrentQuest[Index].QuestObjective[Index2].ObjectiveKill > CurrentQuest[Index].QuestObjective[Index2].CurrentKill)
 				{
-					if (CurrentQuest[IndexA].QuestObjective[IndexB].ObjectiveName.ToString() == Item->ItemName)
-					{
-						CurrentQuest[IndexA].QuestObjective[IndexB].CurrentItemCollect = Item->Count;
-						if (CurrentQuest[IndexA].QuestObjective[IndexB].CurrentItemCollect >= CurrentQuest[IndexA].QuestObjective[IndexB].ObjectiveItemCollect)
-							CurrentQuest[IndexA].QuestObjective[IndexB].IsCompleted = true;
-						else
-							CurrentQuest[IndexA].QuestObjective[IndexB].IsCompleted = false;
-						Itemfind = true;
-					}
+					CurrentQuest[Index].QuestObjective[Index2].CurrentKill++;
+					if (CurrentQuest[Index].QuestObjective[Index2].ObjectiveKill == CurrentQuest[Index].QuestObjective[Index2].CurrentKill)
+						CurrentQuest[Index].QuestObjective[Index2].IsCompleted = true;
+					QuestUpdated.Broadcast();
 				}
-				if (!Itemfind)
-					CurrentQuest[IndexA].QuestObjective[IndexB].CurrentItemCollect = 0;
 			}
 		}
 	}
-	*/
 }
 
-void UPlayerMessageComponent::EnemyKill(FString String)
+void UPlayerMessageComponent::InventoryCheck()
 {
-	/*
-	for (int32 IndexA = 0; IndexA < CurrentQuest.Num(); IndexA++)
+	for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
 	{
-		for (int32 IndexB = 0; IndexB < CurrentQuest[IndexA].QuestObjective.Num(); IndexB++)
+		for (int32 Index2 = 0; Index2 < CurrentQuest[Index].QuestObjective.Num(); Index2++)
 		{
-			if (CurrentQuest[IndexA].QuestObjective[IndexB].QuestType == EQuestType::E_EnemyKill)
+			if (CurrentQuest[Index].QuestObjective[Index2].QuestType == EQuestType::E_ItemCollect)
 			{
-				if (CurrentQuest[IndexA].QuestObjective[IndexB].CurrentKill < CurrentQuest[IndexA].QuestObjective[IndexB].ObjectiveKill)
+				int32 ItemIndex = InventoryComponent->FindItem(CurrentQuest[Index].QuestObjective[Index2].ObjectiveString);
+				UItemObject* Item = InventoryComponent->GetIndexItem(ItemIndex);
+				if (Item != nullptr)
 				{
-					if (CurrentQuest[IndexA].QuestObjective[IndexB].ObjectiveName.ToString() == String)
+					if (Item->ItemName == CurrentQuest[Index].QuestObjective[Index2].ObjectiveString)
 					{
-						CurrentQuest[IndexA].QuestObjective[IndexB].CurrentKill++;
-						if (CurrentQuest[IndexA].QuestObjective[IndexB].CurrentKill >= CurrentQuest[IndexA].QuestObjective[IndexB].ObjectiveKill)
-							CurrentQuest[IndexA].QuestObjective[IndexB].IsCompleted = true;
+						CurrentQuest[Index].QuestObjective[Index2].CurrentItemCollect = Item->Count;
+						if (CurrentQuest[Index].QuestObjective[Index2].CurrentItemCollect >= CurrentQuest[Index].QuestObjective[Index2].ObjectiveItemCollect)
+							CurrentQuest[Index].QuestObjective[Index2].IsCompleted = true;
+						else
+							CurrentQuest[Index].QuestObjective[Index2].IsCompleted = false;
 						QuestUpdated.Broadcast();
 					}
 				}
 			}
 		}
-	}*/
+	}
+	
 }

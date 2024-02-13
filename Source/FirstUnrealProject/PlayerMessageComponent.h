@@ -21,17 +21,21 @@ public:
 		FName SystemName;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FString SystemMessage;
+
 };
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIRSTUNREALPROJECT_API UPlayerMessageComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UPlayerMessageComponent();
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UInventoryComponent* InventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<struct FSystemMessage> SystemMessageArray;
@@ -49,8 +53,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString QuestString;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UInventoryComponent* InventoryComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 LastSelectQuest;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D LastQuestListPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsTalk;
 
 
 	UPROPERTY(BlueprintAssignable)
@@ -61,42 +70,36 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 		FWidgetUpdated MenuUpdated;
-
-	UPROPERTY(BlueprintAssignable)
-		FEnemyKillUpdated EnemyKillUpdated;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	//------------------------Message
 	UFUNCTION(BlueprintCallable)
-	bool AddMessage(struct FSystemMessage Message);
+		bool AddMessage(struct FSystemMessage Message);
 	void RemoveMessage();
 	void RemoveMenu();
 
-	UFUNCTION(BlueprintCallable)
+
+	//------------------------Quest
 	bool AddQuest(FQuestData Data);
+	bool RemoveQuest(FQuestData Data);
 
-	UFUNCTION(BlueprintCallable)
-	bool RemoveQuest(/*FString String, FQuestData Data*/);
-
-	void SetNpcMenuInfo(TArray<struct FPlayerSelect> *Menu);
+	void SetNpcMenuInfo(TArray<struct FPlayerSelect>* Menu);
 	void NextSelectNumber();
+	void SetIsTalk(bool NpcTalk);
+
 
 	bool CurrentCheck(FString String);
 	bool ClearCheck(FString String);
-	bool FinishQuest(FString String);
+	FQuestData* GetCurrentQuest(FString String);
 
-	void ShowQuestWidget();
-
-
+	void EnemyKillCount(FString String);
 	UFUNCTION(BlueprintCallable)
-	void InventoryFind();
-
-	UFUNCTION(BlueprintCallable)
-	void EnemyKill(FString String);
+	void InventoryCheck();
 };

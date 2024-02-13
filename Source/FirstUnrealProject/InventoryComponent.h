@@ -54,4 +54,7 @@ public:
 	virtual bool AddItem(class UItemObject* Item);
 	UFUNCTION(BlueprintCallable)
 	virtual bool RemoveItem(class UItemObject* Item);
+
+	class UItemObject* GetIndexItem(int32 Index);
+	int32 FindItem(FString String);
 };

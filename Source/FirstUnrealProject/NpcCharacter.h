@@ -11,7 +11,8 @@ UENUM(BlueprintType)
 enum class ETalkType : uint8
 {
 	E_Talk UMETA(DisplayName = "Talk"),
-	E_Quest UMETA(DisplayName = "Quest"),
+	E_QuestStart UMETA(DisplayName = "QuestStart"),
+	E_QuestEnd UMETA(DisplayName = "QuestEnd"),
 	E_Trade UMETA(DisplayName = "Trade"),
 	E_QuestSelectYes UMETA(DisplayName = "QuestSelectYes"),
 	E_QuestSelectNo UMETA(DisplayName = "QuestSelectNo"),
@@ -26,6 +27,8 @@ public:
 		FString NpcMenu;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		ETalkType TalkType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool IsVisible = true;
 };
 
 USTRUCT()
@@ -95,8 +98,6 @@ public:
 		FName NpcId;
 	UPROPERTY(EditAnywhere)
 		FNpcInfo NpcInfo;
-	UPROPERTY(EditAnywhere)
-		int32 QuestIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<struct FPlayerSelect> LastTalkSelectMenu;
 
@@ -119,13 +120,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	void NpcTalk();
-	void QuestTalk();
 	void SetNpcInfo();
 
 	void SetQuestData();
+	void SetNpcSelectData();
 
 	void PlayTalk(int32 TalkNumber);
+	void PlayQuestTalk(int32 TalkNumber);
+	struct FQuestData* GetQuestStartData();
+	struct FQuestData* GetQuestEndData();
 	bool PlayQuest();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")

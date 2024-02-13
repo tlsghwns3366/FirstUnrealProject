@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "NpcCharacter.h"
+#include "ItemActor.h"
 #include "QuestComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -26,6 +27,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FText ObjectiveDescription;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FString ObjectiveString;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		EQuestType QuestType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -33,7 +36,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float ObjectiveItemCollect;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		bool ObjectiveInteract;
+		AActor* ObjectiveInterActor;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FVector ObjectiveLocationVector;
 
@@ -41,6 +44,8 @@ public:
 		float CurrentKill;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float CurrentItemCollect;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool CurrentObjectiveInteract;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		bool IsCompleted;
@@ -63,8 +68,6 @@ public:
 		int32 QuestStartTalkNumber;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		int32 QuestEndTalkNumber;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		TArray<struct FPlayerSelect> QuestSelectMenu;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float XPReward;
@@ -103,10 +106,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SetQuestDataTable(FString string);
-	int32 FindQuest(FString string);
-	bool QuestCheck(int32 QuestIndex, AActor* Caller);
-	void ObjectiveCheck(int32 QuestIndex);
-	FString GetQuestTalk(int32 QuestIndex, int32* TalkIndex);
-	FQuestData GetQuestData(int32 QuestIndex);
+	FQuestData* GetQuestData(FString string);
+	bool QuestCheck(FQuestData* QuestData, AActor* Caller);
+	bool ObjectiveCheck(struct FQuestData* CurrentQuest);
 		
 };

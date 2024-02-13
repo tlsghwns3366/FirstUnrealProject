@@ -93,3 +93,21 @@ bool UInventoryComponent::RemoveItem(UItemObject* Item)
 	else
 		return false;
 }
+
+UItemObject* UInventoryComponent::GetIndexItem(int32 Index)
+{
+	if (Index == -1)
+		return nullptr;
+	else
+		return ItemInventory[Index];
+}
+
+int32 UInventoryComponent::FindItem(FString String)
+{
+	for (int32 Index = 0; Index < ItemInventory.Num(); Index++)
+	{
+		if (ItemInventory[Index]->ItemName == String)
+			return Index;
+	}
+	return -1;
+}
