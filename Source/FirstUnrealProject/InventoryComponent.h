@@ -9,12 +9,12 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIRSTUNREALPROJECT_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 public:
@@ -31,7 +31,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UCharacterStateComponent* MainStateComponent;
-	
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D LastInventoryPosition;
@@ -46,15 +46,26 @@ protected:
 	virtual void BeginPlay() override;
 
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual bool AddItem(class UItemObject* Item);
+		virtual bool AddItem(class UItemObject* Item);
 	UFUNCTION(BlueprintCallable)
-	virtual bool RemoveItem(class UItemObject* Item);
+		virtual bool RemoveItem(class UItemObject* Item);
+	UFUNCTION(BlueprintCallable)
+		virtual bool EquipItemRemove(class UEquipItemObject* Item);
+
+
 
 	class UItemObject* GetIndexItem(int32 Index);
 	int32 FindItem(FString String);
+
+	void initializeInventory();
+	void SetBlankInventory(int32 Index);
+	int32 GetInventorySlotIndex();
+
+	UFUNCTION(BlueprintCallable)
+		void SwapItem(int32 IndexA, int32 IndexB);
 };

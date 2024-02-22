@@ -110,7 +110,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
 		float CurrentSpeed;
 
-	//Equip Item
+	//Equip Item slot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		class UEquipItemObject* Helmat;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
@@ -170,24 +170,24 @@ public:
 public:
 	virtual void SetState();
 	virtual void SetAddState();
+	virtual FCharacterState GetFinalState();
+
+	// AddState
+	virtual bool CharacterAddState(UObject* Object);
+	virtual bool CharacterRemoveState(UObject* Object);
 
 
 	virtual bool UseHp(float NewHp);
 	virtual bool UseStamina(float Amount);
 
-	virtual float GetPhysicalDamage();
-	virtual UEquipItemObject* GetEquip(UEquipItemObject* Item);
-	virtual void SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
-
-	virtual FCharacterState GetFinalState();
-
 	// Regen
 	virtual void HpMpRegen(float DeltaTime);
 	virtual void StaminaRegen(float DeltaTime);
 
+	virtual float GetPhysicalDamage();
+	virtual void SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
+
+
 	virtual void EquipItemSpawn(UEquipItemObject* Item);
 
-	// AddState
-	virtual bool CharacterAddState(UObject* Object);
-	virtual bool CharacterRemoveState(UObject* Object);
 };

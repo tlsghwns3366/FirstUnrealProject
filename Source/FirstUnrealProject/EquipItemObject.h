@@ -19,13 +19,16 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
-		bool Equip = false;
+		bool IsEquip = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		FString EquipDescription = "";
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		FAddItemInfo EquipItemInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+		int32 EquipIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 		class UCharacterStateComponent* MainStateComponent;

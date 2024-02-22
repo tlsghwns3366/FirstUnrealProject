@@ -87,8 +87,9 @@ public:
 
 
 	//------------------------Quest
-	bool AddQuest(FQuestData Data);
-	bool RemoveQuest(FQuestData Data);
+	bool AddQuest(FQuestData* Data);
+	bool RemoveQuest(FQuestData* Data);
+	bool QuestClear(FQuestData* Data);
 
 	void SetNpcMenuInfo(TArray<struct FPlayerSelect>* Menu);
 	void NextSelectNumber();
@@ -100,6 +101,7 @@ public:
 	FQuestData* GetCurrentQuest(FString String);
 
 	void EnemyKillCount(FString String);
+
 	UFUNCTION(BlueprintCallable)
 	void InventoryCheck();
 };

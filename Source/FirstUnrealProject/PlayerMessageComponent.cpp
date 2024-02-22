@@ -61,35 +61,60 @@ void UPlayerMessageComponent::RemoveMenu()
 	MenuUpdated.Broadcast();
 }
 
-bool UPlayerMessageComponent::AddQuest(FQuestData Data)
+bool UPlayerMessageComponent::AddQuest(FQuestData* Data)
 {
-	if (&Data != nullptr)
+	if (Data != nullptr)
 	{
-		CurrentQuest.Add(Data);
+		CurrentQuest.Add(*Data);
+		InventoryCheck();
 		QuestUpdated.Broadcast();
 		return true;
 	}
 	return false;
 }
 
-bool UPlayerMessageComponent::RemoveQuest(FQuestData Data)
+bool UPlayerMessageComponent::RemoveQuest(FQuestData* Data)
 {
-	if (&Data != nullptr)
+	if (Data != nullptr)
 	{
 		for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
 		{
-			if (Data.QuestString == CurrentQuest[Index].QuestString)
+			if (*Data->QuestString == CurrentQuest[Index].QuestString)
 			{
 				if (LastSelectQuest == Index)
 					LastSelectQuest = -1;
 				CurrentQuest.RemoveAt(Index);
-				ClearQuest.AddUnique(Data.QuestString);
+				ClearQuest.AddUnique(Data->QuestString);
 				QuestUpdated.Broadcast();
 				return true;
 			}
 		}
 	}
 		return false;
+}
+bool UPlayerMessageComponent::QuestClear(FQuestData* Data)
+{
+	//Reward 
+	if (Data != nullptr)
+	{
+		for (int32 Index = 0; Index < CurrentQuest.Num(); Index++)
+		{
+			if (*Data->QuestString == CurrentQuest[Index].QuestString)
+			{
+				for (int32 ObjectiveIndex = 0; ObjectiveIndex < CurrentQuest[Index].QuestObjective.Num(); ObjectiveIndex++)
+				{
+					if (CurrentQuest[Index].QuestObjective[ObjectiveIndex].QuestType == EQuestType::E_ItemCollect)
+					{
+						int32 ItemIndex = InventoryComponent->FindItem(CurrentQuest[Index].QuestObjective[ObjectiveIndex].ObjectiveString);
+						InventoryComponent->RemoveItem(InventoryComponent->ItemInventory[ItemIndex]);
+						RemoveQuest(Data);
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 void UPlayerMessageComponent::SetNpcMenuInfo(TArray<struct FPlayerSelect> *Menu)
 {
@@ -188,5 +213,4 @@ void UPlayerMessageComponent::InventoryCheck()
 			}
 		}
 	}
-	
 }

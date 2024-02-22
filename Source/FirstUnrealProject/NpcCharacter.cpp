@@ -290,7 +290,7 @@ void ANpcCharacter::OnInteract_Implementation(AActor* Caller)
 				}
 				break;
 			case ETalkType::E_QuestEnd:
-				Player->PlayerMessageComponent->RemoveQuest(*GetQuestEndData());
+				Player->PlayerMessageComponent->QuestClear(GetQuestEndData());
 				IsMenu = false;
 				Player->SetTalkActor(nullptr);
 				Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
@@ -302,7 +302,7 @@ void ANpcCharacter::OnInteract_Implementation(AActor* Caller)
 				break;
 			case ETalkType::E_QuestSelectYes:
 				IsMenu = false;
-				Player->PlayerMessageComponent->AddQuest(*GetQuestStartData());
+				Player->PlayerMessageComponent->AddQuest(GetQuestStartData());
 				Player->PlayerMessageComponent->SetNpcMenuInfo(nullptr);
 				Player->SetTalkActor(nullptr);
 				break;

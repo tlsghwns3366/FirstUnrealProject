@@ -5,7 +5,6 @@
 
 UItemObject::UItemObject()
 {
-
 }
 
 void UItemObject::StartCooldown_Implementation(float CooldownTime)

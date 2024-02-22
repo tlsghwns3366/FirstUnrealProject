@@ -62,130 +62,6 @@ void UCharacterStateComponent::SetState()
 	OnStaminaUpdated.Broadcast();
 }
 
-bool UCharacterStateComponent::UseHp(float NewHp)
-{
-	CurrentHp = CurrentHp - NewHp;
-	if (CurrentHp <= 0.f)
-	{
-		IsDie = true;
-		CurrentHp = 0.f;
-		OnHpbarUpdated.Broadcast();
-		OnHpMpUpdated.Broadcast();
-		return false;
-	}
-	else
-	{
-		OnHpMpUpdated.Broadcast();
-		OnHpbarUpdated.Broadcast();
-		return true;
-	}
-}
-
-bool UCharacterStateComponent::UseStamina(float Amount)
-{
-	if (CurrentStamina - Amount >= 0)
-	{
-		CurrentStamina -= Amount;
-		OnStaminaUpdated.Broadcast();
-		StaminaUseDelay = 1.5f;
-		return true;
-	}
-	else
-		return false;
-}
-
-float UCharacterStateComponent::GetPhysicalDamage()
-{
-	return FMath::FRandRange(FinalState.AttackDamage * 0.85, FinalState.AttackDamage * 1.15);
-}
-UEquipItemObject* UCharacterStateComponent::GetEquip(UEquipItemObject* Item)
-{
-	UEquipItemObject* EquippedItem = nullptr;
-	switch (Item->ItemEnum)
-	{
-	case EItemEnum::E_Equip_Helmet:
-		EquippedItem = Helmat;
-		break;
-	case EItemEnum::E_Equip_Weapons:
-		EquippedItem = Weapons_1;
-		break;
-	case EItemEnum::E_Equip_TopArmor:
-		EquippedItem = TopArmor;
-		break;
-	case EItemEnum::E_Equip_BottomArmor:
-		EquippedItem = BottomArmor;
-		break;
-	case EItemEnum::E_Equip_Boots:
-		EquippedItem = Boots;
-		break;
-	case EItemEnum::E_Equip_Gloves:
-		EquippedItem = Gloves;
-		break;
-	case EItemEnum::E_Equip_Ring:
-		EquippedItem = Ring_2;
-		break;
-	}
-	return EquippedItem;
-}
-
-void UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum)
-{
-	switch (ItemEnum)
-	{
-	case EItemEnum::E_Equip_Helmet:
-		Helmat = Item;
-		break;
-	case EItemEnum::E_Equip_Weapons:
-		Weapons_1 = Item;
-		if (Weapons_1 != nullptr)
-		{
-			EquipItemSpawn(Weapons_1);
-		}
-		else
-		{
-			if (AttachedWeapon != nullptr)
-				AttachedWeapon->Destroy();
-		}
-		break;
-	case EItemEnum::E_Equip_TopArmor:
-		TopArmor = Item;
-		break;
-	case EItemEnum::E_Equip_BottomArmor:
-		BottomArmor = Item;
-		break;
-	case EItemEnum::E_Equip_Boots:
-		Boots = Item;
-		break;
-	case EItemEnum::E_Equip_Gloves:
-		Gloves = Item;
-		break;
-	case EItemEnum::E_Equip_Ring:
-		if (Item == nullptr)
-		{
-			if (Ring_1 != nullptr && Ring_2 == nullptr)
-				Ring_1 = Item;
-			else
-				Ring_2 = Item;
-		}
-		else
-		{
-			if (Ring_1 == nullptr)
-				Ring_1 = Item;
-			else
-				Ring_2 = Item;
-		}
-		break;
-	default:
-		break;
-	}
-	SetAddState();
-}
-
-FCharacterState UCharacterStateComponent::GetFinalState()
-{
-	return FinalState;
-}
-
 void UCharacterStateComponent::SetAddState()
 {
 	FAddItemInfo TempInfo;
@@ -218,63 +94,10 @@ void UCharacterStateComponent::SetAddState()
 	CharacterInfo = TempInfo;
 	SetState();
 }
-void UCharacterStateComponent::HpMpRegen(float DeltaTime)
-{
-	float TargetHP = FinalState.MaxHp;
-	float TargetMP = FinalState.MaxMp;
-	if (CurrentHp < TargetHP)
-		CurrentHp = FMath::Lerp(CurrentHp, CurrentHp + FinalState.HpRegen, DeltaTime);
-	if (CurrentMp < TargetMP)
-		CurrentMp = FMath::Lerp(CurrentMp, CurrentMp + FinalState.MpRegen, DeltaTime);
-	OnHpMpUpdated.Broadcast();
-}
-void UCharacterStateComponent::StaminaRegen(float DeltaTime)
-{
-	float TargetStamina = FinalState.MaxStamina;
-	if (StaminaUseDelay >= 0)
-		StaminaUseDelay = StaminaUseDelay - DeltaTime;
-	if (CurrentStamina < TargetStamina && StaminaUseDelay <= 0)
-	{
-		CurrentStamina = FMath::Lerp(CurrentStamina, CurrentStamina + FinalState.StaminaRegen, DeltaTime);
-	}
-	if (CurrentStamina > TargetStamina)
-		CurrentStamina = TargetStamina;
-	OnStaminaUpdated.Broadcast();
-}
 
-void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
+FCharacterState UCharacterStateComponent::GetFinalState()
 {
-	ACustomCharacter* Character = Cast<ACustomCharacter>(GetOwner());
-	switch (Item->ItemEnum)
-	{
-	case EItemEnum::E_Equip_Helmet:
-		break;
-	case EItemEnum::E_Equip_Weapons:
-	{
-		UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item);
-		if (IsValid(EquipItem))
-		{
-			if (AttachedWeapon != nullptr)
-				AttachedWeapon->Destroy();
-
-			FVector ActorLocation = GetOwner()->GetActorLocation();
-			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(EquipItem->AttachSocket);
-			AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(EquipItem->WeaponBlueprint);
-			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, EquipItem->AttachSocket);
-		}
-	}
-	break;
-	case EItemEnum::E_Equip_TopArmor:
-		break;
-	case EItemEnum::E_Equip_BottomArmor:
-		break;
-	case EItemEnum::E_Equip_Boots:
-		break;
-	case EItemEnum::E_Equip_Gloves:
-		break;
-	default:
-		break;
-	}
+	return FinalState;
 }
 
 bool UCharacterStateComponent::CharacterAddState(UObject* Object)
@@ -318,5 +141,235 @@ bool UCharacterStateComponent::CharacterRemoveState(UObject* Object)
 	else
 	{
 		return false;
+	}
+}
+
+
+
+bool UCharacterStateComponent::UseHp(float NewHp)
+{
+	CurrentHp = CurrentHp - NewHp;
+	if (CurrentHp <= 0.f)
+	{
+		IsDie = true;
+		CurrentHp = 0.f;
+		OnHpbarUpdated.Broadcast();
+		OnHpMpUpdated.Broadcast();
+		return false;
+	}
+	else
+	{
+		OnHpMpUpdated.Broadcast();
+		OnHpbarUpdated.Broadcast();
+		return true;
+	}
+}
+
+bool UCharacterStateComponent::UseStamina(float Amount)
+{
+	if (CurrentStamina - Amount >= 0)
+	{
+		CurrentStamina -= Amount;
+		OnStaminaUpdated.Broadcast();
+		StaminaUseDelay = 1.5f;
+		return true;
+	}
+	else
+		return false;
+}
+
+void UCharacterStateComponent::HpMpRegen(float DeltaTime)
+{
+	float TargetHP = FinalState.MaxHp;
+	float TargetMP = FinalState.MaxMp;
+	if (CurrentHp < TargetHP)
+		CurrentHp = FMath::Lerp(CurrentHp, CurrentHp + FinalState.HpRegen, DeltaTime);
+	if (CurrentMp < TargetMP)
+		CurrentMp = FMath::Lerp(CurrentMp, CurrentMp + FinalState.MpRegen, DeltaTime);
+	OnHpMpUpdated.Broadcast();
+}
+void UCharacterStateComponent::StaminaRegen(float DeltaTime)
+{
+	float TargetStamina = FinalState.MaxStamina;
+	if (StaminaUseDelay >= 0)
+		StaminaUseDelay = StaminaUseDelay - DeltaTime;
+	if (CurrentStamina < TargetStamina && StaminaUseDelay <= 0)
+	{
+		CurrentStamina = FMath::Lerp(CurrentStamina, CurrentStamina + FinalState.StaminaRegen, DeltaTime);
+	}
+	if (CurrentStamina > TargetStamina)
+		CurrentStamina = TargetStamina;
+	OnStaminaUpdated.Broadcast();
+}
+
+
+float UCharacterStateComponent::GetPhysicalDamage()
+{
+	return FMath::FRandRange(FinalState.AttackDamage * 0.85, FinalState.AttackDamage * 1.15);
+}
+
+void UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum)
+{
+	switch (ItemEnum)
+	{
+	case EItemEnum::E_Equip_Helmet:
+		if (Item->IsEquip)
+		{
+			if (Helmat != nullptr)
+				Helmat->UnEquipItem(Helmat);
+			Helmat = Item;
+			//Spawn
+		}
+		else
+		{
+			Helmat = nullptr;
+		}
+		break;
+	case EItemEnum::E_Equip_Weapons:
+		if (Item->IsEquip)
+		{
+			if (Weapons_1 != nullptr)
+				Weapons_1->UnEquipItem(Weapons_1);
+			Weapons_1 = Item;
+			EquipItemSpawn(Weapons_1);
+		}
+		else
+		{
+			Weapons_1 = nullptr;
+			if (AttachedWeapon != nullptr)
+				AttachedWeapon->Destroy();
+		}
+		break;
+	case EItemEnum::E_Equip_TopArmor:
+		if (Item->IsEquip)
+		{
+			if (TopArmor != nullptr)
+				TopArmor->UnEquipItem(Helmat);
+			TopArmor = Item;
+			//Spawn
+		}
+		else
+		{
+			TopArmor = nullptr;
+		}
+		break;
+	case EItemEnum::E_Equip_BottomArmor:
+		if (Item->IsEquip)
+		{
+			if (BottomArmor != nullptr)
+				BottomArmor->UnEquipItem(Helmat);
+			BottomArmor = Item;
+			//Spawn
+		}
+		else
+		{
+			BottomArmor = nullptr;
+		}
+		break;
+	case EItemEnum::E_Equip_Boots:
+		if (Item->IsEquip)
+		{
+			if (Boots != nullptr)
+				Boots->UnEquipItem(Helmat);
+			Boots = Item;
+			//Spawn
+		}
+		else
+		{
+			Boots = nullptr;
+		}
+		Boots = Item;
+		break;
+	case EItemEnum::E_Equip_Gloves:
+		if (Item->IsEquip)
+		{
+			if (Gloves != nullptr)
+				Gloves->UnEquipItem(Helmat);
+			Gloves = Item;
+			//Spawn
+		}
+		else
+		{
+			Gloves = nullptr;
+		}
+		Gloves = Item;
+		break;
+	case EItemEnum::E_Equip_Ring:
+		if (Item->IsEquip)
+		{
+			if (Ring_1 != nullptr && Ring_2 == nullptr)
+			{
+				Ring_2 = Item;
+				Ring_2->EquipIndex = 1;
+			}
+			else
+			{
+				if (Item->EquipIndex == 0)
+				{
+					if (Ring_1 != nullptr)
+						Ring_1->UnEquipItem(Ring_1);
+					Ring_1 = Item;
+					Ring_1->EquipIndex = 0;
+				}
+				else
+				{
+					if (Ring_2 != nullptr)
+						Ring_2->UnEquipItem(Ring_2);
+					Ring_2 = Item;
+					Ring_2->EquipIndex = 1;
+				}
+			}
+		}
+		else
+		{
+			if (Item->EquipIndex == 0)
+			{
+				Ring_1 = nullptr;
+			}
+			else if (Item->EquipIndex == 1)
+			{
+				Ring_2 = nullptr;
+				Item->EquipIndex = 0;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+	SetAddState();
+}
+
+void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
+{
+	ACustomCharacter* Character = Cast<ACustomCharacter>(GetOwner());
+	switch (Item->ItemEnum)
+	{
+	case EItemEnum::E_Equip_Helmet:
+		break;
+	case EItemEnum::E_Equip_Weapons:
+	{
+		UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item);
+		if (IsValid(EquipItem))
+		{
+			if (AttachedWeapon != nullptr)
+				AttachedWeapon->Destroy();
+
+			FVector ActorLocation = GetOwner()->GetActorLocation();
+			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(EquipItem->AttachSocket);
+			AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(EquipItem->WeaponBlueprint);
+			AttachedWeapon->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, EquipItem->AttachSocket);
+		}
+	}
+	break;
+	case EItemEnum::E_Equip_TopArmor:
+		break;
+	case EItemEnum::E_Equip_BottomArmor:
+		break;
+	case EItemEnum::E_Equip_Boots:
+		break;
+	case EItemEnum::E_Equip_Gloves:
+		break;
+	default:
+		break;
 	}
 }

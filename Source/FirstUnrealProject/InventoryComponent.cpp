@@ -25,14 +25,10 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	for (UItemObject* item : DefaultInventory)
+	initializeInventory();
+	for (int32 Index = 0;Index< DefaultInventory.Num();Index++)
 	{
-		AddItem(item);
-	}
-	ACustomCharacter* Character = Cast<ACustomCharacter>(GetOwner());
-	if (IsValid(Character))
-	{
-		MainStateComponent = Character->MainStateComponent;
+		AddItem(DefaultInventory[Index]);		
 	}
 }
 
@@ -46,7 +42,8 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 bool UInventoryComponent::AddItem(UItemObject* Item)
 {
-	if (ItemInventory.Num() < InventorySize)
+	int32 ItemIndex = GetInventorySlotIndex();
+	if (ItemIndex != -1)
 	{
 		if (Item->IsStack)
 		{
@@ -63,7 +60,23 @@ bool UInventoryComponent::AddItem(UItemObject* Item)
 		}
 		Item->World = GetWorld();
 		Item->Inventory = this;
-		ItemInventory.Add(Item);
+		Item->InventorySlotNumber = ItemIndex;
+		ItemInventory[ItemIndex] = Item;
+		OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	return false;
+}
+
+bool UInventoryComponent::RemoveItem(UItemObject* Item)
+{
+	if (Item != nullptr)
+	{
+		Item->World = nullptr;
+		Item->Inventory = nullptr;
+		SetBlankInventory(Item->InventorySlotNumber);
+		Item->InventorySlotNumber = -1;
+		
 		OnInventoryUpdated.Broadcast();
 		return true;
 	}
@@ -71,23 +84,12 @@ bool UInventoryComponent::AddItem(UItemObject* Item)
 		return false;
 }
 
-bool UInventoryComponent::RemoveItem(UItemObject* Item)
+bool UInventoryComponent::EquipItemRemove(UEquipItemObject* Item)
 {
 	if (Item != nullptr)
 	{
-		if (UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item))
-		{
-			if (EquipItem->Equip)
-			{
-				MainStateComponent->SetEquip(nullptr, EquipItem->ItemEnum);
-				EquipInventory.RemoveSingle(EquipItem);
-				EquipItem->Equip = false;
-			}
-		}
-		Item->World = nullptr;
-		Item->Inventory = nullptr;
-		ItemInventory.RemoveSingle(Item);
-		OnInventoryUpdated.Broadcast();
+		Item->UnEquipItem(Item);
+		RemoveItem(Item);
 		return true;
 	}
 	else
@@ -110,4 +112,48 @@ int32 UInventoryComponent::FindItem(FString String)
 			return Index;
 	}
 	return -1;
+}
+
+void UInventoryComponent::initializeInventory()
+{
+	for (int32 Index = ItemInventory.Num(); Index < InventorySize; Index++)
+	{
+		UItemObject* NoneItem = NewObject<UItemObject>(this);
+		NoneItem->InventorySlotNumber = Index;
+		NoneItem->World = GetWorld();
+		NoneItem->Inventory = this;
+		ItemInventory.Add(NoneItem);
+	}
+}
+
+void UInventoryComponent::SetBlankInventory(int32 Index)
+{
+	if (Index == -1)
+		return;
+	UItemObject* NoneItem = NewObject<UItemObject>(this);
+	NoneItem->InventorySlotNumber = Index;
+	NoneItem->World = GetWorld();
+	NoneItem->Inventory = this;
+	ItemInventory[Index] = NoneItem;
+}
+
+int32 UInventoryComponent::GetInventorySlotIndex()
+{
+	for (int32 Index = 0; Index < ItemInventory.Num(); Index++)
+	{
+		if (ItemInventory[Index]->ItemEnum == EItemEnum::E_None)
+		{
+			return Index;
+		}
+	}
+	return -1;
+}
+
+void UInventoryComponent::SwapItem(int32 IndexA, int32 IndexB)
+{
+	int32 TempIndex = ItemInventory[IndexA]->InventorySlotNumber;
+	ItemInventory[IndexA]->InventorySlotNumber = ItemInventory[IndexB]->InventorySlotNumber;
+	ItemInventory[IndexB]->InventorySlotNumber = TempIndex;
+	ItemInventory.Swap(IndexA, IndexB);
+	OnInventoryUpdated.Broadcast();
 }

@@ -27,13 +27,14 @@ enum class EItemEnum : uint8
 	E_Item_Consumable UMETA(DisplayName = "Consumable"),
 	E_Item_QuestItem UMETA(DisplayName = "QuestItem"),
 	E_Item_Miscellaneous UMETA(DisplayName = "Miscellaneous"),
+
 	E_Equip_Helmet UMETA(DisplayName = "Helmet"),
 	E_Equip_Weapons UMETA(DisplayName = "Weapons"),
 	E_Equip_TopArmor UMETA(DisplayName = "TopArmor"),
 	E_Equip_BottomArmor UMETA(DisplayName = "BottomArmor"),
 	E_Equip_Boots UMETA(DisplayName = "Boots"),
 	E_Equip_Gloves UMETA(DisplayName = "Gloves"),
-	E_Equip_Ring UMETA(DisplayName = "Ring")
+	E_Equip_Ring UMETA(DisplayName = "Ring"),
 };
 
 USTRUCT(BlueprintType)
@@ -126,6 +127,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Time")
 		bool IsStack = false;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
+		int32 InventorySlotNumber = -1.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 		int32 QuickSlotNumber = -1.f;

@@ -27,7 +27,7 @@ bool UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 			MainStateComponent = Character->MainStateComponent;
 			Character->CoolDownComponent->AddCoolDownObject(this);
 		}
-		if (!Equip)
+		if (!IsEquip)
 		{
 			EquipItem(this);
 		}
@@ -63,18 +63,12 @@ void UEquipItemObject::SetDescription()
 
 bool UEquipItemObject::EquipItem(UEquipItemObject* Item)
 {
-	if (!Item->Equip)
+	if (!Item->IsEquip)
 	{
-		if (MainStateComponent != nullptr && MainStateComponent->GetEquip(Item) != nullptr)
-		{
-			if (Item->ItemEnum == MainStateComponent->GetEquip(Item)->ItemEnum)
-			{
-				UnEquipItem(MainStateComponent->GetEquip(Item));
-			}
-		}
-		Item->Equip = true;
+		Item->IsEquip = true;
+		Item->Inventory->SetBlankInventory(Item->InventorySlotNumber);
+		Item->InventorySlotNumber = -1;
 		MainStateComponent->SetEquip(Item, Item->ItemEnum);
-		Item->Inventory->ItemInventory.RemoveSingle(Item);
 		Item->Inventory->EquipInventory.Add(Item);
 		Item->Inventory->OnInventoryUpdated.Broadcast();
 		return true;
@@ -85,12 +79,12 @@ bool UEquipItemObject::EquipItem(UEquipItemObject* Item)
 
 bool UEquipItemObject::UnEquipItem(UEquipItemObject* Item)
 {
-	if (Item->Equip)
+	if (Item->IsEquip)
 	{
-		MainStateComponent->SetEquip(nullptr, Item->ItemEnum);
-		Item->Equip = false;
+		Item->IsEquip = false;
+		MainStateComponent->SetEquip(Item, Item->ItemEnum);
+		Item->Inventory->AddItem(Item);
 		Item->Inventory->EquipInventory.RemoveSingle(Item);
-		Item->Inventory->ItemInventory.Add(Item);
 		Item->Inventory->OnInventoryUpdated.Broadcast();
 		return true;
 	}
