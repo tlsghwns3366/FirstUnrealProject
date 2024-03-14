@@ -6,8 +6,25 @@
 #include "GameFramework/Character.h"
 #include "CustomCharacter.generated.h"
 
-
 DECLARE_MULTICAST_DELEGATE(FStopAttack);
+
+UENUM(BlueprintType)
+enum class ECustomCharacterState : uint8
+{
+	E_Peace UMETA(DisplayName = "Peace"),
+	E_Alert UMETA(DisplayName = "Alert"),
+	E_Attack UMETA(DisplayName = "Attack"),
+	E_Defense UMETA(DisplayName = "Defense"),
+	E_Runaway UMETA(DisplayName = "Runaway")
+}; 
+UENUM(BlueprintType)
+enum class ECharacterMovementSpeedState : uint8
+{
+	E_Walk UMETA(DisplayName = "Walk"),
+	E_Run UMETA(DisplayName = "Run"),
+	E_Alert UMETA(DisplayName = "Alert"),
+};
+
 
 UCLASS()
 class FIRSTUNREALPROJECT_API ACustomCharacter : public ACharacter
@@ -21,22 +38,32 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsAttacking = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component)
 		class UDamageComponent* DamageComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component)
 		class UAttackSystemComponent* AttackSystemComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component)
 		class UCharacterStateComponent* MainStateComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component)
 		class UInventoryComponent* InventoryComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Component)
 		class UCoolDownComponent* CoolDownComponent;
 
-		FStopAttack StopAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		AActor* AggroTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		ECustomCharacterState MyCharacterState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MovementState)
+		ECharacterMovementSpeedState MovementState;
+
+	FStopAttack StopAttack;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

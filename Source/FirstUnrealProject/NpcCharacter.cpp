@@ -28,11 +28,6 @@ ANpcCharacter::ANpcCharacter()
 		Widget = BlueprintWidget.Class;
 	}
 	InteractionWidget = CreateWidget<UInteractionUserWidget>(GetWorld(), Widget);
-
-	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	WidgetComponent->SetupAttachment(GetMesh());
-	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
-
 	NpcWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("NpcWidgetComponent"));
 	NpcWidgetComponent->SetupAttachment(GetMesh());
 	NpcWidgetComponent->SetWidgetSpace(EWidgetSpace::World);

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterAnimInstance.h"
+#include "MainGameState.h"
 #include "EnemyAnimInstance.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttckHit);

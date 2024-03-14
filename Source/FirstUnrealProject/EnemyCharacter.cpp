@@ -17,6 +17,7 @@
 #include "CharacterStateComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerMessageComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -47,20 +48,13 @@ void AEnemyCharacter::BeginPlay()
 		Anim->OnMontageEnded.AddDynamic(this, &AEnemyCharacter::OnAttackMontageEnded);
 	}
 	MainState = Cast<AMainGameState>(GetWorld()->GetGameState());
+
 }
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	float GameSpeed = MainState->GameSpeed;
-	if (RestTime < 200.f && Anim->GetRest())
-		RestTime += FMath::Lerp(0, 200.f, 0.001f * GameSpeed);
-	if (Anim->GetRest())
-	{
-		if (RestTime > 0)
-			RestTime -= FMath::Lerp(0, 200.f, 0.01f * GameSpeed);
-	}
 }
 
 float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -69,7 +63,7 @@ float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	if (MainStateComponent->IsDie)
 	{
 		EnemyDie();
-		if (APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn()))
+		if (APlayerCharacter* Player = Cast<APlayerCharacter>(DamageCauser))
 		{
 			Player->PlayerMessageComponent->EnemyKillCount(EnemyName);
 		}
@@ -79,6 +73,7 @@ float AEnemyCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 
 void AEnemyCharacter::Attack()
 {
+	//UE_LOG(LogTemp, Log, TEXT("EnemyAttack"));
 	IsAttacking = true;
 	AttackSystemComponent->Attack();
 }
@@ -134,4 +129,79 @@ void AEnemyCharacter::DropItem()
 		EItem->Iteminitialization(Enemyitem);
 	}
 	EnemyInventoryComponent->ItemInventory.Empty();
+}
+
+void AEnemyCharacter::SetState()
+{
+	float AggroCount = MainStateComponent->AggroCount;
+	ECustomCharacterState TempState = MyCharacterState;
+	if (AggroCount >= AttackAggro)
+	{
+		switch (EnemyType)
+		{
+		case EEnemyType::E_DefendingMonster:
+			MyCharacterState = ECustomCharacterState::E_Defense;
+			break;
+		case EEnemyType::E_AttackingMonster:
+			MyCharacterState = ECustomCharacterState::E_Attack;
+			break;
+		case EEnemyType::E_RunAwayMonster:
+			MyCharacterState = ECustomCharacterState::E_Runaway;
+			break;
+		default:
+			break;
+		}
+	}
+	else if (AggroCount >= AlertAggro)
+	{
+		switch (EnemyType)
+		{
+		case EEnemyType::E_DefendingMonster:
+			MyCharacterState = ECustomCharacterState::E_Alert;
+			break;
+		case EEnemyType::E_AttackingMonster:
+			MyCharacterState = ECustomCharacterState::E_Alert;
+			break;
+		case EEnemyType::E_RunAwayMonster:
+			MyCharacterState = ECustomCharacterState::E_Runaway;
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (EnemyType)
+		{
+		case EEnemyType::E_DefendingMonster:
+			MyCharacterState = ECustomCharacterState::E_Peace;
+			break;
+		case EEnemyType::E_AttackingMonster:
+			MyCharacterState = ECustomCharacterState::E_Peace;
+			break;
+		case EEnemyType::E_RunAwayMonster:
+			MyCharacterState = ECustomCharacterState::E_Peace;
+			break;
+		default:
+			break;
+		}
+	}
+	if (TempState != MyCharacterState)
+		MainStateComponent->AddAggro(0);
+}
+
+void AEnemyCharacter::SetMovementSpeed(ECharacterMovementSpeedState State)
+{
+	switch (State)
+	{
+	case ECharacterMovementSpeedState::E_Walk:
+		GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.WalkSpeed;
+		break;
+	case ECharacterMovementSpeedState::E_Alert:
+		GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.AlertSpeed;
+		break;
+	case ECharacterMovementSpeedState::E_Run:
+		GetCharacterMovement()->MaxWalkSpeed = MainStateComponent->FinalState.RunSpeed;
+		break;
+	}
 }

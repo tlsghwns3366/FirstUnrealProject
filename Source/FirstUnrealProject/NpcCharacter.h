@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CustomCharacter.h"
+#include "EnemyCharacter.h"
 #include "InteractionInterface.h"
 #include "NpcCharacter.generated.h"
 
@@ -70,15 +70,12 @@ public:
  * 
  */
 UCLASS()
-class FIRSTUNREALPROJECT_API ANpcCharacter : public ACustomCharacter, public IInteractionInterface
+class FIRSTUNREALPROJECT_API ANpcCharacter : public AEnemyCharacter, public IInteractionInterface
 {
 	GENERATED_BODY()
 public:
 	ANpcCharacter();
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UWidgetComponent* WidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UWidgetComponent* NpcWidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

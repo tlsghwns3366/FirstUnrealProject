@@ -48,6 +48,8 @@ public:
 		int32 AttackIndex;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		float UseStamaina;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool ShowDebug;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UDataTable* AttackMontageTable;

@@ -23,9 +23,10 @@ EBTNodeResult::Type UBTTaskNodeRandomPosition::ExecuteTask(UBehaviorTreeComponen
 		{
 			FNavLocation RandomLocation; 
 			auto Location = OwnerComp.GetBlackboardComponent()->GetValueAsVector(FName(TEXT("StartPosition")));
-			if (NavSystem->GetRandomPointInNavigableRadius(Location, 500.f, RandomLocation))
+			if (NavSystem->GetRandomPointInNavigableRadius(Location, SearchRadius, RandomLocation))
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsVector(FName(TEXT("RandomPosition")), RandomLocation.Location);
+				FinishLatentTask(OwnerComp,EBTNodeResult::Succeeded);
 				return EBTNodeResult::Succeeded;
 			}
 		}

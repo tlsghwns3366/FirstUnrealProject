@@ -9,6 +9,15 @@
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum class EDayType : uint8
+{
+	E_None UMETA(DisplayName = "None"),
+	E_DayTime UMETA(DisplayName = "DayTime"),
+	E_Night UMETA(DisplayName = "Night"),
+};
+
 UCLASS()
 class FIRSTUNREALPROJECT_API AMainGameState : public AGameStateBase
 {
@@ -16,34 +25,48 @@ class FIRSTUNREALPROJECT_API AMainGameState : public AGameStateBase
 public:
 	AMainGameState();
 public:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 		float GameTime;
 
 	UPROPERTY(BlueprintReadWrite)
 		float GameSpeed;
 
-	UPROPERTY(VisibleAnywhere)
-		float InitialGameTime;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 DayCount;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		int32 Hours;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Minute;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Second;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Year;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Month;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Day;
 
 
-	UPROPERTY(VisibleAnywhere)
-	class UDirectionalLightComponent* DirectionalLightComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Latitude;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Longitude;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TimeZone;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SunsetTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float SunriseTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EDayType DayType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsRun = true;;
+
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -53,4 +76,6 @@ public:
 	void SetGameTime(float DeltaTime, float GS, float GT);
 	void SetClock();
 	void SetCelender();
+
+
 };

@@ -22,37 +22,39 @@ struct FCharacterState
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		int32 Level = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float MaxHp = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float MaxMp = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float HpRegen = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float MpRegen = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float MaxStamina = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float StaminaRegen = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float Speed = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float AttackDamage = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float Shild = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float CriticalChance = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float CriticalDamage = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float DodgeChance = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float MaxExp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float WalkSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
+		float AlertSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = CharacterState)
 		float RunSpeed;
 
 
@@ -74,6 +76,7 @@ public:
 		Result.Speed = Speed;
 		Result.MaxExp = MaxExp;
 		Result.WalkSpeed = WalkSpeed;
+		Result.AlertSpeed = AlertSpeed;
 		Result.RunSpeed = RunSpeed;
 		return Result;
 	}
@@ -106,7 +109,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Current")
 		float CurrentStamina = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
-		float CurrentExp;
+		float CurrentExp = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Current")
 		float CurrentSpeed;
 
@@ -136,6 +139,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "EquipItem")
 		FAddItemInfo CharacterInfo;
 
+
+
+	//Aggro
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro, meta = (ClampMin = 0.0f, ClampMax = 100.0f))
+		float AggroCount = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		bool IsAggro = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		float AggroSensitivity = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		float AggroTime = 5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		float AggroCurrentTime = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		float AggroDelayTime = 3.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		float AggroCurrentDelayTime = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		float AggroExp = 2.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		bool AggroT;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Aggro)
+		bool AggroTAdd;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
 		TArray<class UObject*> CharacterAddStateInfo;
@@ -176,7 +202,7 @@ public:
 	virtual bool CharacterAddState(UObject* Object);
 	virtual bool CharacterRemoveState(UObject* Object);
 
-
+	//Use
 	virtual bool UseHp(float NewHp);
 	virtual bool UseStamina(float Amount);
 
@@ -186,8 +212,10 @@ public:
 
 	virtual float GetPhysicalDamage();
 	virtual void SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum);
-
-
 	virtual void EquipItemSpawn(UEquipItemObject* Item);
+
+	//Aggro
+	virtual void TickAggroCount(float DeltaTime);
+	virtual void AddAggro(float Value);
 
 };

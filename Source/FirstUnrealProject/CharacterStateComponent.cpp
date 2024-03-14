@@ -6,6 +6,7 @@
 #include "EquipItemObject.h"
 #include "CustomCharacter.h"
 #include "ConsumableItemObject.h"
+#include "Logging/StructuredLog.h"
 
 // Sets default values for this component's properties
 UCharacterStateComponent::UCharacterStateComponent()
@@ -43,6 +44,7 @@ void UCharacterStateComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		HpMpRegen(DeltaTime);
 	if (CurrentStamina < FinalState.MaxStamina)
 		StaminaRegen(DeltaTime);
+	TickAggroCount(DeltaTime);
 	// ...
 }
 
@@ -372,4 +374,54 @@ void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
 	default:
 		break;
 	}
+}
+
+void UCharacterStateComponent::TickAggroCount(float DeltaTime)
+{
+	if (IsAggro)
+	{
+		if (AggroCount <= 100.f)
+		{
+			if (AggroT || AggroTAdd)
+			{
+				float Alpha = AggroCount / 100.f;
+				AggroCurrentTime = AggroTime * powf(Alpha, 1.f / AggroExp);
+				AggroT = false;
+				AggroTAdd = false;
+			}
+			float Ratio = FMath::InterpEaseIn(0.f, 1.0f, FMath::Clamp(AggroCurrentTime / AggroTime, 0.f, 1.0f), AggroExp);
+			AggroCount = FMath::Lerp(0.f, 100.f, Ratio);
+			AggroCurrentTime = FMath::Clamp(AggroCurrentTime + DeltaTime * AggroSensitivity, 0.f, AggroTime);
+			AggroCurrentDelayTime = AggroDelayTime;
+		}
+	}
+	else
+	{
+		if (AggroCount >= 0 && AggroCurrentDelayTime <= 0)
+		{
+			if (!AggroT || AggroTAdd)
+			{
+				float Alpha = AggroCount / 100.f;
+				AggroCurrentTime = AggroTime * (1.f - powf(1.f - Alpha, 1.f / AggroExp));
+				AggroT = true;
+				AggroTAdd = false;
+			}
+			float Ratio = FMath::InterpEaseOut(0.f, 1.0f, FMath::Clamp(AggroCurrentTime / AggroTime, 0.f, 1.0f), AggroExp);
+			AggroCount = FMath::Lerp(0.f, 100.f, Ratio);
+			AggroCurrentTime = FMath::Clamp(AggroCurrentTime - DeltaTime, 0.f, AggroTime);
+		}
+		else
+		{
+			AggroCurrentDelayTime = FMath::Clamp(AggroCurrentDelayTime - DeltaTime, 0.f, AggroDelayTime);
+		}
+	}
+}
+
+void UCharacterStateComponent::AddAggro(float Value)
+{
+	AggroCurrentDelayTime = AggroDelayTime;
+	AggroCount += Value * AggroSensitivity;
+	AggroTAdd = true;
+	if (AggroCount > 100.f)
+		AggroCount = 100.f;
 }

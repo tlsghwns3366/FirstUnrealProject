@@ -52,6 +52,7 @@ void ACustomCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float ACustomCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	//UE_LOG(LogTemp, Log, TEXT("TakeDamage"));
 	if (IDamageInterface* DamageInterface = Cast<IDamageInterface>(DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>()))
 	{
 		DamageInterface->SetAttackType(DamageComponent, Damage);
@@ -79,5 +80,3 @@ void ACustomCharacter::Interaction()
 void ACustomCharacter::DodgeAction()
 {
 }
-
-

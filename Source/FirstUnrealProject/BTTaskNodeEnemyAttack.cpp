@@ -21,6 +21,8 @@ EBTNodeResult::Type UBTTaskNodeEnemyAttack::ExecuteTask(UBehaviorTreeComponent& 
 	TarGetActor =Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
 	if (Enemy == nullptr)
 	{
+		Enemy->Attack();
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return EBTNodeResult::Failed;
 	}
 	if (TarGetActor != nullptr)
@@ -34,18 +36,6 @@ void UBTTaskNodeEnemyAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* 
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	if (TarGetActor != nullptr)
 	{
-		FRotator CurrentRotation = Enemy->GetActorRotation();
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Enemy->GetActorLocation(), TarGetActor->GetActorLocation());
-		FRotator InterpRotation = UKismetMathLibrary::RInterpTo(Enemy->GetActorRotation(), LookAtRotation, DeltaSeconds, 5.f);
-		float YawDiff = FMath::FindDeltaAngleDegrees(CurrentRotation.Yaw, LookAtRotation.Yaw);
-		InterpRotation.Pitch = 0.0f;
-		Enemy->SetActorRotation(InterpRotation);
-		float RotationThreshold = 15.0f;
-		if (FMath::Abs(YawDiff) <= RotationThreshold)
-		{
-			Enemy->Attack();
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		}
 
 	}
 	if (Enemy->IsAttacking == false && TarGetActor == nullptr)

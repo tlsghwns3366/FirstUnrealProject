@@ -25,18 +25,7 @@ void UBTService_UpdateEnemy::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	else
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(FName("IsNight"), false);
 
-	if (Enemy->RestTime > 150 && !OwnerComp.GetBlackboardComponent()->GetValueAsBool(FName("FindTarget")))
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(FName("IsRest"), true);
-	if (Enemy->RestTime < 10)
-	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(FName("IsRest"), false);
-	}
-
-
-	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(FName("FindTarget")))
-	{
-		if(Enemy->RestTime < 200.f)
-			Enemy->RestTime += 1;
-	}
-
+	//if (Enemy->RestTime > 150 && !OwnerComp.GetBlackboardComponent()->GetValueAsBool(FName("FindTarget")))
+		//OwnerComp.GetBlackboardComponent()->SetValueAsBool(FName("IsRest"), true);
+	
 }

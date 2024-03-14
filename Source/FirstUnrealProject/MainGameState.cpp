@@ -15,14 +15,19 @@ void AMainGameState::BeginPlay()
 {
 	Super::BeginPlay();
 	GameTime = Hours + (Minute / 60.f) + (Second / 3600.f);
+	SetClock();
+	SetCelender();
 }
 
 void AMainGameState::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	SetGameTime(DeltaTime, GameSpeed, GameTime);
-	SetClock();
-	SetCelender();
+	if (IsRun)
+	{
+		SetGameTime(DeltaTime, GameSpeed, GameTime);
+		SetClock();
+		SetCelender();
+	}
 
 	//UE_LOG(LogTemp, Log, TEXT("%d , %d, %d"), Clock[0], Clock[1], Clock[2]);
 	//UE_LOG(LogTemp, Log, TEXT("%d , %d, %d"), GameDate[0], GameDate[1], GameDate[2]);

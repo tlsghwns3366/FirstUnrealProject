@@ -134,21 +134,43 @@ void UAttackSystemComponent::Trace()
 			ActorsToIgnore.Add(GetOwner());
 
 			FHitResult HitResult;
-			bool Result = UKismetSystemLibrary::SphereTraceSingle(
-				GetWorld(),
-				StartPoint,
-				EndPoint,
-				10.0f,
-				UEngineTypes::ConvertToTraceType(ECC_Pawn),
-				false,
-				ActorsToIgnore,
-				EDrawDebugTrace::None,
-				HitResult,
-				true,
-				FLinearColor::Red,
-				FLinearColor::Green,
-				5.0f
-			);
+			bool Result;
+			if (!ShowDebug)
+			{
+				Result = UKismetSystemLibrary::SphereTraceSingle(
+					GetWorld(),
+					StartPoint,
+					EndPoint,
+					10.0f,
+					UEngineTypes::ConvertToTraceType(ECC_Pawn),
+					false,
+					ActorsToIgnore,
+					EDrawDebugTrace::None,
+					HitResult,
+					true,
+					FLinearColor::Red,
+					FLinearColor::Green,
+					5.0f
+				);
+			}
+			else
+			{
+				Result = UKismetSystemLibrary::SphereTraceSingle(
+					GetWorld(),
+					StartPoint,
+					EndPoint,
+					10.0f,
+					UEngineTypes::ConvertToTraceType(ECC_Pawn),
+					false,
+					ActorsToIgnore,
+					EDrawDebugTrace::ForDuration,
+					HitResult,
+					true,
+					FLinearColor::Red,
+					FLinearColor::Green,
+					5.0f
+				);
+			}
 			if (Result)
 			{
 				HitActor = HitResult.GetActor();

@@ -26,8 +26,8 @@ void UEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		if (EnemyController != nullptr)
 		{
-			IsNight = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("IsNight"));
-			FindTarget = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("FindTarget"));
+			//IsNight = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("IsNight"));
+			//FindTarget = EnemyController->GetBlackboardComponent()->GetValueAsBool(FName("FindTarget"));
 		}
 		else
 		{
