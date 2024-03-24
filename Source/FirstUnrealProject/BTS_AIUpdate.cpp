@@ -21,6 +21,18 @@ void UBTS_AIUpdate::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemor
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsFloat("AggroCount", CharacterAggro);
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum("CharacterState", (uint8)Character->MyCharacterState);
+	if (Character->MyCharacterState == ECustomCharacterState::E_Attack)
+	{
+		auto Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject("SightTarget");
+		if (Target != nullptr)
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsObject("AttackTarget", Target);
+		}
+	}
+	else if (Character->MyCharacterState == ECustomCharacterState::E_Peace)
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject("AttackTarget", nullptr);
+	}
 	/*
 	if(CharacterAggro <= 0)
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("SightSenseDetect", false);

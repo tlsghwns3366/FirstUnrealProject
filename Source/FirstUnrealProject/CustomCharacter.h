@@ -15,8 +15,11 @@ enum class ECustomCharacterState : uint8
 	E_Alert UMETA(DisplayName = "Alert"),
 	E_Attack UMETA(DisplayName = "Attack"),
 	E_Defense UMETA(DisplayName = "Defense"),
-	E_Runaway UMETA(DisplayName = "Runaway")
+	E_Runaway UMETA(DisplayName = "Runaway"),
+	E_Rest UMETA(DisplayName = "Rest"),
+	E_Sleep UMETA(DisplayName = "Sleep")
 }; 
+
 UENUM(BlueprintType)
 enum class ECharacterMovementSpeedState : uint8
 {

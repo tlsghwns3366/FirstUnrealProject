@@ -51,8 +51,6 @@ bool UConsumableItemObject::OnUse_Implementation(ACustomCharacter* Character)
 		if (Count <= 0.f)
 		{
 			Inventory->RemoveItem(this);
-			if (QuickSlotNumber != -1.f)
-				Cast<APlayerCharacter>(Character)->QuickSlotComponent->RemoveObject(QuickSlotNumber);
 			ConditionalBeginDestroy();
 		}
 		return true;

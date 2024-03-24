@@ -137,19 +137,22 @@ void AEnemyCharacter::SetState()
 	ECustomCharacterState TempState = MyCharacterState;
 	if (AggroCount >= AttackAggro)
 	{
-		switch (EnemyType)
+		if (AggroTarget != nullptr)
 		{
-		case EEnemyType::E_DefendingMonster:
-			MyCharacterState = ECustomCharacterState::E_Defense;
-			break;
-		case EEnemyType::E_AttackingMonster:
-			MyCharacterState = ECustomCharacterState::E_Attack;
-			break;
-		case EEnemyType::E_RunAwayMonster:
-			MyCharacterState = ECustomCharacterState::E_Runaway;
-			break;
-		default:
-			break;
+			switch (EnemyType)
+			{
+			case EEnemyType::E_DefendingMonster:
+				MyCharacterState = ECustomCharacterState::E_Defense;
+				break;
+			case EEnemyType::E_AttackingMonster:
+				MyCharacterState = ECustomCharacterState::E_Attack;
+				break;
+			case EEnemyType::E_RunAwayMonster:
+				MyCharacterState = ECustomCharacterState::E_Runaway;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	else if (AggroCount >= AlertAggro)

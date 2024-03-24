@@ -9,6 +9,7 @@
 #include "ConsumableItemObject.h"
 #include "PlayerCharacter.h"
 #include "PlayerMessageComponent.h"
+#include "QuickSlotComponent.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -74,9 +75,11 @@ bool UInventoryComponent::RemoveItem(UItemObject* Item)
 	{
 		Item->World = nullptr;
 		Item->Inventory = nullptr;
+		if (Item->QuickSlotNumber != -1.f)
+			Cast<APlayerCharacter>(GetOwner())->QuickSlotComponent->RemoveObject(Item->QuickSlotNumber);
 		SetBlankInventory(Item->InventorySlotNumber);
 		Item->InventorySlotNumber = -1;
-		
+
 		OnInventoryUpdated.Broadcast();
 		return true;
 	}
@@ -151,6 +154,8 @@ int32 UInventoryComponent::GetInventorySlotIndex()
 
 void UInventoryComponent::SwapItem(int32 IndexA, int32 IndexB)
 {
+	if (IndexA == -1 || IndexB == -1)
+		return;
 	int32 TempIndex = ItemInventory[IndexA]->InventorySlotNumber;
 	ItemInventory[IndexA]->InventorySlotNumber = ItemInventory[IndexB]->InventorySlotNumber;
 	ItemInventory[IndexB]->InventorySlotNumber = TempIndex;

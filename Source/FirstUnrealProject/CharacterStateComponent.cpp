@@ -7,6 +7,7 @@
 #include "CustomCharacter.h"
 #include "ConsumableItemObject.h"
 #include "Logging/StructuredLog.h"
+#include "PlayerCharacter.h"
 
 // Sets default values for this component's properties
 UCharacterStateComponent::UCharacterStateComponent()
@@ -212,6 +213,7 @@ float UCharacterStateComponent::GetPhysicalDamage()
 
 void UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEnum)
 {
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
 	switch (ItemEnum)
 	{
 	case EItemEnum::E_Equip_Helmet:
@@ -227,19 +229,32 @@ void UCharacterStateComponent::SetEquip(UEquipItemObject* Item, EItemEnum ItemEn
 			Helmat = nullptr;
 		}
 		break;
-	case EItemEnum::E_Equip_Weapons:
+	case EItemEnum::E_Equip_Weapons_1:
 		if (Item->IsEquip)
 		{
 			if (Weapons_1 != nullptr)
+			{
 				Weapons_1->UnEquipItem(Weapons_1);
+				Player->SetWeaponEnum(EWeaponEnum::E_Weapon_None);
+			}
 			Weapons_1 = Item;
 			EquipItemSpawn(Weapons_1);
+			Player->SetWeaponEnum(AttachedWeapon->WeaponEnum);
 		}
 		else
 		{
 			Weapons_1 = nullptr;
 			if (AttachedWeapon != nullptr)
 				AttachedWeapon->Destroy();
+			Player->SetWeaponEnum(EWeaponEnum::E_Weapon_None);
+		}
+		break;
+	case EItemEnum::E_Equip_Weapons_2:
+		if (Item->IsEquip)
+		{
+			if (Weapons_2 != nullptr)
+				Weapons_2->UnEquipItem(Weapons_2);
+			Weapons_2 = Item;
 		}
 		break;
 	case EItemEnum::E_Equip_TopArmor:
@@ -348,14 +363,15 @@ void UCharacterStateComponent::EquipItemSpawn(UEquipItemObject* Item)
 	{
 	case EItemEnum::E_Equip_Helmet:
 		break;
-	case EItemEnum::E_Equip_Weapons:
+	case EItemEnum::E_Equip_Weapons_1:
 	{
 		UEquipItemObject* EquipItem = Cast<UEquipItemObject>(Item);
 		if (IsValid(EquipItem))
 		{
 			if (AttachedWeapon != nullptr)
+			{
 				AttachedWeapon->Destroy();
-
+			}
 			FVector ActorLocation = GetOwner()->GetActorLocation();
 			FTransform WeaponSocketTransform = Character->GetMesh()->GetSocketTransform(EquipItem->AttachSocket);
 			AttachedWeapon = GetWorld()->SpawnActor<AWeapon>(EquipItem->WeaponBlueprint);

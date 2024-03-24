@@ -84,6 +84,14 @@ void AEnemyAIController::SetCharacterState()
 	}
 }
 
+void AEnemyAIController::SetAggroSensitivity(float Value)
+{
+	if (AEnemyCharacter* AICharacter = Cast<AEnemyCharacter>(GetPawn()))
+	{
+		AICharacter->MainStateComponent->AggroSensitivity = Value;
+	}
+}
+
 void AEnemyAIController::SenseDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
 	auto DetectedSence = UAIPerceptionSystem::GetSenseClassForStimulus(this, Stimulus);
@@ -109,20 +117,18 @@ void AEnemyAIController::SightDetected(AActor* Actor, FAIStimulus const Stimulus
 		{
 			AICharacter->AggroTarget = Actor;
 			AICharacter->MainStateComponent->IsAggro = true;
-			AICharacter->MainStateComponent->AggroSensitivity = 2.f;
 		}
 		GetBlackboardComponent()->SetValueAsObject("SightTarget", Actor);
-		TargetActor = Actor;
 	}
 	else
 	{
 		if (ACustomCharacter* AICharacter = Cast<ACustomCharacter>(GetPawn()))
 		{
+
+			AICharacter->AggroTarget = nullptr;
 			AICharacter->MainStateComponent->IsAggro = false;
-			AICharacter->MainStateComponent->AggroSensitivity = 2.f;
 		}
 		GetBlackboardComponent()->SetValueAsObject("SightTarget", nullptr);
-		TargetActor = nullptr;
 	}
 	GetBlackboardComponent()->SetValueAsVector("SenseLocation", Stimulus.StimulusLocation);
 	SenseLocation = Stimulus.StimulusLocation;

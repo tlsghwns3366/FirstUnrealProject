@@ -33,8 +33,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector SenseLocation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		AActor* TargetActor;
 
 
 public:
@@ -49,6 +47,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SetCharacterState();
+	UFUNCTION(BlueprintCallable)
+		void SetAggroSensitivity(float Value);
+
 	UFUNCTION()
 		void SenseDetected(AActor* Actor, FAIStimulus const Stimulus);
 

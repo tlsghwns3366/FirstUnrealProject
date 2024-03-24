@@ -21,9 +21,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 		float SideInput;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
-		bool IsCrouch;
-
 
 
 public:
@@ -31,7 +28,4 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override; 
 
-public:
-
-	void SetLocomotionState();
 };

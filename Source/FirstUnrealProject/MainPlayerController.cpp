@@ -133,17 +133,11 @@ void AMainPlayerController::RequestLook(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	float Sensitivity = 1.f;
-
-	float InterpolatedYawInput = FMath::Lerp(0.f, LookAxisVector.X, Sensitivity);
-	float InterpolatedPitchInput = FMath::Lerp(0.f, LookAxisVector.Y, Sensitivity);
-
 	if (IsValid(MainPlayer))
 	{
 		// add yaw and pitch input to controller
-		MainPlayer->AddControllerYawInput(-InterpolatedYawInput);
-		MainPlayer->AddControllerPitchInput(InterpolatedPitchInput);
+		MainPlayer->AddControllerYawInput(-LookAxisVector.X);
+		MainPlayer->AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
 

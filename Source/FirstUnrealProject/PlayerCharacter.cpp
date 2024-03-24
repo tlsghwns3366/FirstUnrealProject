@@ -78,8 +78,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (IsRun)
 		Running(DeltaTime);
-	if(Anim->ForwardInput != 0 || Anim->SideInput != 0)
-		SetActorRotation(FRotator(0.f,UKismetMathLibrary::RInterpTo(GetActorRotation(), GetController()->GetControlRotation(), DeltaTime,0.f).Yaw,0.f));
+	//if(Anim->ForwardInput != 0 || Anim->SideInput != 0)
+		//SetActorRotation(FRotator(0.f,UKismetMathLibrary::RInterpTo(GetActorRotation(), GetController()->GetControlRotation(), DeltaTime,0.f).Yaw,0.f));
+		
 	ForwardTrace();
 }
 
@@ -323,5 +324,13 @@ void APlayerCharacter::SetTempAction(int32 Index)
 	case 2:
 		TempActionType = ETempActionType::E_NpcTalk;
 		break;
+	}
+}
+
+void APlayerCharacter::SetWeaponEnum(EWeaponEnum WeaponEnum)
+{
+	if (Anim != nullptr)
+	{
+		Anim->WeaponEnum = WeaponEnum;
 	}
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CustomCharacter.h"
+#include "Weapon.h"
 #include "PlayerCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -95,4 +96,6 @@ public:
 
 	void TempAction();
 	void SetTempAction(int32 Index);
+
+	void SetWeaponEnum(EWeaponEnum WeaponEnum);
 };

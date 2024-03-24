@@ -29,7 +29,8 @@ enum class EItemEnum : uint8
 	E_Item_Miscellaneous UMETA(DisplayName = "Miscellaneous"),
 
 	E_Equip_Helmet UMETA(DisplayName = "Helmet"),
-	E_Equip_Weapons UMETA(DisplayName = "Weapons"),
+	E_Equip_Weapons_1 UMETA(DisplayName = "Weapons_1"),
+	E_Equip_Weapons_2 UMETA(DisplayName = "Weapons_2"),
 	E_Equip_TopArmor UMETA(DisplayName = "TopArmor"),
 	E_Equip_BottomArmor UMETA(DisplayName = "BottomArmor"),
 	E_Equip_Boots UMETA(DisplayName = "Boots"),
