@@ -2,8 +2,9 @@
 
 
 #include "InteractionUserWidget.h"
-#include "ItemObject.h"
 #include "Components/TextBlock.h"
+
+#include "Item/ItemObject.h"
 
 void UInteractionUserWidget::SetWidget(UItemObject* Object)
 {

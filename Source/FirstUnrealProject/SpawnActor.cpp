@@ -3,7 +3,8 @@
 
 #include "SpawnActor.h"
 #include "Components/BoxComponent.h"
-#include "EnemyCharacter.h"
+
+#include "Character/EnemyCharacter.h"
 
 // Sets default values
 ASpawnActor::ASpawnActor()

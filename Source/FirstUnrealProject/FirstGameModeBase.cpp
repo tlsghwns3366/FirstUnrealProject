@@ -2,9 +2,10 @@
 
 
 #include "FirstGameModeBase.h"
-#include "PlayerCharacter.h"
-#include "MainGameState.h"
 #include "GameFramework/HUD.h"
+
+#include "Character/PlayerCharacter.h"
+#include "MainGameState.h"
 
 AFirstGameModeBase::AFirstGameModeBase()
 {
