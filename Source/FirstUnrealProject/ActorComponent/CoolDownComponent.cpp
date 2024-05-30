@@ -62,6 +62,7 @@ void UCoolDownComponent::AddCoolDownObject(UObject* Object)
 			if (CoolDownTimeConsumableItem[i]->ItemName == ConsumableItem->ItemName)
 			{
 				RemoveBuffCoolDownObject(CoolDownTimeConsumableItem[i]);
+				break;
 			}
 		}
 		CoolDownTimeConsumableItem.Add(ConsumableItem);

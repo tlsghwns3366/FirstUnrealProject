@@ -35,7 +35,7 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UInventoryComponent* InventoryComponent;
+		class UInventoryComponent* InventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<struct FSystemMessage> SystemMessageArray;

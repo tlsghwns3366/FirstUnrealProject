@@ -93,7 +93,8 @@ void AMainPlayerController::RequestMove(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	if (IsValid(MainPlayer))
+
+	if (MainPlayer)
 	{
 		if (MainPlayer->IsAttacking)
 			return;
@@ -125,7 +126,8 @@ void AMainPlayerController::RequestLook(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-	if (IsValid(MainPlayer))
+
+	if (MainPlayer)
 	{
 		// add yaw and pitch input to controller
 		MainPlayer->AddControllerYawInput(-LookAxisVector.X);
@@ -155,7 +157,7 @@ void AMainPlayerController::RequestAttack()
 
 void AMainPlayerController::RequestAttackRelease()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->Attack();
 	}
@@ -163,7 +165,7 @@ void AMainPlayerController::RequestAttackRelease()
 
 void AMainPlayerController::RequestInteract()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->Interaction();
 	}
@@ -172,7 +174,7 @@ void AMainPlayerController::RequestInteract()
 
 void AMainPlayerController::RequestJumpStart()
 {
-	if (IsValid(GetCharacter()))
+	if (MainPlayer)
 	{
 		MainPlayer->JumpStart();
 	}
@@ -180,14 +182,14 @@ void AMainPlayerController::RequestJumpStart()
 
 void AMainPlayerController::RequestJumpStop()
 {
-	if (IsValid(GetCharacter()))
+	if (MainPlayer)
 	{
 		MainPlayer->JumpEnd();
 	}
 }
 void AMainPlayerController::SetIsRunTrue()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->SetIsRunTrue();
 	}
@@ -195,7 +197,7 @@ void AMainPlayerController::SetIsRunTrue()
 
 void AMainPlayerController::SetIsRunFalse()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->SetIsRunFalse();
 	}
@@ -217,7 +219,7 @@ void AMainPlayerController::SetShowMouse()
 
 void AMainPlayerController::Target()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->SetTargetActor();
 	}
@@ -225,7 +227,7 @@ void AMainPlayerController::Target()
 
 void AMainPlayerController::RequestSpace()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->DodgeAction();
 	}
@@ -233,7 +235,7 @@ void AMainPlayerController::RequestSpace()
 
 void AMainPlayerController::RequestCrouch()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->CrouchAction();
 	}
@@ -241,7 +243,7 @@ void AMainPlayerController::RequestCrouch()
 void AMainPlayerController::RequestSlotAction(const FInputActionValue& Value)
 {
 	float Num = Value.Get<float>();
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->SlotUse(Num);
 	}
@@ -249,7 +251,7 @@ void AMainPlayerController::RequestSlotAction(const FInputActionValue& Value)
 
 void AMainPlayerController::RequestTemp()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->TempAction();
 	}
@@ -257,7 +259,7 @@ void AMainPlayerController::RequestTemp()
 
 void AMainPlayerController::SetZoomTrue()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->ZoomAction(true);
 	}
@@ -265,7 +267,7 @@ void AMainPlayerController::SetZoomTrue()
 
 void AMainPlayerController::SetZoomFalse()
 {
-	if (IsValid(MainPlayer))
+	if (MainPlayer)
 	{
 		MainPlayer->ZoomAction(false);
 	}

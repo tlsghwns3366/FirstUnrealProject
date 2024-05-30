@@ -40,8 +40,7 @@ public:
 		FName AttachSocket;
 public:
 		virtual bool OnUse_Implementation(class ACustomCharacter* Character) override;
-	UFUNCTION(BlueprintCallable, Category = "Item")
-		virtual void SetDescription();
+		virtual void SetDescription() override;
 
 		virtual bool EquipItem(class UEquipItemObject* Item);
 		virtual bool UnEquipItem(UEquipItemObject* Item);

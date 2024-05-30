@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/SkinnedMeshComponent.h"
 
 #include "Item/Weapon.h"
 #include "Character/CustomCharacter.h"
@@ -24,15 +25,29 @@ void AProjectileActor_Arrow::HitBoxOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	if (OtherActor != this && OwnerActor != OtherActor && OwnerActor)
 	{
-		this->AttachToActor(OtherActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
+		if (USkinnedMeshComponent* HitBone = Cast<USkinnedMeshComponent>(OtherComp))
+		{
+			if (ACustomCharacter* Character = Cast<ACustomCharacter>(OtherActor))
+				this->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepWorldTransform, HitBone->GetBoneName(OtherBodyIndex));
+		}
+		else
+		{
+			this->AttachToActor(OtherActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
+		}
 		HitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		StopArrow();
+
 		if (SweepResult.GetActor() && Cast<ACustomCharacter>(SweepResult.GetActor()))
 		{
-			OnArrowHit.Execute(SweepResult.GetActor(), LastValue);
+			if (!IsDamage)
+			{
+				IsDamage = true;
+				OnArrowHit.Execute(SweepResult.GetActor(), LastValue);
+			}
 		}
 	}
 }
+
 void AProjectileActor_Arrow::SetArrow(FRotator ArrowRotator, float Value)
 {
 	LastValue = Value;

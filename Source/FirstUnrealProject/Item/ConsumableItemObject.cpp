@@ -12,23 +12,23 @@
 
 void UConsumableItemObject::SetDescription()
 {
-	ConsumableItemDescription = "";
+	AddDescription = "";
 	if (ConsumableItemInfo.AddDamage != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("Damage + %.1f\n"), ConsumableItemInfo.AddDamage);
+		AddDescription += FString::Printf(TEXT("Damage + %.1f\n"), ConsumableItemInfo.AddDamage);
 	if (ConsumableItemInfo.AddShild != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("Shild + %.1f\n"), ConsumableItemInfo.AddShild);
+		AddDescription += FString::Printf(TEXT("Shild + %.1f\n"), ConsumableItemInfo.AddShild);
 	if (ConsumableItemInfo.AddHP != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("HP + %.1f\n"), ConsumableItemInfo.AddHP);
+		AddDescription += FString::Printf(TEXT("HP + %.1f\n"), ConsumableItemInfo.AddHP);
 	if (ConsumableItemInfo.AddMP != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("MP + %.1f\n"), ConsumableItemInfo.AddMP);
+		AddDescription += FString::Printf(TEXT("MP + %.1f\n"), ConsumableItemInfo.AddMP);
 	if (ConsumableItemInfo.AddStamina != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("Stamina + %.1f\n"), ConsumableItemInfo.AddStamina);
+		AddDescription += FString::Printf(TEXT("Stamina + %.1f\n"), ConsumableItemInfo.AddStamina);
 	if (ConsumableItemInfo.AddCriticalChance != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("CriticalChance + %.1f\n"), ConsumableItemInfo.AddCriticalChance);
+		AddDescription += FString::Printf(TEXT("CriticalChance + %.1f\n"), ConsumableItemInfo.AddCriticalChance);
 	if (ConsumableItemInfo.AddCriticalDamage != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("CriticalDamage + %.1f\n"), ConsumableItemInfo.AddCriticalDamage);
+		AddDescription += FString::Printf(TEXT("CriticalDamage + %.1f\n"), ConsumableItemInfo.AddCriticalDamage);
 	if (ConsumableItemInfo.AddDodgeChance != 0)
-		ConsumableItemDescription += FString::Printf(TEXT("DodgeChance + %.1f\n"), ConsumableItemInfo.AddDodgeChance);
+		AddDescription += FString::Printf(TEXT("DodgeChance + %.1f\n"), ConsumableItemInfo.AddDodgeChance);
 }
 
 bool UConsumableItemObject::OnUse_Implementation(ACustomCharacter* Character)

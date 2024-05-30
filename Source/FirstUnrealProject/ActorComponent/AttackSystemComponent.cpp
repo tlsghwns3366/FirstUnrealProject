@@ -322,15 +322,19 @@ void UAttackSystemComponent::AttackDamage()
 {
 	for (AActor* HitActor : HitActorArray)
 	{
-		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		if (Character->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
+		if (ACustomCharacter* HitCharacter = Cast< ACustomCharacter>(HitActor))
 		{
-			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage() * Character->MainStateComponent->FinalState.CriticalDamage, Character->GetController(), Character, DamageTypeClass);
-		}
-		else {
-			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-			UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage(), Character->GetController(), Character, DamageTypeClass);
+			float RandomChance = FMath::RandRange(0.f, 100000.f);
+
+			if (Character->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
+			{
+				TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
+				UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage() * Character->MainStateComponent->FinalState.CriticalDamage, Character->GetController(), Character, DamageTypeClass);
+			}
+			else {
+				TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
+				UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage(), Character->GetController(), Character, DamageTypeClass);
+			}
 		}
 	}
 	HitActorArray.Empty();
@@ -338,11 +342,10 @@ void UAttackSystemComponent::AttackDamage()
 
 void UAttackSystemComponent::AttackDamage(AActor* TargetActor, float Value)
 {
-	if (TargetActor != nullptr)
+	if (ACustomCharacter* HitCharacter = Cast<ACustomCharacter>(TargetActor))
 	{
 		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		float Power = FMath::Clamp(Value / 100.f, 0.f, 1.f);
-		Power += 0.2f;
+		float Power = FMath::Clamp((Value / 100.f)+0.2f, 0.f, 1.f);
 		if (Character->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
 		{
 			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();

@@ -43,6 +43,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Info")
 		class UEquipItemObject* EquipItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Info")
+		class UDamageType* WeaponDamageType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		float StaminaCost;

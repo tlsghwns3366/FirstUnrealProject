@@ -116,6 +116,7 @@ bool UCharacterStateComponent::CharacterAddState(UObject* Object)
 				if (ConsumableItemObject->ItemName == Cast<UConsumableItemObject>(CharacterAddStateInfo[i])->ItemName)
 				{
 					CharacterRemoveState(CharacterAddStateInfo[i]);
+					break;
 				}
 			}
 		}

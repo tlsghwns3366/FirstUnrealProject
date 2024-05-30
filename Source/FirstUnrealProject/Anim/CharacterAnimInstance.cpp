@@ -38,7 +38,6 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		DeltaTimeX = DeltaSeconds;
 		Velocity = CharacterMovement->Velocity;
 		Speed = Velocity.Length();
-		//InputVector = CharacterMovement->GetLastInputVector().GetClampedToSize(0.0f, 1.0f);
 		IsMoving = Speed > 3.0f;
 		IsFalling = CharacterMovement->IsFalling();
 		if (IsFalling || !IsZoom)

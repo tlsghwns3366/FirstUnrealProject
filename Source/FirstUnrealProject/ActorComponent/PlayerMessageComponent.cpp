@@ -84,8 +84,8 @@ bool UPlayerMessageComponent::RemoveQuest(FQuestData* Data)
 			{
 				if (LastSelectQuest == Index)
 					LastSelectQuest = -1;
-				CurrentQuest.RemoveAt(Index);
 				ClearQuest.AddUnique(Data->QuestString);
+				CurrentQuest.RemoveAt(Index);
 				QuestUpdated.Broadcast();
 				return true;
 			}
@@ -108,10 +108,10 @@ bool UPlayerMessageComponent::QuestClear(FQuestData* Data)
 					{
 						int32 ItemIndex = InventoryComponent->FindItem(CurrentQuest[Index].QuestObjective[ObjectiveIndex].ObjectiveString);
 						InventoryComponent->RemoveItem(InventoryComponent->ItemInventory[ItemIndex]);
-						RemoveQuest(Data);
-						return true;
 					}
 				}
+				RemoveQuest(Data);
+				return true;
 			}
 		}
 	}

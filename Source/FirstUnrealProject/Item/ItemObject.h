@@ -111,6 +111,8 @@ public:
 		FString ItemName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (MultiLine = true))
 		FString ItemDescription;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+		FString AddDescription = "";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (ClampMin = 0.0))
 		int32 Count = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (ClampMin = 0.0))
@@ -146,6 +148,9 @@ public:
 
 	virtual void StartCooldown_Implementation(float CooldownTime);
 	virtual void EndCooldown_Implementation();
+
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	virtual void SetDescription();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Item")
 		bool OnUse(class ACustomCharacter* Character);

@@ -43,23 +43,23 @@ bool UEquipItemObject::OnUse_Implementation(ACustomCharacter* Character)
 
 void UEquipItemObject::SetDescription()
 {
-	EquipDescription = "";
+	AddDescription = "";
 	if (EquipItemInfo.AddDamage != 0)
-		EquipDescription += FString::Printf(TEXT("Damage + %.1f\n"), EquipItemInfo.AddDamage);
+		AddDescription += FString::Printf(TEXT("Damage + %.1f\n"), EquipItemInfo.AddDamage);
 	if (EquipItemInfo.AddShild != 0)
-		EquipDescription += FString::Printf(TEXT("Shild + %.1f\n"), EquipItemInfo.AddShild);
+		AddDescription += FString::Printf(TEXT("Shild + %.1f\n"), EquipItemInfo.AddShild);
 	if (EquipItemInfo.AddHP != 0)
-		EquipDescription += FString::Printf(TEXT("HP + %.1f\n"), EquipItemInfo.AddHP);
+		AddDescription += FString::Printf(TEXT("HP + %.1f\n"), EquipItemInfo.AddHP);
 	if (EquipItemInfo.AddMP != 0)
-		EquipDescription += FString::Printf(TEXT("MP + %.1f\n"), EquipItemInfo.AddMP);
+		AddDescription += FString::Printf(TEXT("MP + %.1f\n"), EquipItemInfo.AddMP);
 	if (EquipItemInfo.AddStamina != 0)
-		EquipDescription += FString::Printf(TEXT("Stamina + %.1f\n"), EquipItemInfo.AddStamina);
+		AddDescription += FString::Printf(TEXT("Stamina + %.1f\n"), EquipItemInfo.AddStamina);
 	if (EquipItemInfo.AddCriticalChance != 0)
-		EquipDescription += FString::Printf(TEXT("CriticalChance + %.1f\n"), EquipItemInfo.AddCriticalChance);
+		AddDescription += FString::Printf(TEXT("CriticalChance + %.1f\n"), EquipItemInfo.AddCriticalChance);
 	if (EquipItemInfo.AddCriticalDamage != 0)
-		EquipDescription += FString::Printf(TEXT("CriticalDamage + %.1f\n"), EquipItemInfo.AddCriticalDamage);
+		AddDescription += FString::Printf(TEXT("CriticalDamage + %.1f\n"), EquipItemInfo.AddCriticalDamage);
 	if (EquipItemInfo.AddDodgeChance != 0)
-		EquipDescription += FString::Printf(TEXT("DodgeChance + %.1f\n"), EquipItemInfo.AddDodgeChance);
+		AddDescription += FString::Printf(TEXT("DodgeChance + %.1f\n"), EquipItemInfo.AddDodgeChance);
 }
 
 bool UEquipItemObject::EquipItem(UEquipItemObject* Item)

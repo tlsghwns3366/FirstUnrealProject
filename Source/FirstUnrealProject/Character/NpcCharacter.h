@@ -93,7 +93,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName NpcId;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FNpcInfo NpcInfo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<struct FPlayerSelect> LastTalkSelectMenu;

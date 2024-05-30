@@ -51,6 +51,7 @@ void AWeapon_Arrow::ShowProjectilePath(float Value)
 	PathParams.SimFrequency = 30.f;
 	PathParams.DrawDebugType = EDrawDebugTrace::None;
 	PathParams.DrawDebugTime = 3.f;
+	
 
 	FPredictProjectilePathResult PathResult;
 	UGameplayStatics::PredictProjectilePath(GetWorld(), PathParams, PathResult);

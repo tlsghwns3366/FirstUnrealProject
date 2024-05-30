@@ -32,8 +32,7 @@ public:
 		float CurrentBuffDuration = 0.0f;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Item")
-		virtual void SetDescription();
+		virtual void SetDescription() override;
 
 	virtual bool OnUse_Implementation(class ACustomCharacter* Character) override;
 	virtual void StartBuffCooldown_Implementation(float CooldownTime) override;

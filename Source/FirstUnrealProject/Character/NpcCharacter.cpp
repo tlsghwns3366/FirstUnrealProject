@@ -107,12 +107,10 @@ void ANpcCharacter::SetNpcSelectData()
 	if (QuestEndData != nullptr)
 	{
 		FPlayerSelect Select;
-		Select.NpcMenu = NpcInfo.TalkInfo[QuestEndData->QuestStartTalkNumber].TalkName.ToString();
+		Select.NpcMenu = NpcInfo.TalkInfo[QuestEndData->QuestEndTalkNumber].TalkName.ToString();
 		Select.TalkType = ETalkType::E_QuestEnd;
 		LastTalkSelectMenu.Add(Select);
 	}
-
-
 }
 
 void ANpcCharacter::PlayTalk(int32 TalkNumber)
@@ -295,6 +293,7 @@ void ANpcCharacter::OnInteract_Implementation(AActor* Caller)
 				ClearTalk();
 				break;
 			case ETalkType::E_QuestSelectYes:
+				Player->PlayerMessageComponent->AddQuest(GetQuestStartData());
 				ClearTalk();
 				break;
 			case ETalkType::E_QuestSelectNo:

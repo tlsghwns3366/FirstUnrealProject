@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LastValue;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool IsDamage = false;
+
 public:
 	FOnArrowHit OnArrowHit;
 

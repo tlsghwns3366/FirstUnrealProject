@@ -35,7 +35,4 @@ public:
 	struct FSystemMessage GetNpcMessage(int32 Index);
 	struct FSystemMessage GetQuestMessage(int32 QuestIndex, int32 DescriptionIndex);
 	int32 FindQuest(class APlayerCharacter* Player);
-
-
-
 };

@@ -17,7 +17,7 @@ ADamageActor::ADamageActor()
 	DamageWidget = CreateWidget<UDamageTextWidget>(GetWorld(), Widget);
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 
-
+	SetRootComponent(WidgetComponent);
 	WidgetComponent->SetWidget(DamageWidget);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetComponent->SetDrawSize(FVector2D(200.f, 50.f));

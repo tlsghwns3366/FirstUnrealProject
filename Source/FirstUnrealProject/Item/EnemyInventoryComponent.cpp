@@ -79,11 +79,13 @@ void UEnemyInventoryComponent::EquipItem(EItemEnum ItemEnum)
 {
 	if (GetOwner())
 	{
+		//End ItemInventory size == 0 warning
 		for (auto Enemyitem : ItemInventory)
 		{
 			if (Enemyitem->ItemEnum == ItemEnum)
 			{
 				Enemyitem->OnUse_Implementation(Cast<ACustomCharacter>(GetOwner()));
+				break;
 			}
 		}
 	}
@@ -98,6 +100,7 @@ void UEnemyInventoryComponent::UnEquipItem(EItemEnum ItemEnum)
 			if (Enemyitem->ItemEnum == ItemEnum)
 			{
 				Enemyitem->OnUse_Implementation(Cast<ACustomCharacter>(GetOwner()));
+				break;
 			}
 		}
 	}

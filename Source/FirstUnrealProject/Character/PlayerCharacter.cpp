@@ -202,7 +202,7 @@ void APlayerCharacter::CrouchAction()
 			FCollisionQueryParams CollisionParams;
 			CollisionParams.AddIgnoredActor(this); 
 			bool Result = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
-			DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+			//DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
 			if (!Result)
 			{
 				Anim->IsCrouch = false;
