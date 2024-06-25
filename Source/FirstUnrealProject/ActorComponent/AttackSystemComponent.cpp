@@ -10,14 +10,13 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Character/CustomCharacter.h"
+#include "Damage/DamageComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Anim/CharacterAnimInstance.h"
 #include "Anim/PlayerAnimInstance.h"
 #include "Item/WeaponInterface.h"
 #include "ActorComponent/CharacterStateComponent.h"
-#include "ActorComponent/Damage/DamageType_FIre.h"
-#include "ActorComponent/Damage/DamageType_Physical.h"
-#include "ActorComponent/Damage/DamageType_Critical.h"
+#include "ActorComponent/Damage/DamageTypeBase.h"
 #include "ProjectileActor_Arrow.h"
 #include "Item/Weapon_Bow.h"
 #include "Item/Weapon_Arrow.h"
@@ -39,7 +38,6 @@ void UAttackSystemComponent::BeginPlay()
 	AnimInstance = Cast<UCharacterAnimInstance>(Character->GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance))
 	{
-		//AnimInstance->OnAttackHit.AddUObject(this, &UAttackSystemComponent::Trace);
 		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UAttackSystemComponent::OnNotifyBeginReceived);
 		AnimInstance->OnMontageEnded.AddDynamic(this, &UAttackSystemComponent::OnAttackMontageEnded);
 		AnimInstance->AttackStartTrace.AddUObject(this, &UAttackSystemComponent::TraceStart);
@@ -102,6 +100,7 @@ void UAttackSystemComponent::OnNotifyBeginReceived(FName NotifyName, const FBran
 		break;
 	default:
 		ComboAttack();
+		ActorsToIgnore.Empty();
 		break;
 	}
 	AttackWeapon->WeaponAction();
@@ -253,6 +252,7 @@ void UAttackSystemComponent::Trace()
 		if (Result)
 		{
 			HitActorArray.AddUnique(HitResult.GetActor());
+			AttackDamage();
 		}
 
 	}
@@ -265,13 +265,16 @@ void UAttackSystemComponent::SetAttackWeapon()
 		AttackArrow->Destroy();
 		AttackArrow = nullptr;
 	}
-	if (Character->MainStateComponent->AttachedWeapon)
+
+	if (Character)
 	{
-		AttackWeapon = Character->MainStateComponent->AttachedWeapon;
-		SetAttackMontage();
-		SetEquipMontage();
-		AttackWeapon->WeaponInitialize(AttackWeapon->EquipItem);
-		PlayMontage(WeaponEquipMontage);
+		AttackWeapon = Cast<AWeapon>(Character->GetCharacterEquipItem(EItemEnum::E_Equip_Weapons_1));
+		if (AttackWeapon)
+		{
+			SetAttackMontage();
+			SetEquipMontage();
+			PlayMontage(WeaponEquipMontage);
+		}
 	}
 	else
 	{
@@ -324,18 +327,9 @@ void UAttackSystemComponent::AttackDamage()
 	{
 		if (ACustomCharacter* HitCharacter = Cast< ACustomCharacter>(HitActor))
 		{
-			float RandomChance = FMath::RandRange(0.f, 100000.f);
-
-			if (Character->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
-			{
-				TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-				UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage() * Character->MainStateComponent->FinalState.CriticalDamage, Character->GetController(), Character, DamageTypeClass);
-			}
-			else {
-				TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-				UGameplayStatics::ApplyDamage(HitActor, Character->MainStateComponent->GetPhysicalDamage(), Character->GetController(), Character, DamageTypeClass);
-			}
+			UGameplayStatics::ApplyDamage(HitActor, Character->DamageComponent->GetPhysicalDamage(), Character->GetController(), Character, AttackWeapon->WeaponDamageType);
 		}
+		ActorsToIgnore.AddUnique(HitActor);
 	}
 	HitActorArray.Empty();
 }
@@ -345,16 +339,8 @@ void UAttackSystemComponent::AttackDamage(AActor* TargetActor, float Value)
 	if (ACustomCharacter* HitCharacter = Cast<ACustomCharacter>(TargetActor))
 	{
 		float RandomChance = FMath::RandRange(0.f, 100000.f);
-		float Power = FMath::Clamp((Value / 100.f)+0.2f, 0.f, 1.f);
-		if (Character->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
-		{
-			TSubclassOf<UDamageType_Critical> DamageTypeClass = UDamageType_Critical::StaticClass();
-			UGameplayStatics::ApplyDamage(TargetActor, Character->MainStateComponent->GetPhysicalDamage() * Character->MainStateComponent->FinalState.CriticalDamage * Power, Character->GetController(), Character, DamageTypeClass);
-		}
-		else {
-			TSubclassOf<UDamageType_Physical> DamageTypeClass = UDamageType_Physical::StaticClass();
-			UGameplayStatics::ApplyDamage(TargetActor, Character->MainStateComponent->GetPhysicalDamage() * Power, Character->GetController(), Character, DamageTypeClass);
-		}
+		float Power = FMath::Clamp((Value / 100.f) + 0.2f, 0.f, 1.f);
+		UGameplayStatics::ApplyDamage(TargetActor, Character->DamageComponent->GetPhysicalDamage(), Character->GetController(), Character, AttackWeapon->WeaponDamageType);
 	}
 }
 

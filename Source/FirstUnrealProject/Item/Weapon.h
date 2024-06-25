@@ -41,13 +41,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hit Box")
 		class UArrowComponent* EndPoint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Info")
-		class UEquipItemObject* EquipItem;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = "Info")
-		class UDamageType* WeaponDamageType;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		float StaminaCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class UDamageTypeBase> WeaponDamageType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsEquip = true;;

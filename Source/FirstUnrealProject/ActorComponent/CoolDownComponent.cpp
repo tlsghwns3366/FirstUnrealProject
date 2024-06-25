@@ -5,6 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Item/ItemObject.h"
+#include "ActorComponent/Damage/DamageTypeBase.h"
 #include "Item/ConsumableItemObject.h"
 
 // Sets default values for this component's properties
@@ -52,11 +53,11 @@ void UCoolDownComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UCoolDownComponent::AddCoolDownObject(UObject* Object)
 {
 	if (Object != nullptr)
-		CoolDownTimeObject.Add(Object);
+		CoolDownTimeObject.AddUnique(Object);
 	if (UConsumableItemObject* ConsumableItem = Cast<UConsumableItemObject>(Object))
 	{
 		//Duplicate check
-		int32 BuffCount= CoolDownTimeConsumableItem.Num();
+		int32 BuffCount = CoolDownTimeConsumableItem.Num();
 		for (int32 i = 0; i < BuffCount; i++)
 		{
 			if (CoolDownTimeConsumableItem[i]->ItemName == ConsumableItem->ItemName)
@@ -97,6 +98,27 @@ void UCoolDownComponent::TickCoolTime(UObject* Object, float DeltaTime)
 					Interface->Execute_EndCooldown(Item);
 				}
 				RemoveCoolDownObject(Item);
+			}
+		}
+	}
+	if (UDamageTypeBase* DamageType = Cast< UDamageTypeBase>(Object))
+	{
+		float CurrentTime = DamageType->CurrentDamageOverTime;
+		DamageType->CurrentDamageOverTime = UKismetMathLibrary::FInterpTo(CurrentTime, CurrentTime - 1.0f, DeltaTime, 1.0f);
+		if (FMath::Floor(DamageType->CurrentDamageOverTime) != FMath::Floor(CurrentTime))
+		{
+			ICoolTimeInterface* Interface = Cast<ICoolTimeInterface>(DamageType);
+			if (Interface)
+			{
+				Interface->Execute_OneTimeCooldown(DamageType);
+			}
+			if (DamageType->CurrentDamageOverTime <= 0.f)
+			{
+				if (Interface)
+				{
+					Interface->Execute_EndCooldown(DamageType);
+				}
+				RemoveCoolDownObject(DamageType);
 			}
 		}
 	}

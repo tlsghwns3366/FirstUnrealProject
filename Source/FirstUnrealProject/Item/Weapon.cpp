@@ -6,6 +6,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "EquipItemObject.h"
 
+#include "ActorComponent/Damage/DamageTypeBase.h"
+
 // Sets default values
 AWeapon::AWeapon()
 {
@@ -22,7 +24,7 @@ AWeapon::AWeapon()
 	StartPoint->SetupAttachment(StaticMesh);
 	EndPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("EndPoint"));
 	EndPoint->SetupAttachment(StaticMesh);
-
+	WeaponDamageType = UDamageTypeBase::StaticClass();
 }
 
 // Called when the game starts or when spawned

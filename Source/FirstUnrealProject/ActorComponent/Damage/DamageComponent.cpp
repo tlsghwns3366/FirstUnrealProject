@@ -4,6 +4,7 @@
 #include "DamageComponent.h"
 #include "DamageActor.h"
 #include "Character/CustomCharacter.h"
+#include "ActorComponent/CoolDownComponent.h"
 #include "ActorComponent/CharacterStateComponent.h"
 
 
@@ -25,6 +26,7 @@ void UDamageComponent::BeginPlay()
 	if (IsValid(Character))
 	{
 		MainStateComponent = Character->MainStateComponent;
+		CoolDownComponent = Character->CoolDownComponent;
 	}
 	
 }
@@ -47,6 +49,17 @@ void UDamageComponent::OnDamaged(float Damage)
 	}
 }
 
+float UDamageComponent::OnCriticalDamaged(float Damage, AActor* CauserActor)
+{
+	ACustomCharacter* CauserCharacter = Cast<ACustomCharacter>(CauserActor);
+	if (CauserCharacter->MainStateComponent != nullptr)
+	{
+		OnDamaged(CauserCharacter->MainStateComponent->FinalState.CriticalDamage * Damage);
+		return CauserCharacter->MainStateComponent->FinalState.CriticalDamage * Damage;
+	}
+	return 0.f;
+}
+
 void UDamageComponent::DamageTaken(float Damage, FColor Color)
 {
 	FVector Location = GetOwner()->GetActorLocation();
@@ -56,24 +69,44 @@ void UDamageComponent::DamageTaken(float Damage, FColor Color)
 	DamageActor->SetRandomPosition();
 }
 
-void UDamageComponent::OnPhysical(float Damage)
+const bool UDamageComponent::CheckCritical(AActor* CauserActor)
 {
-	//UE_LOG(LogTemp, Log, TEXT("Physical"));
-	OnDamaged(Damage);
-	DamageTaken(Damage,FColor::White);
+	float RandomChance = FMath::RandRange(0.f, 100000.f);
+
+	ACustomCharacter*  CauserCharacter = Cast<ACustomCharacter>(CauserActor);
+	if (CauserCharacter->MainStateComponent != nullptr)
+	{
+		if (CauserCharacter->MainStateComponent->FinalState.CriticalChance > RandomChance / 100000.f)
+			return true;
+
+	}
+	return false;
+	
 }
 
-void UDamageComponent::OnFire(float Damage)
+const float UDamageComponent::GetCriticalDamage()
 {
-	//UE_LOG(LogTemp, Log, TEXT("Fire"));
-	OnDamaged(Damage);
-	DamageTaken(Damage,FColor::Orange);
+	if (MainStateComponent != nullptr)
+	{
+		return MainStateComponent->FinalState.CriticalDamage;
+	}
+	return false;
 }
 
-void UDamageComponent::OnCritical(float Damage)
+const float UDamageComponent::GetPhysicalDamage()
 {
-	//UE_LOG(LogTemp, Log, TEXT("Critical"));
-	OnDamaged(Damage);
-	DamageTaken(Damage,FColor::Red);
+	if (MainStateComponent != nullptr)
+		return FMath::FRandRange(MainStateComponent->FinalState.AttackDamage * 0.85, MainStateComponent->FinalState.AttackDamage * 1.15);
+	else
+		return false;
 }
 
+void UDamageComponent::SetDamageOverTime(UObject* DamageObject, float Damage, float DamageOverTim)
+{
+	CoolDownComponent->AddCoolDownObject(DamageObject);
+	ICoolTimeInterface* Interface = Cast<ICoolTimeInterface>(DamageObject);
+	if (Interface)
+	{
+		Interface->Execute_StartCooldown(DamageObject, DamageOverTim);
+	}
+}

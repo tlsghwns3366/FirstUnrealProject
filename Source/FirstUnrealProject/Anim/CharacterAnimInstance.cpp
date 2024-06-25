@@ -198,10 +198,13 @@ void UCharacterAnimInstance::UpdateOnZoomLoop()
 {
 	if (IsZoom)
 	{
-		StartRotation = Character->GetActorRotation();
-		PrimaryTargetRotation = Character->GetController()->GetControlRotation();
-		float InYaw = UKismetMathLibrary::RInterpTo(StartRotation, PrimaryTargetRotation, DeltaTimeX, 100.f).Yaw;
-		Character->SetActorRotation(FRotator(0.f, InYaw, 0.f));
+		if (Character)
+		{
+			StartRotation = Character->GetActorRotation();
+			PrimaryTargetRotation = Character->GetController()->GetControlRotation();
+			float InYaw = UKismetMathLibrary::RInterpTo(StartRotation, PrimaryTargetRotation, DeltaTimeX, 100.f).Yaw;
+			Character->SetActorRotation(FRotator(0.f, InYaw, 0.f));
+		}
 	}
 	else
 	{

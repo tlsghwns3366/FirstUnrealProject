@@ -12,9 +12,7 @@
 #include "ActorComponent/AttackSystemComponent.h"
 #include "ActorComponent/Damage/DamageComponent.h"
 #include "ActorComponent/Damage/DamageInterface.h"
-#include "ActorComponent/Damage/DamageType_FIre.h"
-#include "ActorComponent/Damage/DamageType_Physical.h"
-#include "ActorComponent/Damage/DamageType_Critical.h"
+#include "ActorComponent/Damage/DamageTypeBase.h"
 
 // Sets default values
 ACustomCharacter::ACustomCharacter()
@@ -56,7 +54,7 @@ float ACustomCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 	//UE_LOG(LogTemp, Log, TEXT("TakeDamage"));
 	if (IDamageInterface* DamageInterface = Cast<IDamageInterface>(DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>()))
 	{
-		DamageInterface->SetAttackType(DamageComponent, Damage);
+		DamageInterface->SetAttackType(DamageComponent, Damage, DamageCauser);
 	}
 	return 0.0f;
 }
@@ -80,6 +78,48 @@ void ACustomCharacter::Interaction()
 
 void ACustomCharacter::DodgeAction()
 {
+}
+
+UObject* ACustomCharacter::GetCharacterEquipItem(EItemEnum ItemEnum)
+{
+	switch (ItemEnum)
+	{
+	case EItemEnum::E_None:
+		break;
+	case EItemEnum::E_Item_Consumable:
+		break;
+	case EItemEnum::E_Item_QuestItem:
+		break;
+	case EItemEnum::E_Item_Miscellaneous:
+		break;
+	case EItemEnum::E_Equip_Helmet:
+		return MainStateComponent->Helmat;
+		break;
+	case EItemEnum::E_Equip_Weapons_1:
+		return MainStateComponent->AttachedWeapon;
+		break;
+	case EItemEnum::E_Equip_Weapons_2:
+		break;
+	case EItemEnum::E_Equip_TopArmor:
+		return MainStateComponent->TopArmor;
+		break;
+	case EItemEnum::E_Equip_BottomArmor:
+		return MainStateComponent->BottomArmor;
+		break;
+	case EItemEnum::E_Equip_Boots:
+		return MainStateComponent->Boots;
+		break;
+	case EItemEnum::E_Equip_Gloves:
+		return MainStateComponent->Gloves;
+		break;
+	case EItemEnum::E_Equip_Ring:
+		return MainStateComponent->Ring_1;
+		break;
+	default:
+		break;
+	}
+
+	return nullptr;
 }
 
 void ACustomCharacter::SetWeaponEnum(EWeaponEnum WeaponEnum)

@@ -10,7 +10,7 @@ bool IDamageInterface::SetDamageValue(int32 Damage) const
     return false;
 }
 
-bool IDamageInterface::SetAttackType(UDamageComponent* DamageComponent,float Damage) const
+bool IDamageInterface::SetAttackType(UDamageComponent* DamageComponent,float Damage, AActor* DamageCauser)
 {
     return false;
 }

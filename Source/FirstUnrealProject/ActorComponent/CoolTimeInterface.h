@@ -22,12 +22,15 @@ class FIRSTUNREALPROJECT_API ICoolTimeInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cooldown")
 		void StartCooldown(float CooldownTime);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cooldown")
 		void StartBuffCooldown(float CooldownTime);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cooldown")
 		void EndCooldown();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cooldown")
 		void EndBuffCooldown();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cooldown")
+		void OneTimeCooldown();
+
 };

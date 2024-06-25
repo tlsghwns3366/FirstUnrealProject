@@ -98,6 +98,7 @@ public:
 	bool PlayHitReactMontage();
 	bool Attack();
 	void Trace();
+
 	UFUNCTION()
 	void SetAttackWeapon();
 	void SetAttackMontage();

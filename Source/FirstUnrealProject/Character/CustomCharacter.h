@@ -89,5 +89,8 @@ public:
 	virtual void Interaction();
 	virtual void DodgeAction();
 
+	UFUNCTION()
+	virtual UObject* GetCharacterEquipItem(EItemEnum ItemEnum);
+
 	virtual void SetWeaponEnum(EWeaponEnum WeaponEnum);
 };

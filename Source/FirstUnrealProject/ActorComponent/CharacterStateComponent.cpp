@@ -9,6 +9,7 @@
 #include "Character/CustomCharacter.h"
 #include "Item/ConsumableItemObject.h"
 #include "Character/PlayerCharacter.h"
+#include "Damage/DamageTypeBase.h"
 
 // Sets default values for this component's properties
 UCharacterStateComponent::UCharacterStateComponent()
